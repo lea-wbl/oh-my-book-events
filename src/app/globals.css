@@ -20,6 +20,139 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-h1 {
+/* h1 {
   background-color: green;
+} */
+
+/* .navlink::before {
+  content: "";
+  position: absolute;
+  top: 40%;
+  width: 120%;
+  height: 12px;
+  transform: skew(-12deg) translateX(-10%);
+  transform-origin: left;
+  transition: transform 0.3s ease-in-out;
+  background: #fcc0c5;
+  z-index: -1;
+} */
+
+/* .navlink {
+  padding-inline: 0.5rem;
+}
+
+.navlink::before {
+  content: "";
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  height: 12px;
+  background: #fcc0c5;
+  transform: scaleX(0) skew(-12deg) translate(-0.5rem); 
+  transform-origin: -0.5rem; 
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+  cursor: pointer;
+}
+
+.navlink-container:hover .navlink::before .navlink.active::before {
+  transform: scaleX(1) skew(-12deg) translate(-0.5rem); 
+} */
+
+.navlink {
+  padding-inline: 0.5rem;
+}
+
+.navlink::before {
+  content: "";
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  height: 12px;
+  background: #fcc0c5;
+  transform: scaleX(0) skew(-12deg) translate(-0.5rem); /* Initially hidden */
+  transform-origin: left; /* Animation starts from the left */
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth animation */
+  z-index: -2;
+}
+
+.navlink-container:hover .navlink::before,
+.navlink.active::before {
+  transform: scaleX(1) skew(-12deg) translate(-0.5rem); /* Line becomes visible */
+}
+
+.navlink.active::before {
+  background: #f79d8e;
+}
+
+.footer-link::before {
+  content: "";
+  position: absolute;
+  top: 75%; /* Align vertically */
+  left: -0.5rem; /* Start from the left */
+  width: calc(100% + 1rem); /* Full width of the link */
+  height: 12px; /* Height of the highlight */
+  background: #fcc0c5; /* Highlight color */
+  transform: translateY(-50%) scaleX(0) skew(-12deg); /* Hidden initially */
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1; /* Ensure it's behind the text */
+}
+
+.footer-link-container:hover .footer-link::before {
+  transform: translateY(-50%) scaleX(1) skew(-12deg); /* Expand on hover */
+}
+
+.realistic-marker-highlight:before {
+  content: "";
+  background-color: #fcc0c5;
+  width: calc(100% + 0.5em);
+  height: 1em;
+  position: absolute;
+  z-index: -1;
+  filter: url(#marker-shape);
+  left: -0.25em;
+  top: 1px;
+  padding: 0 0.25em;
+  transform: skew(-345deg);
+}
+
+.circle-sketch-highlight {
+  position: relative;
+  left: 0.5em;
+}
+.circle-sketch-highlight:before {
+  content: "";
+  z-index: -1;
+  left: -0.5em;
+  top: -0.1em;
+  border-width: 4px;
+  border-style: solid;
+  border-color: #ef8c22;
+  position: absolute;
+  border-right-color: transparent;
+  width: calc(100% + 0.5em);
+  height: 1.5em;
+  transform: rotate(2deg);
+  opacity: 0.7;
+  border-radius: 50%;
+  padding: 0.1em 0.25em;
+}
+.circle-sketch-highlight:after {
+  content: "";
+  z-index: -1;
+  left: -0.5em;
+  top: 0.1em;
+  padding: 0.1em 0.25em;
+  border-width: 4px;
+  border-style: solid;
+  border-color: #ef8c22;
+  border-left-color: transparent;
+  border-top-color: transparent;
+  position: absolute;
+  width: calc(100% + 0.5em);
+  height: 1.5em;
+  transform: rotate(-1deg);
+  opacity: 0.7;
+  border-radius: 50%;
 }
