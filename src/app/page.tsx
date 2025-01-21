@@ -1,3 +1,11 @@
+"use client";
+
+import CardsSwiper from "@/components/CardsSwiper";
+import Countdown from "@/components/Countdown";
+import FlipCountdown from "@/components/FlipCountdown";
+import ReviewSlider from "@/components/ReviewSlider";
+import ReviewSlider2 from "@/components/ReviewSlider2";
+import ReviewSwiper from "@/components/ReviewSwiper";
 import Image from "next/image";
 
 export default function Home() {
@@ -80,99 +88,106 @@ export default function Home() {
       </section>
 
       {/* UPCOMING EVENT */}
-      <section className="flex gap-4 h-screen-minus-header bg-red-200 px-12 py-6">
-        UPCOMING EVENT SECTION
+      <section className="flex flex-col gap-4 h-screen-minus-header bg-red-200 px-12 py-6">
+        <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
+          Prochain événement
+        </h1>
+
+        <div className="flex-1 flex">
+          {/* POLAROIDS */}
+          <div className="flex w-1/2 justify-center items-center">
+            <div className="shadow-md w-1/2 border rounded-t -rotate-6 h-fit">
+              <div className="border-[1.2rem] border-white w-full aspect-square relative rounded-t">
+                <Image
+                  aria-hidden
+                  src="/brunch.jpg"
+                  alt="File icon"
+                  objectFit="cover"
+                  fill
+                  className="shadow"
+                />
+              </div>
+              <div className="bg-white w-full h-12 -mt-1 rounded-b"> </div>
+            </div>
+            <div className="shadow-md w-1/2 border rounded-t rotate-12 -ml-10 h-fit">
+              <div className="border-[1.2rem] border-white w-full aspect-square relative rounded-t">
+                <Image
+                  aria-hidden
+                  src="/books.jpg"
+                  alt="File icon"
+                  objectFit="cover"
+                  fill
+                  className="shadow"
+                />
+              </div>
+              <div className="bg-white w-full h-12 -mt-1 rounded-b"></div>
+            </div>
+          </div>
+
+          {/* EVENT INFOS */}
+          <div className="bg-white rounded-xl w-1/2 p-8 shadow-md">
+            <h3 className="font-headline text-2xl">Un Nom d'Event</h3>
+            <h4>Brunch littéraire</h4>
+            <p>La Fabuleuse Cantine, 107 rue de Marseille, 69007 Lyon</p>
+            <p>De 10h à 18h</p>
+            {/* <p>
+            Lorem ipsum odor amet, consectetuer adipiscing elit. Et amet
+            convallis adipiscing hac posuere turpis. Malesuada tincidunt
+            vulputate eget elit sed fringilla habitasse felis? Malesuada
+            malesuada varius inceptos; volutpat eros quis. Est vulputate
+            porttitor blandit accumsan nascetur nisl odio. Efficitur consectetur
+            erat ornare velit tristique suspendisse. Porta inceptos quis dolor
+            maximus habitasse semper tortor netus nibh.
+            <br />
+            Torquent fermentum eleifend dolor hac ac molestie pharetra. Iaculis
+            maecenas pharetra magnis neque potenti elit finibus. Diam magna
+            nostra parturient sagittis cubilia hac sem rutrum. Ultricies feugiat
+            vitae commodo aliquam rutrum magna tristique euismod? Leo pharetra
+            fermentum bibendum egestas amet, orci tellus habitant. Litora vitae
+            natoque fames hac; amet blandit habitant ultrices quis. Nisl quisque
+            cubilia consectetur tempor; enim tincidunt? Metus auctor facilisis
+            varius vel mattis feugiat; ultricies himenaeos. Inceptos elit
+            tincidunt penatibus suspendisse gravida.
+          </p> */}
+            <button className="rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]">
+              Acheter mon billet
+            </button>
+            <button className="rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]">
+              En savoir plus
+            </button>
+            <div className="flex justify-center">
+              <Countdown targetDate="2025-01-31T00:00:00" />
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* CUSTOMERS REVIEWS */}
-      <section className="grid grid-flow-col bg-gray-100 h-screen-minus-header px-12 py-6 gap-4">
-        <div>
-          <cite>Utilsatrice1</cite>
-          <blockquote>
-            Vous allez réaliser le rêve de plein de gens, je crois en vous !
-          </blockquote>
+      <section className="flex flex-col bg-white h-screen-minus-header py-6 gap-4 overflow-x-hidden">
+        <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit ml-12">
+          Vos avis
+        </h1>
+        <div className="hidden md:block">
+          <ReviewSwiper />
         </div>
-        <div>
-          <cite>Utilisateur2</cite>
-          <blockquote>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </blockquote>
-        </div>
-        <div>
-          <cite>Utilsatrice3</cite>
-          <blockquote>
-            Juste merci d'avoir eu cette idée folle. J'ai hâte de découvrir.
-          </blockquote>
-        </div>
-        <div>
-          <cite>Utilisateur4</cite>
-          <blockquote>
-            Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-            cupidatat non proident, sunt in culpa qui officia deserunt mollit
-            anim id est laborum.
-          </blockquote>
+
+        <div className="md:hidden">
+          <CardsSwiper />
         </div>
       </section>
 
-      {/* <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-              <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        /> 
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer> */}
+      {/* <div>
+        <div className="ml-52 mb-20 grid grid-cols-2 grid-rows-2 relative paper shadow-md">
+          <div className="top-left"></div>
+          <div className="top-right"></div>
+          <div className="bottom-left"></div>
+          <div className="bottom-right"></div>
+          <div className="w-full aspect-square flex flex-col justify-center p-2 absolute top-0 left-0">
+            <cite className="block font-bold">Utillisatrice1</cite>
+            <blockquote className="mt-4 italic">Trop chouette !</blockquote>
+          </div>
+        </div>
+      </div> */}
     </div>
   );
 }

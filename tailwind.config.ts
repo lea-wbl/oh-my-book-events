@@ -14,6 +14,7 @@ export default {
       },
       height: {
         "screen-minus-header": "calc(100dvh - 72px)",
+        "screen-minus-header-mobile": "calc(100dvh - 56px)",
       },
       fontFamily: {
         headline: ["var(--font-caprasimo)", "serif"],
@@ -31,5 +32,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 } satisfies Config;

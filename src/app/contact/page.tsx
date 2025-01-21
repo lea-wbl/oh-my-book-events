@@ -4,7 +4,6 @@ import axios from "axios";
 import { InstagramIcon, TiktokIcon } from "hugeicons-react";
 import React, { useState } from "react";
 import Image from "next/image";
-import MarkerShapeFilter from "@/components/MarkerShapeFilter";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 
 const Contact = () => {
@@ -45,13 +44,13 @@ const Contact = () => {
 
   return (
     <div className="bg-[#F6838D]">
-      <MaxWidthWrapper className="flex flex-col md:flex-row gap-4 md:gap-0 items-center bg-[#F6838D] bg-custom-bg bg-custom-bg-size bg-custom-bg-position bg-no-repeat h-screen-minus-header">
+      <MaxWidthWrapper className="flex flex-col md:flex-row gap-4 md:gap-0 items-center bg-[#F6838D] bg-custom-bg bg-custom-bg-size bg-custom-bg-position bg-no-repeat md:h-screen-minus-header h-fit">
         <div className="md:w-1/2">
           <div className="relative">
             {/* <h1 className="font-headline text-6xl text-white bg-[url('/highlighter1.png')] bg-contain bg-no-repeat py-3 mt-[-12px] ml-[-32px] pl-8">
             Contactez-nous
           </h1> */}
-            <h1 className="font-headline text-4xl md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
+            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
               Contactez-nous
             </h1>
             <Image
@@ -64,13 +63,13 @@ const Contact = () => {
           </div>
 
           <div className="pt-6 md:pt-16 grid gap-4 md:w-4/5 text-white">
-            <p>
+            <p className="hidden md:block">
               Taciti hendrerit torquent lobortis montes nostra cubilia gravida
               faucibus nascetur. Mus praesent tempus semper suscipit dui
               habitasse neque.
             </p>
             <div className="flex justify-between">
-              <div className="flex flex-col gap-4">
+              <div className="flex-col gap-4 hidden md:flex">
                 <p>contact@ohmybook.com</p>
                 <p>06 01 02 03 04</p>
                 <div className="flex gap-4 ml-[-2px]">
@@ -164,6 +163,15 @@ const Contact = () => {
             </button>
           </form>
           <p>{status}</p>
+        </div>
+
+        <div className="flex flex-col gap-2 text-white text-center md:hidden">
+          <p>contact@ohmybook.com</p>
+          <p>06 01 02 03 04</p>
+          <div className="flex gap-4 ml-[-2px] justify-center">
+            <InstagramIcon size={32} color="white" className="cursor-pointer" />
+            <TiktokIcon size={32} color="white" className="cursor-pointer" />
+          </div>
         </div>
       </MaxWidthWrapper>
     </div>

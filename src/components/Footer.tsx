@@ -12,7 +12,7 @@ const Footer = () => {
       {/* NEWSLETTER SUBSCRIPTION */}
       <div className="bg-red-200 shadow-md">
         <MaxWidthWrapper>
-          <div className="bg-red-200 flex flex-col md:flex-row gap-4 justify-between">
+          <div className="bg-red-200 flex flex-col md:flex-row gap-8 md:gap-4 justify-between">
             <div className="flex gap-8 relative">
               <div className="md:w-2/3">
                 <h3 className="text-xl mb-4 font-headline text-[#232323]">
@@ -26,15 +26,17 @@ const Footer = () => {
                     Placerat arcu est metus nec egestas commodo. Rutrum porta
                     maecenas posuere duis per auctor lacus.
                   </p>
-                  <Image
-                    src="/heart-doodle.png"
-                    alt="heart"
-                    width={50}
-                    height={25}
-                    className="absolute top-8 right-28"
-                    priority
-                    aria-hidden
-                  />
+                  <div className="absolute top-12 right-4 md:top-8 md:right-28 rotate-[25deg] md:rotate-0 md:aspect-[2/3] md:h-16 h-[40px]">
+                    <Image
+                      src="/heart-doodle.png"
+                      alt="heart"
+                      fill
+                      // width={50}
+                      // height={25}
+                      priority
+                      aria-hidden
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -98,7 +100,7 @@ const Footer = () => {
                 />
                 <button
                   type="submit"
-                  className="rounded-full bg-[#f7a976] text-white px-2 py-1"
+                  className="rounded-full bg-[#f7a976] text-white px-2 py-1 mt-2"
                 >
                   S'inscrire
                 </button>
