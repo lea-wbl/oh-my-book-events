@@ -43,18 +43,18 @@ const Countdown = ({ targetDate }: { targetDate: string }) => {
   }
 
   return (
-    <div className="grid grid-cols-4 gap-6 text-center w-fit">
+    <div className="grid grid-cols-4 gap-6 text-center max-w-[90%] m-auto">
       {Object.entries(timeLeft).map(([key, value]) => (
-        <div className="relative max-w-24" key={key}>
+        <div className="relative" key={key}>
           <div className="perforations">
             <div className="paper-ring"></div>
           </div>
           <div className="perforations">
             <div className="paper-ring"></div>
           </div>
-          <div className="countdown font-mono text-5xl bg-red-200 rounded-md grid px-2 pt-6 pb-3 shadow-md mb-2">
+          <div className="countdown font-mono text-5xl bg-red-200 rounded-md grid content-center px-2 pt-6 pb-3 shadow-md mb-2">
             <span
-              className="countdown font-mono text-5xl"
+              className="countdown font-mono text-7xl w-full"
               style={
                 {
                   "--value": `${addLeadingZero(value)}`,
@@ -62,7 +62,7 @@ const Countdown = ({ targetDate }: { targetDate: string }) => {
               }
             ></span>
           </div>
-          <span className="text-sm tracking-widest">{key.toUpperCase()}</span>
+          <span className="text-md tracking-widest">{key.toUpperCase()}</span>
         </div>
       ))}
     </div>

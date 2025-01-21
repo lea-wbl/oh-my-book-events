@@ -3,6 +3,7 @@
 import CardsSwiper from "@/components/CardsSwiper";
 import Countdown from "@/components/Countdown";
 import FlipCountdown from "@/components/FlipCountdown";
+import PartnersSlider from "@/components/PartnersSlider";
 import ReviewSlider from "@/components/ReviewSlider";
 import ReviewSlider2 from "@/components/ReviewSlider2";
 import ReviewSwiper from "@/components/ReviewSwiper";
@@ -130,34 +131,33 @@ export default function Home() {
             <h4>Brunch littéraire</h4>
             <p>La Fabuleuse Cantine, 107 rue de Marseille, 69007 Lyon</p>
             <p>De 10h à 18h</p>
-            {/* <p>
-            Lorem ipsum odor amet, consectetuer adipiscing elit. Et amet
-            convallis adipiscing hac posuere turpis. Malesuada tincidunt
-            vulputate eget elit sed fringilla habitasse felis? Malesuada
-            malesuada varius inceptos; volutpat eros quis. Est vulputate
-            porttitor blandit accumsan nascetur nisl odio. Efficitur consectetur
-            erat ornare velit tristique suspendisse. Porta inceptos quis dolor
-            maximus habitasse semper tortor netus nibh.
-            <br />
-            Torquent fermentum eleifend dolor hac ac molestie pharetra. Iaculis
-            maecenas pharetra magnis neque potenti elit finibus. Diam magna
-            nostra parturient sagittis cubilia hac sem rutrum. Ultricies feugiat
-            vitae commodo aliquam rutrum magna tristique euismod? Leo pharetra
-            fermentum bibendum egestas amet, orci tellus habitant. Litora vitae
-            natoque fames hac; amet blandit habitant ultrices quis. Nisl quisque
-            cubilia consectetur tempor; enim tincidunt? Metus auctor facilisis
-            varius vel mattis feugiat; ultricies himenaeos. Inceptos elit
-            tincidunt penatibus suspendisse gravida.
-          </p> */}
+            <p>
+              Lorem ipsum odor amet, consectetuer adipiscing elit. Et amet
+              convallis adipiscing hac posuere turpis. Malesuada tincidunt
+              vulputate eget elit sed fringilla habitasse felis? Malesuada
+              malesuada varius inceptos; volutpat eros quis. Est vulputate
+              porttitor blandit accumsan nascetur nisl odio. Efficitur
+              consectetur erat ornare velit tristique suspendisse. Porta
+              inceptos quis dolor maximus habitasse semper tortor netus nibh.
+              {/* <br />
+              Torquent fermentum eleifend dolor hac ac molestie pharetra.
+              Iaculis maecenas pharetra magnis neque potenti elit finibus. Diam
+              magna nostra parturient sagittis cubilia hac sem rutrum. Ultricies
+              feugiat vitae commodo aliquam rutrum magna tristique euismod? Leo
+              pharetra fermentum bibendum egestas amet, orci tellus habitant.
+              Litora vitae natoque fames hac; amet blandit habitant ultrices
+              quis. Nisl quisque cubilia consectetur tempor; enim tincidunt?
+              Metus auctor facilisis varius vel mattis feugiat; ultricies
+              himenaeos. Inceptos elit tincidunt penatibus suspendisse gravida. */}
+            </p>
+            <PartnersSlider />
             <button className="rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]">
               Acheter mon billet
             </button>
             <button className="rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]">
               En savoir plus
             </button>
-            <div className="flex justify-center">
-              <Countdown targetDate="2025-01-31T00:00:00" />
-            </div>
+            <Countdown targetDate="2025-01-31T00:00:00" />
           </div>
         </div>
       </section>
