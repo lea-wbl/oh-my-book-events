@@ -93,7 +93,7 @@ const Footer = () => {
                   name="email"
                   id="email"
                   placeholder="Email"
-                  className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded max-w-[25rem]"
+                  className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded flex-1 md:max-w-[25rem]"
                   // onChange={handleChange}
                   // value={contactInfo.email}
                   required

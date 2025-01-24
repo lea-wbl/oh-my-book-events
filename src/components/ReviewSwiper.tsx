@@ -70,10 +70,10 @@ const ReviewSwiper = () => {
         centeredSlides={true}
         spaceBetween={30}
         loop={true}
-        watchSlidesProgress={true}
         grabCursor={true}
         pagination={{
           clickable: true,
+          dynamicBullets: true,
         }}
         modules={[Pagination]}
         className="reviewSwiper"

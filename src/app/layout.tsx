@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Caprasimo, Raleway } from "next/font/google";
+import { Caprasimo, Raleway, Sacramento } from "next/font/google";
 import MarkerShapeFilter from "@/components/MarkerShapeFilter";
 
 const caprasimo = Caprasimo({
@@ -15,6 +15,13 @@ const raleway = Raleway({
   variable: "--font-raleway",
   weight: ["600", "700"],
   style: ["normal", "italic"],
+  subsets: ["latin"],
+});
+
+const sacramento = Sacramento({
+  variable: "--font-sacramento",
+  weight: ["400"],
+  style: ["normal"],
   subsets: ["latin"],
 });
 
@@ -34,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${caprasimo.variable} ${raleway.className} antialiased`}
+        className={`${sacramento.variable} ${caprasimo.variable} ${raleway.className} antialiased`}
       >
         <MarkerShapeFilter />
         <Header />

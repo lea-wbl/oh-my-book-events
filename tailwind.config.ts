@@ -13,12 +13,13 @@ export default {
         foreground: "var(--foreground)",
       },
       height: {
-        "screen-minus-header": "calc(100dvh - 72px)",
-        "screen-minus-header-mobile": "calc(100dvh - 56px)",
+        "screen-minus-header": "calc(100dvh - 5rem)",
+        "screen-minus-header-mobile": "calc(100vh - 3.5rem)",
       },
       fontFamily: {
         headline: ["var(--font-caprasimo)", "serif"],
         body: ["var(--font-raleway)", "sans-serif"],
+        handwritten: ["var(--font-sacramento)", "sans-serif"],
       },
       backgroundImage: {
         "custom-bg":
