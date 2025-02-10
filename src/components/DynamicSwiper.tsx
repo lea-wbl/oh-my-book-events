@@ -18,7 +18,7 @@ const DynamicSwiper: FC<DynamicSwiperProps> = ({ slides, ...swiperProps }) => {
       pagination={true}
       modules={[Pagination]}
       {...swiperProps}
-      className="dynamicSwiper"
+      className="dynamicSwiper shadow-md"
     >
       {slides.map((slide, index) => (
         <SwiperSlide key={index}>{slide}</SwiperSlide>

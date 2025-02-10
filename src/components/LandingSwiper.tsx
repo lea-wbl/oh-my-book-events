@@ -12,11 +12,13 @@ import Image from "next/image";
 
 type LandingSwiperProps = BaseSwiperProps & {
   images: string[];
+  dir: string;
   mobileOnly: boolean;
 };
 
 const LandingSwiper: FC<LandingSwiperProps> = ({
   images,
+  dir,
   mobileOnly,
   ...swiperProps
 }) => {
@@ -26,6 +28,7 @@ const LandingSwiper: FC<LandingSwiperProps> = ({
       <Swiper
         slidesPerView={"auto"}
         spaceBetween={20}
+        dir={dir}
         {...swiperProps}
         pagination={false}
         modules={[Pagination, Autoplay]}

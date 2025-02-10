@@ -13,7 +13,7 @@ const caprasimo = Caprasimo({
 
 const raleway = Raleway({
   variable: "--font-raleway",
-  weight: ["600", "700"],
+  weight: ["500", "600", "700", "800"],
   style: ["normal", "italic"],
   subsets: ["latin"],
 });

@@ -43,7 +43,7 @@ const Countdown = ({ targetDate }: { targetDate: string }) => {
   }
 
   return (
-    <div className="grid grid-cols-4 gap-2 md:gap-6 text-center md:max-w-[90%] m-auto mt-4">
+    <div className="grid grid-cols-4 gap-2 md:gap-6 text-center">
       {Object.entries(timeLeft).map(([key, value]) => (
         <div className="relative" key={key}>
           <div className="perforations-mobile md:perforations">

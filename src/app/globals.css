@@ -135,7 +135,21 @@ body {
 
 .realistic-marker-highlight2:before {
   content: "";
-  background-color: #fcc0c5;
+  background-color: #f7a976;
+  width: calc(100% + 0.5em);
+  height: 1em;
+  position: absolute;
+  z-index: -1;
+  filter: url(#marker-shape);
+  left: -0.25em;
+  top: 1px;
+  padding: 0 0.25em;
+  transform: skew(15deg);
+}
+
+.realistic-marker-highlight3:before {
+  content: "";
+  background-color: #f79d8e;
   width: calc(100% + 0.5em);
   height: 1em;
   position: absolute;
@@ -733,4 +747,49 @@ body {
 
 .dynamicSwiper .swiper-slide {
   height: auto;
+}
+
+/* FAQ */
+.boxx {
+  min-width: 250px;
+  display: block;
+  height: fit-content;
+  border-radius: 5px;
+  background: linear-gradient(to right, #abbd73 35%, #d6e2ad 100%);
+  padding: 1em;
+  position: relative;
+  color: darkslategray;
+  box-shadow: 1px 2px 1px -1px rgba(119, 119, 119, 0.6);
+  transition: background 200ms ease-in-out;
+}
+
+.boxx::before {
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 13px;
+  right: 7px;
+  width: 50%;
+  top: 0;
+  box-shadow: 0 15px 10px rgba(119, 119, 119, 0.8);
+  transform: rotate(4deg);
+  transition: all 150ms ease-in-out;
+}
+
+.boxx:hover {
+  background: linear-gradient(to right, #abbd73 0%, #abbd73 100%);
+}
+
+.boxx:hover::before {
+  transform: rotate(0deg);
+  bottom: 20px;
+}
+
+.circlee {
+  float: left;
+  border-radius: 50%;
+  box-shadow: inset 1px 1px 1px 0px rgba(0, 0, 0, 0.5), inset 0 0 0 25px white;
+  width: 20px;
+  height: 20px;
+  margin-right: 1em;
 }

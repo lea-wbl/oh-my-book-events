@@ -26,17 +26,15 @@ const Footer = () => {
                     Placerat arcu est metus nec egestas commodo. Rutrum porta
                     maecenas posuere duis per auctor lacus.
                   </p>
-                  <div className="absolute top-12 right-4 md:top-8 md:right-28 rotate-[25deg] md:rotate-0 md:aspect-[2/3] md:h-16 h-[40px]">
-                    <Image
-                      src="/heart-doodle.png"
-                      alt="heart"
-                      fill
-                      // width={50}
-                      // height={25}
-                      priority
-                      aria-hidden
-                    />
-                  </div>
+                  <Image
+                    src="/heart-doodle.png"
+                    alt="heart"
+                    width={50}
+                    height={50}
+                    priority
+                    aria-hidden
+                    className="w-10 md:w-16 h-auto absolute top-6 right-6 md:top-8 md:right-28 rotate-[25deg] md:rotate-0"
+                  />
                 </div>
               </div>
 
@@ -54,7 +52,7 @@ const Footer = () => {
             {/* contact form */}
             <div className="flex gap-8">
               <form
-                className="flex flex-col gap-4 flex-1"
+                className="flex flex-col gap-4 flex-1 md:max-w-[25rem] h-fit"
                 //onSubmit={handleSubmit}
               >
                 <div className="flex flex-col md:flex-row gap-4">
@@ -108,11 +106,11 @@ const Footer = () => {
               <Image
                 src="/sparkles3.png"
                 alt="sparkles"
-                width={80}
-                height={40}
+                width={50}
+                height={50}
                 priority
                 aria-hidden
-                className="hidden md:block"
+                className="hidden md:block w-auto h-4/5"
               />
             </div>
           </div>
