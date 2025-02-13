@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import "@/app/globals.css";
 import { Caprasimo, Raleway, Sacramento } from "next/font/google";
 import MarkerShapeFilter from "@/components/MarkerShapeFilter";
+import Sidebar from "@/components/Sidebar";
 
 const caprasimo = Caprasimo({
   variable: "--font-caprasimo",
@@ -41,12 +40,11 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${sacramento.variable} ${caprasimo.variable} ${raleway.className} antialiased`}
+        className={`${sacramento.variable} ${caprasimo.variable} ${raleway.className} antialiased flex min-h-screen`}
       >
         <MarkerShapeFilter />
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <Sidebar />
+        <main className="flex-1 p-6 lg:ml-64">{children}</main>
       </body>
     </html>
   );
