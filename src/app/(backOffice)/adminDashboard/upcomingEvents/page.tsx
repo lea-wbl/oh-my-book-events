@@ -2,14 +2,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { PencilEdit02Icon, Delete02Icon } from "hugeicons-react";
+import { FileUploaderRegular } from "@uploadcare/react-uploader/next";
+import "@uploadcare/react-uploader/core.css";
+import Image from "next/image";
+import { deleteUcareImg } from "@/app/utils/imageManager";
 
 interface ProgramCard {
+  image: { uuid: string; name: string };
   title: string;
   content: string;
 }
 
 interface Event {
   _id?: string;
+  images: { uuid: string; name: string }[];
   name: string;
   type: string;
   date: string;
@@ -25,6 +31,7 @@ interface Event {
 const UpcomingEvents = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [newEvent, setNewEvent] = useState<Event>({
+    images: [],
     name: "",
     type: "",
     date: "",
@@ -37,30 +44,33 @@ const UpcomingEvents = () => {
     programCards: [],
   });
   const [newCard, setNewCard] = useState<ProgramCard>({
+    image: { uuid: "", name: "" },
     title: "",
     content: "",
   });
   const [eventTypes, setEventTypes] = useState<{ _id: string; name: string }[]>(
     []
   );
+  const [uploaderKey, setUploaderKey] = useState(0);
 
-  // EVENT TYPES HANDLING ****************************************************
+  // EVENT TYPES HANDLING **********************************************
+  // Retrieve event types name for the select input
   useEffect(() => {
     axios
       .get("/api/eventTypes?field=name")
       .then((res) => setEventTypes(res.data));
   }, []);
 
-  // PROGRAM CARDS HANDLING ****************************************************
+  // PROGRAM CARDS HANDLING ********************************************
   // Create a new program card
   const addNewCard = (e: React.FormEvent) => {
     e.preventDefault();
-    // setCards([...cards, newCard]);
     setNewEvent({
       ...newEvent,
       programCards: [...newEvent.programCards, newCard],
     });
-    setNewCard({ title: "", content: "" });
+    setNewCard({ image: { uuid: "", name: "" }, title: "", content: "" });
+    setUploaderKey((prevKey) => prevKey + 1);
   };
 
   // Delete a program card
@@ -82,6 +92,7 @@ const UpcomingEvents = () => {
   const addEvent = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log(newEvent);
     const hasEmptyField = Object.values(newEvent).some(
       (value) => value.length === 0
     );
@@ -92,6 +103,7 @@ const UpcomingEvents = () => {
       const { data } = await axios.post("/api/events", newEvent);
       setEvents([...events, data]);
       setNewEvent({
+        images: [],
         name: "",
         type: "",
         date: "",
@@ -114,9 +126,82 @@ const UpcomingEvents = () => {
   //     setReviews(reviews.filter((review) => review._id !== id));
   //   };
 
+  // IMAGE HANDLING ****************************************************
+  // Add images to the new event
+  const handleNewEventImages = (file: any) => {
+    const eventImg = file.successEntries.map((entry: any) => ({
+      uuid: entry.uuid,
+      name: entry.name,
+    }));
+
+    setNewEvent({
+      ...newEvent,
+      images: eventImg,
+    });
+  };
+
+  const deleteImage = async (uuid: string) => {
+    try {
+      const response = await axios.delete(
+        `https://api.uploadcare.com/files/${uuid}/`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Uploadcare.Simple ${process.env.UPLOADCARE_PUBLIC_KEY}:${process.env.UPLOADCARE_SECRET_KEY}`,
+          },
+        }
+      );
+
+      return Response.json({
+        success: true,
+        message: "Image deleted successfully",
+        data: response.data,
+      });
+    } catch (error: any) {
+      return Response.json(
+        { success: false, error: error.response?.data || error.message },
+        { status: 500 }
+      );
+    }
+  };
+
   return (
     <div className="p-12">
       <h1 className="text-2xl font-bold mb-4">Événements à venir</h1>
+
+      <FileUploaderRegular
+        sourceList="local, camera, gdrive"
+        cameraModes="photo"
+        classNameUploader="uc-light uc-orange"
+        pubkey="1f20d7f5d1614fe8cf9a"
+        multiple={true}
+        multipleMax={2}
+        onChange={(file) => handleNewEventImages(file)}
+      />
+      {newEvent.images.map((img) => (
+        <div
+          key={img.uuid}
+          className="flex items-center justify-between gap-2 bg-gray-100 p-2 mb-2 h-14"
+        >
+          <Image
+            src={`https://ucarecdn.com/${img.uuid}/`}
+            alt="File icon"
+            width={200}
+            height={200}
+            className="h-full w-auto"
+          />
+          <div className="truncate">{img.name}</div>
+          <div
+            className="flex items-center"
+            onClick={() => {
+              deleteUcareImg(newCard.image.uuid);
+              setNewCard({ ...newCard, image: { uuid: "", name: "" } });
+            }}
+          >
+            <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
+          </div>
+        </div>
+      ))}
 
       {/* INFOS PRATIQUES */}
       <h2 className="text-xl font-semi bold mb-4">Infos pratiques</h2>
@@ -254,6 +339,48 @@ const UpcomingEvents = () => {
 
       {/* PROGRAMME */}
       <h2 className="text-xl font-semi bold mb-4">Cartes programme</h2>
+      <FileUploaderRegular
+        key={uploaderKey}
+        sourceList="local, camera, gdrive"
+        cameraModes="photo"
+        classNameUploader="uc-light uc-orange"
+        pubkey="1f20d7f5d1614fe8cf9a"
+        multiple={false}
+        onChange={(file) => {
+          console.log(file.successEntries);
+          setNewCard({
+            ...newCard,
+            image: {
+              uuid: file.successEntries[0].uuid,
+              name: file.successEntries[0].name,
+            },
+          });
+        }}
+      />
+      {newCard.image.uuid && (
+        <div
+          key={newCard.image.uuid}
+          className="flex items-center justify-between gap-2 bg-gray-100 p-2 mb-2 h-14"
+        >
+          <Image
+            src={`https://ucarecdn.com/${newCard.image.uuid}/`}
+            alt="File icon"
+            width={200}
+            height={200}
+            className="h-full w-auto"
+          />
+          <div className="truncate">{newCard.image.name}</div>
+          <div
+            className="flex items-center"
+            onClick={() => {
+              deleteUcareImg(newCard.image.uuid);
+              setNewCard({ ...newCard, image: { uuid: "", name: "" } });
+            }}
+          >
+            <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
+          </div>
+        </div>
+      )}
       <label htmlFor="title">Titre de la carte</label>
       <input
         type="text"
@@ -275,6 +402,15 @@ const UpcomingEvents = () => {
         {newEvent.programCards.map((card, index) => (
           <li key={index} className="border flex w-1/2 p-4 rounded-lg">
             <div className="flex-1">
+              <div className="h-40 w-40">
+                <Image
+                  src={`https://ucarecdn.com/${card.image.uuid}/`}
+                  alt="File icon"
+                  width={200}
+                  height={200}
+                  className="h-full w-auto"
+                />
+              </div>
               <strong>{card.title}</strong> <br />
               <p>{card.content}</p>
             </div>
@@ -305,9 +441,25 @@ const UpcomingEvents = () => {
 
       {/* List of Events */}
       <ul className="mt-6 space-y-2 flex flex-wrap gap-4">
-        {events.map((event) => (
-          <li key={event._id} className="border flex w-1/2 p-4 rounded-lg">
+        {events.map((event, index) => (
+          <li key={index} className="border flex w-1/2 p-4 rounded-lg">
             <div className="flex-1">
+              {event.images.map((img, index) => (
+                <div key={index}>
+                  <div>
+                    <Image
+                      src={`https://ucarecdn.com/${img.uuid}/`}
+                      alt="File icon"
+                      width={200}
+                      height={200}
+                      className=""
+                    />
+                  </div>
+                  {/* <button onClick={() => deleteImage(event.images[0])}>
+                    delete img
+                  </button> */}
+                </div>
+              ))}
               <h1>{event.name}</h1>
               <p>{event.type}</p>
               <p>
@@ -321,6 +473,15 @@ const UpcomingEvents = () => {
               <ul>
                 {event.programCards.map((card) => (
                   <li key={card.title}>
+                    <div>
+                      <Image
+                        src={`https://ucarecdn.com/${card.image.uuid}/`}
+                        alt="File icon"
+                        width={200}
+                        height={200}
+                        className=""
+                      />
+                    </div>
                     <strong>{card.title}</strong>
                     <p>{card.content}</p>
                   </li>
