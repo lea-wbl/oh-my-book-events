@@ -8,11 +8,17 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const field = searchParams.get("field");
-    console.log(field);
+    const id = searchParams.get("id");
+    console.log(field, id);
 
     if (field === "name") {
       const types = await EventType.find().select("name");
       return NextResponse.json(types);
+    }
+
+    if (id) {
+      const type = await EventType.findById(id);
+      return NextResponse.json(type);
     }
 
     const types = await EventType.find();
@@ -27,7 +33,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   try {
-    const { name, desc, events } = await req.json();
+    const { name, desc } = await req.json();
     if (!name || !desc) {
       return NextResponse.json(
         { error: "Name and description are required" },
@@ -36,7 +42,7 @@ export async function POST(req: Request) {
     }
 
     await mongooseConnect();
-    const newType = await EventType.create({ name, desc, events });
+    const newType = await EventType.create({ name, desc });
 
     return NextResponse.json(newType);
   } catch (error) {

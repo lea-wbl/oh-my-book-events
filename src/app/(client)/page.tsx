@@ -15,6 +15,9 @@ import {
   BookBookmark01Icon,
   PaintBoardIcon,
 } from "hugeicons-react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Event } from "@/interfaces/event.interface";
 
 const objectifs = [
   {
@@ -45,27 +48,56 @@ const goalsSlides = objectifs.map((obj) => (
 ));
 
 export default function Home() {
+  const [sliderImages, setSliderImages] = useState([]);
+  const [nextEvent, setNextEvent] = useState<Event>({
+    images: [],
+    name: "",
+    type: "",
+    typeId: "",
+    date: "",
+    timeStart: "",
+    timeEnd: "",
+    location: "",
+    address: "",
+    ticketLink: "",
+    tagline: "",
+    description: "",
+    programCards: [],
+  });
+
+  useEffect(() => {
+    axios.get("/api/gallery").then((res) => {
+      setSliderImages(res.data);
+    });
+
+    axios.get("/api/events?closest=true").then((res) => {
+      console.log("ndsjknvkj", res.data);
+      setNextEvent(res.data);
+    });
+  }, []);
+
+  const mixUpArray = (arr: any[]) => {
+    let middle = Math.floor(arr.length / 2);
+    return arr.slice(middle).concat(arr.slice(0, middle));
+  };
+
   return (
     <div>
       {/* LANDING V2 */}
       <section className="flex flex-col h-screen-minus-header-mobile md:h-screen-minus-header bg-[#F6838D] md:py-6 py-0 gap-4 relative">
+        <LandingSwiper images={sliderImages} dir="ltr" mobileOnly={false} />
         <LandingSwiper
-          images={["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]}
-          dir="ltr"
-          mobileOnly={false}
-        />
-        <LandingSwiper
-          images={["f", "g", "h", "i", "j", "a", "b", "c", "d", "e"]}
+          images={mixUpArray(sliderImages)}
           dir="rtl"
           mobileOnly={false}
         />
         <LandingSwiper
-          images={["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].reverse()}
+          images={sliderImages.reverse()}
           dir="ltr"
           mobileOnly={true}
         />
         <LandingSwiper
-          images={["f", "g", "h", "i", "j", "a", "b", "c", "d", "e"].reverse()}
+          images={mixUpArray(sliderImages).reverse()}
           dir="rtl"
           mobileOnly={true}
         />
@@ -104,31 +136,6 @@ export default function Home() {
             <DynamicSwiper slides={goalsSlides} />
           </div>
         </div>
-
-        {/* <Image
-          aria-hidden
-          src="/underline-doodle.png"
-          alt="doodle"
-          width={500}
-          height={500}
-          className="h-auto w-4/5 md:w-1/5 md:absolute md:right-1/2 md:bottom-8 md:translate-x-1/2 m-auto mt-4 z-0"
-        />
-        <Image
-          aria-hidden
-          src="/craft-doodle.png"
-          alt="doodle"
-          width={500}
-          height={500}
-          className="h-1/4 w-auto absolute md:right-16 md:top-6 md:translate-x-1/2 m-auto rotate-180 z-0 hidden md:block"
-        />
-        <Image
-          aria-hidden
-          src="/photo-doodle.png"
-          alt="doodle"
-          width={500}
-          height={500}
-          className="h-1/5 w-auto absolute -right-2 md:left-2 md:top-auto top-4 md:bottom-8 z-0"
-        /> */}
       </section>
 
       {/* UPCOMING EVENT */}
@@ -173,12 +180,22 @@ export default function Home() {
           {/* header */}
           <div className="flex justify-between items-center border-b-2 pb-2">
             <div>
-              <h3 className="font-headline text-2xl">Un Nom d'Event</h3>
-              <h4 className="text-gray-500">Brunch littéraire</h4>
+              <h3 className="font-headline text-2xl">{nextEvent.name}</h3>
+              <h4 className="text-gray-500">{nextEvent.type}</h4>
             </div>
             <div className="grid justify-items-center content-center py-1 px-3 bg-red-200 rounded-md shadow-sm -mt-2">
-              <span className="font-bold text-3xl leading-7">12</span>
-              <span>FÉV.</span>
+              <span className="font-bold text-3xl leading-7">
+                {new Date(nextEvent.date).toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                })}
+              </span>
+              <span>
+                {new Date(nextEvent.date)
+                  .toLocaleDateString("fr-FR", {
+                    month: "short",
+                  })
+                  .toUpperCase()}
+              </span>
             </div>
           </div>
 
@@ -186,16 +203,18 @@ export default function Home() {
             <div className="flex gap-4 items-center">
               <Location04Icon size={34} color="black" className="" />
               <p>
-                <span className="font-bold">La Fabuleuse Cantine</span>
+                <span className="font-bold">{nextEvent.location}</span>
                 <br />
-                <span>107 rue de Marseille, 69007 Lyon</span>
+                <span>{nextEvent.address}</span>
               </p>
             </div>
             <div className="flex gap-4 items-center">
               <div className="w-[34px]">
                 <Clock05Icon size={28} color="black" className="" />
               </div>
-              <p>De 10h à 18h</p>
+              <p>
+                De {nextEvent.timeStart} à {nextEvent.timeEnd}
+              </p>
             </div>
           </div>
           <p className="hidden">
@@ -211,7 +230,10 @@ export default function Home() {
             <PartnersSlider />
           </div>
           <div className="flex justify-between gap-4 py-4">
-            <button className="flex-1 shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]">
+            <button
+              onClick={() => window.open(nextEvent.ticketLink, "_blank")}
+              className="flex-1 shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]"
+            >
               Acheter mon billet
             </button>
             <button className="flex-1 shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]">
@@ -220,7 +242,11 @@ export default function Home() {
           </div>
 
           <div className="md:w-[90%] m-auto mt-4">
-            <Countdown targetDate="2025-01-31T00:00:00" />
+            <Countdown
+              targetDate={`${nextEvent.date.toString().slice(0, 10)}T${
+                nextEvent.timeStart
+              }:00.000`}
+            />
           </div>
         </div>
       </section>

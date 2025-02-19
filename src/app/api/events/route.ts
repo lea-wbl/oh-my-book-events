@@ -2,10 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { mongooseConnect } from "@/lib/mongooseConnect";
 import Event from "@/models/Event";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     await mongooseConnect();
-    const events = await Event.find();
+
+    const { searchParams } = new URL(req.url);
+    const closest = searchParams.get("closest");
+    const typeId = searchParams.get("byType");
+
+    let events;
+
+    if (closest) {
+      const today = new Date().toISOString().split("T")[0];
+      events = await Event.findOne({ date: { $gte: today } }).sort({
+        date: 1,
+      });
+      console.log("EVENT", events);
+    } else if (typeId) {
+      events = await Event.find({ typeId });
+    } else {
+      events = await Event.find();
+    }
+
     return NextResponse.json(events);
   } catch (error) {
     return NextResponse.json(
@@ -18,8 +36,11 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     await mongooseConnect();
+
     const eventData = await req.json();
+
     console.log("Received event data:", eventData);
+
     const newEvent = await Event.create(eventData);
 
     return NextResponse.json(newEvent, { status: 201 });

@@ -11,7 +11,7 @@ import { Autoplay, Pagination } from "swiper/modules";
 import Image from "next/image";
 
 type LandingSwiperProps = BaseSwiperProps & {
-  images: string[];
+  images: { _id: string; uuid: string; name: string }[];
   dir: string;
   mobileOnly: boolean;
 };
@@ -36,19 +36,18 @@ const LandingSwiper: FC<LandingSwiperProps> = ({
           delay: 3000,
           disableOnInteraction: false,
         }}
-        loop={true}
-        centeredSlides
+        loop={false}
+        // centeredSlides
         className={`${mobileOnly && "block md:hidden"} landingSwiper`}
       >
         {images.map((image, index) => (
-          <SwiperSlide className="w-fit" key={image}>
+          <SwiperSlide className="w-fit" key={image._id}>
             <Image
               aria-hidden
-              src={`/${image}.jpg`}
+              src={`https://ucarecdn.com/${image.uuid}/`}
               alt="File icon"
               width={500}
               height={500}
-              // objectFit="cover"
               className="h-full w-auto"
               priority
             />

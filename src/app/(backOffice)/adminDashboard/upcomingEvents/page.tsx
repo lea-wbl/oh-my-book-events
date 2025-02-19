@@ -6,27 +6,7 @@ import { FileUploaderRegular } from "@uploadcare/react-uploader/next";
 import "@uploadcare/react-uploader/core.css";
 import Image from "next/image";
 import { deleteUcareImg } from "@/app/utils/imageManager";
-
-interface ProgramCard {
-  image: { uuid: string; name: string };
-  title: string;
-  content: string;
-}
-
-interface Event {
-  _id?: string;
-  images: { uuid: string; name: string }[];
-  name: string;
-  type: string;
-  date: string;
-  timeStart: string;
-  timeEnd: string;
-  location: string;
-  ticketLink: string;
-  tagline: string;
-  description: string;
-  programCards: ProgramCard[];
-}
+import { Event, ProgramCard } from "@/interfaces/event.interface";
 
 const UpcomingEvents = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -34,10 +14,12 @@ const UpcomingEvents = () => {
     images: [],
     name: "",
     type: "",
+    typeId: "",
     date: "",
     timeStart: "",
     timeEnd: "",
     location: "",
+    address: "",
     ticketLink: "",
     tagline: "",
     description: "",
@@ -52,6 +34,17 @@ const UpcomingEvents = () => {
     []
   );
   const [uploaderKey, setUploaderKey] = useState(0);
+
+  // Adding the first event type as default
+  useEffect(() => {
+    if (eventTypes.length > 0) {
+      setNewEvent({
+        ...newEvent,
+        type: eventTypes[0].name,
+        typeId: eventTypes[0]._id,
+      });
+    }
+  }, [eventTypes]);
 
   // EVENT TYPES HANDLING **********************************************
   // Retrieve event types name for the select input
@@ -92,7 +85,6 @@ const UpcomingEvents = () => {
   const addEvent = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(newEvent);
     const hasEmptyField = Object.values(newEvent).some(
       (value) => value.length === 0
     );
@@ -106,10 +98,12 @@ const UpcomingEvents = () => {
         images: [],
         name: "",
         type: "",
+        typeId: "",
         date: "",
         timeStart: "",
         timeEnd: "",
         location: "",
+        address: "",
         ticketLink: "",
         tagline: "",
         description: "",
@@ -228,9 +222,18 @@ const UpcomingEvents = () => {
               name="eventType"
               id="eventType"
               className="bg-gray-200 px-4 py-2"
-              onChange={(e) =>
-                setNewEvent({ ...newEvent, type: e.target.value })
-              }
+              onChange={(e) => {
+                const selectedType = eventTypes.find(
+                  (type) => type.name === e.target.value
+                );
+                if (selectedType) {
+                  setNewEvent({
+                    ...newEvent,
+                    type: e.target.value,
+                    typeId: selectedType._id,
+                  });
+                }
+              }}
             >
               {eventTypes.map((type) => (
                 <option key={type._id} value={type.name}>
@@ -297,6 +300,16 @@ const UpcomingEvents = () => {
               value={newEvent.location}
               onChange={(e) =>
                 setNewEvent({ ...newEvent, location: e.target.value })
+              }
+              className="bg-gray-200 px-4 py-2"
+            />
+            <label htmlFor="location">Adresse du lieu</label>
+            <input
+              type="text"
+              id="location"
+              value={newEvent.address}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, address: e.target.value })
               }
               className="bg-gray-200 px-4 py-2"
             />

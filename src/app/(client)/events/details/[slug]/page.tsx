@@ -6,10 +6,12 @@ import {
   Clock05Icon,
   Location04Icon,
 } from "hugeicons-react";
-import React, { use } from "react";
+import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import PartnersSlider from "@/components/PartnersSlider";
 import Countdown from "@/components/Countdown";
+import axios from "axios";
+import { Event } from "@/interfaces/event.interface";
 
 const programation = [
   {
@@ -31,7 +33,35 @@ const programation = [
 
 const Details = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = use(params);
+  const [event, setEvent] = useState<Event>({
+    _id: "",
+    images: [],
+    name: "",
+    type: "",
+    typeId: "",
+    date: "",
+    timeStart: "",
+    timeEnd: "",
+    location: "",
+    address: "",
+    ticketLink: "",
+    tagline: "",
+    description: "",
+    programCards: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    axios.get(`/api/events?id=${slug}`).then((res) => {
+      console.log("SINGLE EVENT details", res.data);
+      setEvent(res.data[0]);
+      setIsLoading(false);
+    });
+  }, [slug]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
   return (
     <div>
       {/* EVENT INFOS */}
@@ -45,11 +75,11 @@ const Details = ({ params }: { params: Promise<{ slug: string }> }) => {
                 <div className="border-[1.2rem] border-white w-full aspect-square relative rounded-t">
                   <Image
                     aria-hidden
-                    src="/brunch.jpg"
+                    src={`https://ucarecdn.com/${event.images[0].uuid}/`}
                     alt="File icon"
-                    objectFit="cover"
-                    fill
-                    className="shadow"
+                    width={500}
+                    height={500}
+                    className="shadow w-full h-full object-cover"
                   />
                 </div>
                 <div className="bg-white w-full h-12 -mt-1 rounded-b"> </div>
@@ -58,11 +88,11 @@ const Details = ({ params }: { params: Promise<{ slug: string }> }) => {
                 <div className="border-[1.2rem] border-white w-full aspect-square relative rounded-t">
                   <Image
                     aria-hidden
-                    src="/books.jpg"
+                    src={`https://ucarecdn.com/${event.images[1].uuid}/`}
                     alt="File icon"
-                    objectFit="cover"
-                    fill
-                    className="shadow"
+                    width={500}
+                    height={500}
+                    className="shadow w-full h-full object-cover"
                   />
                 </div>
                 <div className="bg-white w-full h-12 -mt-1 rounded-b"></div>
@@ -72,33 +102,56 @@ const Details = ({ params }: { params: Promise<{ slug: string }> }) => {
             <div className="text-xl w-1/2 text-white">
               <div>
                 <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
-                  Plume et rencontre
+                  {event.name}
                 </h1>
-                <h2 className="text-4xl py-4">Speed meeting</h2>
+                <h2 className="text-4xl py-4">{event.type}</h2>
               </div>
               <div className="grid gap-4 text-2xl">
                 <div className="flex gap-4 items-center">
                   <div className="w-[34px]">
                     <CalendarLove02Icon size={28} color="white" className="" />
                   </div>
-                  <p>Samedi 01 mars 2025</p>
+                  <p>
+                    {new Date(event.date)
+                      .toLocaleDateString("fr-FR", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })
+                      .charAt(0)
+                      .toUpperCase() +
+                      new Date(event.date)
+                        .toLocaleDateString("fr-FR", {
+                          weekday: "long",
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
+                        .slice(1)}
+                  </p>
                 </div>
                 <div className="flex gap-4 items-center">
                   <div className="w-[34px]">
                     <Clock05Icon size={28} color="white" className="" />
                   </div>
-                  <p>De 10h à 18h</p>
+                  <p>
+                    De {event.timeStart} à {event.timeEnd}
+                  </p>
                 </div>
                 <div className="flex gap-4 items-center">
                   <Location04Icon size={34} color="white" className="" />
                   <p>
-                    <span className="font-bold">TiTi Palacio</span>
+                    <span className="font-bold">{event.location}</span>
                     <br />
-                    <span>17 Boulevard Morland, 75004 Paris</span>
+                    <span>{event.address}</span>
                   </p>
                 </div>
               </div>
-              <button className="flex-1 shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]">
+              <button
+                onClick={() => window.open(event.ticketLink, "_blank")}
+                className="flex-1 shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]"
+              >
                 Acheter mon billet
               </button>
             </div>
@@ -112,9 +165,10 @@ const Details = ({ params }: { params: Promise<{ slug: string }> }) => {
       {/* DESCRIPTION */}
       <section className="px-6 py-8 md:px-12 md:py-6 flex flex-col gap-8 h-screen-minus-header justify-center">
         <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
-          Un titre en fonction de l'event
+          {event.tagline}
         </h1>
-        <div className="flex flex-col gap-3 text-justify text-lg">
+        <p>{event.description}</p>
+        {/* <div className="flex flex-col gap-3 text-justify text-lg">
           <p>
             Les rumeurs sont vraies… et on ne pouvait pas rêver mieux pour notre
             tout premier événement Oh My Book : samedi 1er mars au Titi Palacio
@@ -143,7 +197,7 @@ const Details = ({ params }: { params: Promise<{ slug: string }> }) => {
             découvrir une toute nouvelle manière de vivre la littérature… et
             promis, cette journée va marquer le début d’une belle aventure !
           </p>
-        </div>
+        </div> */}
       </section>
 
       {/* AU PROGRAMME */}
@@ -154,25 +208,25 @@ const Details = ({ params }: { params: Promise<{ slug: string }> }) => {
           </h1>
           {/* content */}
           <div className="flex gap-8">
-            {programation.map((p) => (
+            {event.programCards.map((card) => (
               <div
                 className="notes shadow-lg md:w-1/3 p-8 pt-12 h-full md:h-auto z-10 grid justify-items-center"
-                key={p.title}
+                key={card.title}
               >
-                <div className="mb-4">
+                <div className="mb-4 h-40">
                   <Image
                     aria-hidden
-                    src={p.img}
+                    src={`https://ucarecdn.com/${card.image.uuid}/`}
                     alt="drink"
                     width={500}
                     height={500}
-                    className="h-full w-auto"
+                    className="h-full w-full object-contain"
                   />
                 </div>
                 <h3 className="text-xl font-medium font-headline pb-4">
-                  {p.title}
+                  {card.title}
                 </h3>
-                <p className="text-center">{p.text}</p>
+                <p className="text-center">{card.content}</p>
               </div>
             ))}
           </div>
@@ -192,27 +246,47 @@ const Details = ({ params }: { params: Promise<{ slug: string }> }) => {
               <div className="w-[34px]">
                 <CalendarLove02Icon size={28} color="black" className="" />
               </div>
-              <p>Samedi 01 mars 2025</p>
+              <p>
+                {new Date(event.date)
+                  .toLocaleDateString("fr-FR", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })
+                  .charAt(0)
+                  .toUpperCase() +
+                  new Date(event.date)
+                    .toLocaleDateString("fr-FR", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                    .slice(1)}
+              </p>
             </div>
             <div className="flex gap-4 items-center">
               <div className="w-[34px]">
                 <Clock05Icon size={28} color="black" className="" />
               </div>
-              <p>De 10h à 18h</p>
+              <p>
+                De {event.timeStart} à {event.timeEnd}
+              </p>
             </div>
             <div className="flex gap-4 items-center">
               <Location04Icon size={34} color="black" className="" />
               <p>
-                <span className="font-bold">TiTi Palacio</span>
+                <span className="font-bold">{event.location}</span>
                 <br />
-                <span>17 Boulevard Morland, 75004 Paris</span>
+                <span>{event.address}</span>
               </p>
             </div>
           </div>
           {/* google map */}
           <div className="w-1/2">
             <GoogleMap
-              address={"TiTi Palacio, Boulevard Morland, Paris, France"}
+              address={`${event.location}, ${event.address}, France`}
             />
           </div>
         </div>

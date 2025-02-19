@@ -1,8 +1,9 @@
 "use client";
 
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 const eventTypes = [
   {
@@ -24,10 +25,17 @@ const eventTypes = [
 
 const Events = () => {
   const router = useRouter();
+  const [eventTypes, setEventTypes] = React.useState<
+    { _id: string; name: string; desc: string }[]
+  >([]);
 
   const discover = (id: string) => {
     router.push(`/events/${id}`);
   };
+
+  useEffect(() => {
+    axios.get("/api/eventTypes").then((res) => setEventTypes(res.data));
+  }, []);
 
   return (
     <section className="px-6 py-8 md:px-12 md:py-6 grid gap-8 h-screen-minus-header content-center">
@@ -50,16 +58,16 @@ const Events = () => {
         {eventTypes.map((type) => (
           <div
             className="flex flex-col flex-1 bg-red-100 rounded-lg justify-between p-8"
-            key={type.title}
+            key={type._id}
           >
             <div>
               <h2 className="text-xl font-medium font-headline pb-4">
-                {type.title}
+                {type.name}
               </h2>
-              <p>{type.text}</p>
+              <p>{type.desc}</p>
             </div>
             <button
-              onClick={() => discover(type.id)}
+              onClick={() => discover(type._id)}
               className="rounded-full bg-[#F7A976] text-white px-4 py-1 self-end"
             >
               Découvrir
