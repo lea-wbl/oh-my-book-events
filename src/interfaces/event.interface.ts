@@ -10,17 +10,4 @@ export interface Event {
   location: string;
   address: string;
   ticketLink: string;
-  tagline: string;
-  description: string;
-  programCards: {
-    image: { uuid: string; name: string };
-    title: string;
-    content: string;
-  }[];
-}
-
-export interface ProgramCard {
-  image: { uuid: string; name: string };
-  title: string;
-  content: string;
 }

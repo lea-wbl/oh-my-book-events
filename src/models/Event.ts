@@ -5,12 +5,6 @@ const ImageSchema = new Schema({
   name: { type: String, required: true },
 });
 
-const ProgramCardSchema = new Schema({
-  image: { type: ImageSchema, required: true },
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-});
-
 const EventSchema = new Schema({
   images: [{ type: { uuid: String, name: String } }],
   name: { type: String, required: true },
@@ -22,9 +16,6 @@ const EventSchema = new Schema({
   location: { type: String, required: false },
   address: { type: String, required: true },
   ticketLink: { type: String, required: true },
-  tagline: { type: String, required: true },
-  description: { type: String, required: true },
-  programCards: [{ type: ProgramCardSchema }],
 });
 
 const Event = models.Event || model("Event", EventSchema);

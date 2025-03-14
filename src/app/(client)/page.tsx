@@ -18,22 +18,69 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Event } from "@/interfaces/event.interface";
+import ReviewSwiper2 from "@/components/ReviewSwiper2";
 
 const objectifs = [
   {
     icon: <Agreement01Icon size={34} color="black" className="" />,
     title: "Rencontrer de nouvelles personnes",
-    text: "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.",
+    text: (
+      <p className="text-justify">
+        <strong>
+          Parce qu’on sait ce que c’est d’aimer un livre et de n’avoir personne
+          à qui en parler.
+        </strong>{" "}
+        Tu termines un roman qui t’a bouleversé, et là… rien. Personne avec qui
+        partager ton émotion, personne à harceler pour revivre CETTE scène. Avec
+        nous,{" "}
+        <span className="text-orange-500 font-handwritten text-3xl leading-5">
+          tu ne vivras plus jamais ça !
+        </span>{" "}
+        Nos événements sont pensés pour te connecter à des gens qui te
+        comprennent, dans une ambiance bienveillante et authentique. Viens comme
+        tu es, repars avec des amitiés qui comptent.
+      </p>
+    ),
   },
   {
     icon: <BookBookmark01Icon size={34} color="black" className="" />,
-    title: "Découvrir de nouvelles lectures",
-    text: "Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.",
+    title: "Vivre des expériences uniques",
+    text: (
+      <p className="text-justify">
+        <strong>
+          Ici, on ne fait pas juste des événements : on crée des souvenirs.
+        </strong>{" "}
+        Oublie les clubs de lecture et les rencontres classiques, on t’embarque
+        dans des mondes où tu as un rôle à jouer, où chaque événement est une
+        aventure. Plonge dans des soirées immersives et des expériences
+        littéraires où l’ennui n’a pas sa place. On veut que tu ressortes avec{" "}
+        <span className="text-orange-500 font-handwritten text-3xl leading-5 mr-1">
+          des étoiles dans les yeux
+        </span>
+        {"  "}
+        et cette sensation rare d’avoir vécu un moment hors du temps.
+      </p>
+    ),
   },
   {
     icon: <PaintBoardIcon size={34} color="black" className="" />,
-    title: "Participer à des ateliers créatifs",
-    text: "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.",
+    title: "Découvrir des pépites littéraires",
+    text: (
+      <p className="text-justify">
+        <strong>
+          Que tu sois un lecteur occasionnel ou un dévoreur de livres, ici, tout
+          le monde a sa place.
+        </strong>{" "}
+        Notre mission ? Te faire découvrir des romans incroyables, ceux qui
+        méritent d’être sous les projecteurs. Fini les recommandations vues et
+        revues, ici, on met en lumière des histoires qui bousculent, qui
+        marquent et qui font vibrer.{" "}
+        <span className="text-orange-500 font-handwritten text-3xl leading-5 mr-1">
+          Des récits qui méritent qu’on en parle
+        </span>{" "}
+        et qui, peut-être, deviendront tes prochains coups de cœur.
+      </p>
+    ),
   },
 ];
 
@@ -43,7 +90,7 @@ const goalsSlides = objectifs.map((obj) => (
     key={obj.title}
   >
     <h3 className="text-xl font-medium font-headline pb-4">{obj.title}</h3>
-    <p>{obj.text}</p>
+    {obj.text}
   </div>
 ));
 
@@ -116,7 +163,7 @@ export default function Home() {
             </p>{" "}
             <p className="relative z-10 text-3xl md:text-[2.5rem] text-center font-bold leading-[3.2rem] -mt-6 highlighter px-6 text-white">
               en{" "}
-              <span className="text-5xl md:text-7xl font-handwritten leading-[3.5rem] align-bottom mx-2">
+              <span className="mx-2 text-5xl md:text-7xl font-handwritten align-bottom">
                 souvenirs
               </span>{" "}
               uniques
@@ -126,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* GOALS */}
-      <section className="h-fit md:h-screen-minus-header bg-amber-200 md:px-12 md:py-6 px-6 py-8 relative  overflow-hidden">
+      <section className="h-fit md:h-screen-minus-header bg-amber-200 custom-bg1 md:px-12 md:py-6 px-6 py-8 relative  overflow-hidden">
         <div className="flex flex-col justify-center h-full gap-12 md:-mt-6">
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight2 relative z-0 w-fit">
             Pourquoi nous rejoindre ?
@@ -139,13 +186,13 @@ export default function Home() {
       </section>
 
       {/* UPCOMING EVENT */}
-      <section className="flex flex-col md:flex-row gap-12 h-fit md:h-screen-minus-header bg-[#FCC0C5] md:px-12 md:py-8 px-6 py-12">
-        <div className="flex-1 flex flex-col justify-center gap-12 w-full md:w-1/2">
-          <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
+      <section className="flex flex-col md:flex-row gap-12 h-fit md:h-screen-minus-header bg-[#FCC0C5] custom-bg2 md:p-12 py-12 items-center">
+        <div className="flex-1 flex flex-col justify-center gap-12 w-full md:w-1/2 self-start">
+          <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight4 relative z-0 w-fit">
             Prochain événement
           </h1>
           {/* POLAROIDS */}
-          <div className="hidden md:flex justify-center items-center">
+          {/* <div className="hidden md:flex justify-center items-center">
             <div className="shadow-md w-1/2 border rounded-t -rotate-6 h-fit">
               <div className="border-[1.2rem] border-white w-full aspect-square relative rounded-t">
                 <Image
@@ -172,11 +219,49 @@ export default function Home() {
               </div>
               <div className="bg-white w-full h-12 -mt-1 rounded-b"></div>
             </div>
+          </div> */}
+          <div className="h-full w-full flex -mt-2">
+            {/* pol 1 */}
+            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-x-12 rotate-6 z-0 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-left ease-in">
+              <div className="bg-gray-300 w-52 aspect-square">
+                <Image
+                  aria-hidden
+                  src="/presentation.jpg"
+                  alt="File icon"
+                  fill
+                  className="shadow object-cover"
+                />
+              </div>
+            </div>
+            {/* pol 2 */}
+            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-y-12 -rotate-2 z-10 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-center ease-in">
+              <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
+                <Image
+                  aria-hidden
+                  src="/library.jpg"
+                  alt="File icon"
+                  fill
+                  className="shadow object-cover"
+                />
+              </div>
+            </div>
+            {/* pol 3 */}
+            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform -translate-x-12 rotate-[4deg] z-20 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-right ease-in">
+              <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
+                <Image
+                  aria-hidden
+                  src="/books.jpg"
+                  alt="File icon"
+                  fill
+                  className="shadow object-cover"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* EVENT INFOS */}
-        <div className="bg-white rounded-xl w-full md:w-1/2 p-6 md:p-8 shadow-md">
+        <div className="bg-white rounded-xl w-full md:w-2/5 p-6 md:p-8 shadow-md h-fit">
           {/* header */}
           <div className="flex justify-between items-center border-b-2 pb-2">
             <div>
@@ -208,13 +293,21 @@ export default function Home() {
                 <span>{nextEvent.address}</span>
               </p>
             </div>
-            <div className="flex gap-4 items-center">
-              <div className="w-[34px]">
-                <Clock05Icon size={28} color="black" className="" />
+            <div className="flex justify-between">
+              <div className="flex gap-4 items-center">
+                <div className="w-[34px]">
+                  <Clock05Icon size={28} color="black" className="" />
+                </div>
+                <p>
+                  De {nextEvent.timeStart} à {nextEvent.timeEnd}
+                </p>
               </div>
-              <p>
-                De {nextEvent.timeStart} à {nextEvent.timeEnd}
-              </p>
+              <button
+                onClick={() => window.open(nextEvent.ticketLink, "_blank")}
+                className="shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]"
+              >
+                En savoir plus
+              </button>
             </div>
           </div>
           <p className="hidden">
@@ -226,33 +319,23 @@ export default function Home() {
             erat ornare velit tristique suspendisse. Porta inceptos quis dolor
             maximus habitasse semper tortor netus nibh.
           </p>
-          <div className="py-2">
-            <PartnersSlider />
-          </div>
-          <div className="flex justify-between gap-4 py-4">
-            <button
-              onClick={() => window.open(nextEvent.ticketLink, "_blank")}
-              className="flex-1 shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]"
-            >
-              Acheter mon billet
-            </button>
-            <button className="flex-1 shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]">
-              En savoir plus
-            </button>
-          </div>
 
-          <div className="md:w-[90%] m-auto mt-4">
+          <div className="m-auto mt-4">
             <Countdown
               targetDate={`${nextEvent.date.toString().slice(0, 10)}T${
                 nextEvent.timeStart
               }:00.000`}
             />
           </div>
+
+          <div className="py-2">
+            <PartnersSlider />
+          </div>
         </div>
       </section>
 
       {/* CUSTOMERS REVIEWS */}
-      <section className="bg-white h-fit md:h-screen-minus-header pt-10 pb-16 md:pb-8 gap-4 overflow-x-hidden relative">
+      <section className="bg-[#F6838D] custom-bg3 h-fit md:h-screen-minus-header pt-10 pb-16 md:pb-8 gap-4 overflow-x-hidden relative">
         {/* <Image
           aria-hidden
           src="/3hearts-doodle.png"
@@ -266,7 +349,7 @@ export default function Home() {
             Vos avis
           </h1>
           <div className="hidden md:block">
-            <ReviewSwiper />
+            <ReviewSwiper2 />
           </div>
           <div className="md:hidden">
             <CardsSwiper />

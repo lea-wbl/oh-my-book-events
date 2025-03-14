@@ -58,7 +58,7 @@ const Countdown = ({ targetDate }: { targetDate: string }) => {
           </div>
           <div className="countdown font-mono bg-red-200 rounded-md grid content-center px-2 pt-6 pb-3 shadow-md mb-2">
             <span
-              className="countdown font-mono text-5xl md:text-7xl w-full"
+              className="countdown font-mono text-5xl md:text-6xl w-full"
               style={
                 {
                   "--value": `${addLeadingZero(value)}`,

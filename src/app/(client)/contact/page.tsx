@@ -2,12 +2,19 @@
 
 import axios from "axios";
 import { InstagramIcon, TiktokIcon } from "hugeicons-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import Link from "next/link";
 
 const Contact = () => {
   const [contactInfo, setContactInfo] = useState({
+    email: "",
+    tel: "",
+    ig: "",
+    tiktok: "",
+  });
+  const [userMessageInfo, setUserMessageInfo] = useState({
     name: "",
     email: "",
     subject: "",
@@ -15,13 +22,19 @@ const Contact = () => {
   });
   const [status, setStatus] = useState("");
 
+  useEffect(() => {
+    axios.get("/api/contactInfo").then((res) => {
+      setContactInfo(res.data[0]);
+    });
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     if (e.target.name === "message") console.log(e.target.value);
 
-    setContactInfo({
-      ...contactInfo,
+    setUserMessageInfo({
+      ...userMessageInfo,
       [e.target.name]: e.target.value,
     });
   };
@@ -31,10 +44,10 @@ const Contact = () => {
     setStatus("Envoi en cours...");
 
     try {
-      const response = await axios.post("/api/contact", contactInfo);
+      const response = await axios.post("/api/contact", userMessageInfo);
       if (response.status === 200) {
         setStatus("Message envoyé avec succès !");
-        setContactInfo({ name: "", email: "", subject: "", message: "" });
+        setUserMessageInfo({ name: "", email: "", subject: "", message: "" });
       }
     } catch (error) {
       console.error("Erreur lors de l'envoi du message : ", error);
@@ -44,12 +57,9 @@ const Contact = () => {
 
   return (
     <div className="bg-[#F6838D]">
-      <MaxWidthWrapper className="flex flex-col md:flex-row gap-4 md:gap-0 items-center bg-[#F6838D] bg-custom-bg bg-custom-bg-size bg-custom-bg-position bg-no-repeat md:h-screen-minus-header h-fit">
+      <MaxWidthWrapper className="flex flex-col md:flex-row gap-4 md:gap-0 items-center bg-[#F6838D] bg-chiant md:h-screen-minus-header h-fit">
         <div className="md:w-1/2">
           <div className="relative">
-            {/* <h1 className="font-headline text-6xl text-white bg-[url('/highlighter1.png')] bg-contain bg-no-repeat py-3 mt-[-12px] ml-[-32px] pl-8">
-            Contactez-nous
-          </h1> */}
             <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
               Contactez-nous
             </h1>
@@ -63,26 +73,48 @@ const Contact = () => {
           </div>
 
           <div className="pt-6 md:pt-16 grid gap-4 md:w-4/5 text-white">
-            <p className="hidden md:block">
-              Taciti hendrerit torquent lobortis montes nostra cubilia gravida
-              faucibus nascetur. Mus praesent tempus semper suscipit dui
-              habitasse neque.
+            <p className="hidden md:block font-semibold">
+              Si notre FAQ n’a pas réussi à répondre à tes questions, pas de
+              souci — on est là pour ça ! <br /> Que ce soit pour régler un
+              petit problème, poser une question ou même discuter de ton idée
+              d’événement, on t’écoute !
             </p>
             <div className="flex justify-between">
               <div className="flex-col gap-4 hidden md:flex">
-                <p>contact@ohmybook.com</p>
-                <p>06 01 02 03 04</p>
+                <p className="font-semibold">{contactInfo.email}</p>
+                {contactInfo.tel && (
+                  <p className="font-semibold">{contactInfo.tel.replace(/(.{2})/g, "$1 ")}</p>
+                )}
                 <div className="flex gap-4 ml-[-2px]">
-                  <InstagramIcon
-                    size={32}
-                    color="white"
-                    className="cursor-pointer"
-                  />
-                  <TiktokIcon
-                    size={32}
-                    color="white"
-                    className="cursor-pointer"
-                  />
+                  {contactInfo.ig && (
+                    <Link
+                      href={contactInfo.ig}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link relative"
+                    >
+                      <InstagramIcon
+                        size={32}
+                        color="white"
+                        className="cursor-pointer"
+                      />
+                    </Link>
+                  )}
+
+                  {contactInfo.tiktok && (
+                    <Link
+                      href={contactInfo.tiktok}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link relative"
+                    >
+                      <TiktokIcon
+                        size={32}
+                        color="white"
+                        className="cursor-pointer"
+                      />
+                    </Link>
+                  )}
                 </div>
               </div>
 
@@ -113,7 +145,7 @@ const Contact = () => {
               placeholder="Nom"
               className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded"
               onChange={handleChange}
-              value={contactInfo.name}
+              value={userMessageInfo.name}
               required
             />
             <label htmlFor="email" className="sr-only">
@@ -126,7 +158,7 @@ const Contact = () => {
               placeholder="Email"
               className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded"
               onChange={handleChange}
-              value={contactInfo.email}
+              value={userMessageInfo.email}
               required
             />
             <label htmlFor="subject" className="sr-only">
@@ -139,7 +171,7 @@ const Contact = () => {
               placeholder="Sujet"
               className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded"
               onChange={handleChange}
-              value={contactInfo.subject}
+              value={userMessageInfo.subject}
               required
             />
             <label htmlFor="message" className="sr-only">
@@ -152,7 +184,7 @@ const Contact = () => {
               rows={8}
               className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded"
               onChange={handleChange}
-              value={contactInfo.message}
+              value={userMessageInfo.message}
               required
             ></textarea>
             <button

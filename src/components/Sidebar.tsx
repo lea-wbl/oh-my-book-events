@@ -54,19 +54,6 @@ const Sidebar = () => {
         </nav>
 
         <div className="p-4 text-lg font-bold border-b border-gray-700">
-          À propos
-        </div>
-
-        <nav className="flex flex-col gap-2 p-4">
-          <Link
-            href="/adminDashboard/questions"
-            className="px-4 py-2 hover:bg-gray-700 rounded-md"
-          >
-            FAQ
-          </Link>
-        </nav>
-
-        <div className="p-4 text-lg font-bold border-b border-gray-700">
           Événements
         </div>
 
@@ -82,6 +69,25 @@ const Sidebar = () => {
             className="px-4 py-2 hover:bg-gray-700 rounded-md"
           >
             Événements à venir
+          </Link>
+        </nav>
+
+        <div className="p-4 text-lg font-bold border-b border-gray-700">
+          Divers
+        </div>
+
+        <nav className="flex flex-col gap-2 p-4">
+          <Link
+            href="/adminDashboard/contact"
+            className="px-4 py-2 hover:bg-gray-700 rounded-md"
+          >
+            Contact
+          </Link>
+          <Link
+            href="/adminDashboard/questions"
+            className="px-4 py-2 hover:bg-gray-700 rounded-md"
+          >
+            FAQ
           </Link>
         </nav>
       </div>

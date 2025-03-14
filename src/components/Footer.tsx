@@ -10,40 +10,45 @@ const Footer = () => {
   return (
     <footer className="bg-[#fff] shadow-sm">
       {/* NEWSLETTER SUBSCRIPTION */}
-      <div className="bg-red-200 shadow-md">
+      <div className="bg-[#FCC0C5] shadow-md relative">
+        <div
+          className="absolute top-0 left-0 h-full w-full rotate-180 z-0"
+          style={{ boxShadow: "0px 5px 10px 0px rgb(179 96 103 / 10%)" }}
+        ></div>
         <MaxWidthWrapper>
-          <div className="bg-red-200 flex flex-col md:flex-row gap-8 md:gap-4 justify-between">
+          <div className="bg-[#FCC0C5] flex flex-col md:flex-row gap-8 md:gap-4 justify-around relative z-10">
+            <Image
+              src="/heart-doodle.png"
+              alt="heart"
+              width={50}
+              height={50}
+              priority
+              aria-hidden
+              className="w-10 md:w-16 h-auto absolute top-6 left-6 md:-top-4 md:left-6 rotate-[30deg] md:-rotate-6"
+            />
             <div className="flex gap-8 relative">
               <div className="md:w-2/3">
-                <h3 className="text-xl mb-4 font-headline text-[#232323]">
-                  Inscription à la{" "}
-                  <span className="circle-sketch-highlight z-0">
+                <div className="grid justify-items-center gap-1 text-white">
+                  <span className="text-4xl">Inscription</span>
+                  <div className="flex items-center gap-2">
+                    <hr className="border-white border-[1px] w-16" />
+                    <span className="text-2xl">à la</span>
+                    <hr className="border-white border-[1px] w-16" />
+                  </div>
+                  <span className="font-bold text-5xl font-headline">
                     NEWSLETTER
                   </span>
-                </h3>
-                <div className="relative">
-                  <p className="text-[#232323]">
-                    Placerat arcu est metus nec egestas commodo. Rutrum porta
-                    maecenas posuere duis per auctor lacus.
-                  </p>
-                  <Image
-                    src="/heart-doodle.png"
-                    alt="heart"
-                    width={50}
-                    height={50}
-                    priority
-                    aria-hidden
-                    className="w-10 md:w-16 h-auto absolute top-6 right-6 md:top-8 md:right-28 rotate-[25deg] md:rotate-0"
-                  />
                 </div>
               </div>
+            </div>
 
+            <div className="w-40 h-fit">
               <Image
                 src="/letter2.png"
                 alt="enveloppe"
-                width={160}
-                height={40}
-                className="rotate-[20deg] absolute right-12 top-2 hidden md:block"
+                width={500}
+                height={500}
+                className="rotate-[20deg] hidden md:block w-full h-auto"
                 priority
                 aria-hidden
               />
@@ -136,17 +141,17 @@ const Footer = () => {
           <h3 className="text-lg font-headline text-[#232323]">Liens utiles</h3>
           <ul className="grid gap-2 place-items-center md:place-items-start">
             <li className="footer-link-container z-0">
-              <Link href="/" className="footer-link relative">
+              <Link href="/about" className="footer-link relative">
                 À propos
               </Link>
             </li>
             <li className="footer-link-container z-0">
-              <Link href="/" className="footer-link relative">
+              <Link href="/faq" className="footer-link relative">
                 FAQ
               </Link>
             </li>
             <li className="footer-link-container z-0">
-              <Link href="/" className="footer-link relative">
+              <Link href="/contact" className="footer-link relative">
                 Contact
               </Link>
             </li>

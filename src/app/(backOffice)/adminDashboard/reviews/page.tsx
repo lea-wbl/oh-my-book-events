@@ -34,55 +34,66 @@ const Reviews = () => {
   };
 
   return (
-    <div className="p-12">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Avis de la communauté</h1>
 
+      <h2 className="text-xl font-semi bold mb-4">Ajouter un nouvel avis</h2>
       {/* Form */}
       <form onSubmit={addReview} className="flex flex-col space-y-4">
-        <label htmlFor="question">Nom du client</label>
-        <input
-          type="text"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="bg-gray-200 px-4 py-2"
-        />
+        <div className="grid flex-1 gap-1">
+          <label htmlFor="name">Nom du client</label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="bg-gray-200 px-4 py-2 rounded"
+          />
+        </div>
+        <div className="grid flex-1 gap-1">
+          <label htmlFor="content">Contenu de l'avis</label>
+          <textarea
+            id="content"
+            className="bg-gray-200 px-4 py-2 w-full field-sizing-content min-h-16"
+            onChange={(e) => setContent(e.target.value)}
+          ></textarea>
+        </div>
 
-        <label htmlFor="answer">Contenu de l'avis</label>
-        <input
-          type="text"
-          id="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="bg-gray-200 px-4 py-2"
-        />
-
-        <button type="submit" className="bg-orange-400 text-white px-4 py-2">
+        <button
+          type="submit"
+          className="bg-orange-400 text-white px-4 py-2 w-fit self-end mt-4 rounded"
+        >
           Ajouter aux avis
         </button>
       </form>
 
+      <hr className="my-8" />
+
+      <h2 className="text-xl font-semi bold mb-4">Avis existants</h2>
       {/* List of Questions */}
-      <ul className="mt-6 space-y-2 flex flex-wrap gap-4">
+      <ul className="mt-6 grid grid-cols-2 gap-4">
         {reviews.map((review) => (
-          <li key={review._id} className="border flex w-1/2 p-4 rounded-lg">
+          <li
+            key={review._id}
+            className="border grid gap-4 p-4 rounded-lg shadow"
+          >
             <div className="flex-1">
-              <strong>{review.name}</strong> <br />
-              <p>{review.content}</p>
+              <div className="flex gap-2 float-right">
+                <PencilEdit02Icon
+                  size={24}
+                  color={"blue"}
+                  className="cursor-pointer"
+                />
+                <Delete02Icon
+                  size={24}
+                  color={"red"}
+                  onClick={() => deleteReview(review._id)}
+                  className="cursor-pointer"
+                />
+              </div>
+              <strong>{review.name}</strong>
             </div>
-            <div className="flex gap-2 float-right">
-              <PencilEdit02Icon
-                size={24}
-                color={"blue"}
-                className="cursor-pointer"
-              />
-              <Delete02Icon
-                size={24}
-                color={"red"}
-                onClick={() => deleteReview(review._id)}
-                className="cursor-pointer"
-              />
-            </div>
+            <p>{review.content}</p>
           </li>
         ))}
       </ul>

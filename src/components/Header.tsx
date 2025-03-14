@@ -44,7 +44,11 @@ const Header = () => {
                 <Link
                   href={link.href}
                   className={`navlink relative ${
-                    pathname === link.href ? "active" : ""
+                    pathname.startsWith(link.href) && link.href !== "/"
+                      ? "active"
+                      : link.href === "/" && pathname === link.href
+                      ? "active"
+                      : ""
                   }`}
                   aria-current={pathname === link.href ? "page" : undefined}
                 >

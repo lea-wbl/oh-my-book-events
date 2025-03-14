@@ -6,7 +6,7 @@ import { FileUploaderRegular } from "@uploadcare/react-uploader/next";
 import "@uploadcare/react-uploader/core.css";
 import Image from "next/image";
 import { deleteUcareImg } from "@/app/utils/imageManager";
-import { Event, ProgramCard } from "@/interfaces/event.interface";
+import { Event } from "@/interfaces/event.interface";
 
 const UpcomingEvents = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -21,14 +21,6 @@ const UpcomingEvents = () => {
     location: "",
     address: "",
     ticketLink: "",
-    tagline: "",
-    description: "",
-    programCards: [],
-  });
-  const [newCard, setNewCard] = useState<ProgramCard>({
-    image: { uuid: "", name: "" },
-    title: "",
-    content: "",
   });
   const [eventTypes, setEventTypes] = useState<{ _id: string; name: string }[]>(
     []
@@ -53,27 +45,6 @@ const UpcomingEvents = () => {
       .get("/api/eventTypes?field=name")
       .then((res) => setEventTypes(res.data));
   }, []);
-
-  // PROGRAM CARDS HANDLING ********************************************
-  // Create a new program card
-  const addNewCard = (e: React.FormEvent) => {
-    e.preventDefault();
-    setNewEvent({
-      ...newEvent,
-      programCards: [...newEvent.programCards, newCard],
-    });
-    setNewCard({ image: { uuid: "", name: "" }, title: "", content: "" });
-    setUploaderKey((prevKey) => prevKey + 1);
-  };
-
-  // Delete a program card
-  const deleteCard = (index: number) => {
-    // setCards(cards.splice(index, 1));
-    setNewEvent({
-      ...newEvent,
-      programCards: newEvent.programCards.splice(index, 1),
-    });
-  };
 
   // EVENT HANDLING ****************************************************
   // Retrieve existing events
@@ -105,9 +76,6 @@ const UpcomingEvents = () => {
         location: "",
         address: "",
         ticketLink: "",
-        tagline: "",
-        description: "",
-        programCards: [],
       });
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'événement", error);
@@ -160,46 +128,60 @@ const UpcomingEvents = () => {
   };
 
   return (
-    <div className="p-12">
+    <div>
       <h1 className="text-2xl font-bold mb-4">Événements à venir</h1>
 
-      <FileUploaderRegular
-        sourceList="local, camera, gdrive"
-        cameraModes="photo"
-        classNameUploader="uc-light uc-orange"
-        pubkey="1f20d7f5d1614fe8cf9a"
-        multiple={true}
-        multipleMax={2}
-        onChange={(file) => handleNewEventImages(file)}
-      />
-      {newEvent.images.map((img) => (
-        <div
-          key={img.uuid}
-          className="flex items-center justify-between gap-2 bg-gray-100 p-2 mb-2 h-14"
-        >
-          <Image
-            src={`https://ucarecdn.com/${img.uuid}/`}
-            alt="File icon"
-            width={200}
-            height={200}
-            className="h-full w-auto"
+      {/* CREATE NEW EVENT */}
+      <h2 className="text-xl font-semi bold mb-4">Créer un nouvel événement</h2>
+      {/* IMAGES */}
+      <div className="mb-4 flex gap-4">
+        <div className="grid gap-1">
+          <label>
+            Images <span>(3 requises)</span>
+          </label>
+          <FileUploaderRegular
+            sourceList="local, camera, gdrive"
+            cameraModes="photo"
+            classNameUploader="uc-light uc-orange"
+            pubkey="1f20d7f5d1614fe8cf9a"
+            multiple={true}
+            multipleMax={3}
+            onChange={(file) => handleNewEventImages(file)}
           />
-          <div className="truncate">{img.name}</div>
-          <div
-            className="flex items-center"
-            onClick={() => {
-              deleteUcareImg(newCard.image.uuid);
-              setNewCard({ ...newCard, image: { uuid: "", name: "" } });
-            }}
-          >
-            <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
-          </div>
         </div>
-      ))}
-
-      {/* INFOS PRATIQUES */}
-      <h2 className="text-xl font-semi bold mb-4">Infos pratiques</h2>
-      <form onSubmit={addEvent} className="flex flex-col space-y-4">
+        <div className="grid grid-cols-3 gap-2 flex-1">
+          {newEvent.images.map((img) => (
+            <div
+              key={img.uuid}
+              className="flex items-center justify-between gap-2 bg-gray-100 p-2 h-14"
+            >
+              <Image
+                src={`https://ucarecdn.com/${img.uuid}/`}
+                alt="File icon"
+                width={200}
+                height={200}
+                className="h-full w-auto"
+              />
+              <div className="truncate">{img.name}</div>
+              <div
+                className="flex items-center"
+                onClick={() => {
+                  deleteUcareImg(img.uuid);
+                  setNewEvent({
+                    ...newEvent,
+                    images: newEvent.images.filter(
+                      (image) => image.uuid !== img.uuid
+                    ),
+                  });
+                }}
+              >
+                <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <form onSubmit={addEvent} className="flex flex-col gap-4">
         <div className="flex gap-4">
           {/* NOM */}
           <div className="grid flex-1">
@@ -211,7 +193,7 @@ const UpcomingEvents = () => {
               onChange={(e) =>
                 setNewEvent({ ...newEvent, name: e.target.value })
               }
-              className="bg-gray-200 px-4 py-2"
+              className="bg-gray-200 px-4 py-2 rounded"
             />
           </div>
 
@@ -245,48 +227,64 @@ const UpcomingEvents = () => {
         </div>
 
         <div className="flex gap-4">
-          {/* DATE */}
-          <div className="grid flex-1">
-            <label htmlFor="date">Date de l'événement</label>
-            <input
-              type="date"
-              id="date"
-              value={newEvent.date}
-              onChange={(e) =>
-                setNewEvent({ ...newEvent, date: e.target.value })
-              }
-              className="bg-gray-200 px-4 py-2"
-            />
-          </div>
+          <div className="flex gap-4 flex-1">
+            {/* DATE */}
+            <div className="grid flex-1">
+              <label htmlFor="date">Date de l'événement</label>
+              <input
+                type="date"
+                id="date"
+                value={newEvent.date}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, date: e.target.value })
+                }
+                className="bg-gray-200 px-4 py-2 rounded"
+              />
+            </div>
 
-          {/* HORAIRES */}
-          <div className="flex flex-col flex-1">
-            <span>Horaires de l'événement</span>
-            <div className="flex gap-4">
-              <div className="flex gap-4 items-baseline">
-                <label htmlFor="timeStart">De:</label>
-                <input
-                  type="time"
-                  id="timeStart"
-                  className="bg-gray-200 px-4 py-2"
-                  onChange={(e) => {
-                    setNewEvent({ ...newEvent, timeStart: e.target.value });
-                  }}
-                />
-              </div>
+            {/* HORAIRES */}
+            <div className="flex flex-col">
+              <span>Horaires de l'événement</span>
+              <div className="flex gap-4">
+                <div className="flex gap-4 items-baseline">
+                  <label htmlFor="timeStart">De:</label>
+                  <input
+                    type="time"
+                    id="timeStart"
+                    className="bg-gray-200 px-4 py-2 rounded"
+                    onChange={(e) => {
+                      setNewEvent({ ...newEvent, timeStart: e.target.value });
+                    }}
+                  />
+                </div>
 
-              <div className="flex gap-4 items-baseline">
-                <label htmlFor="timeEnd">à:</label>
-                <input
-                  type="time"
-                  id="timeEnd"
-                  className="bg-gray-200 px-4 py-2"
-                  onChange={(e) => {
-                    setNewEvent({ ...newEvent, timeEnd: e.target.value });
-                  }}
-                />
+                <div className="flex gap-4 items-baseline">
+                  <label htmlFor="timeEnd">à:</label>
+                  <input
+                    type="time"
+                    id="timeEnd"
+                    className="bg-gray-200 px-4 py-2 rounded"
+                    onChange={(e) => {
+                      setNewEvent({ ...newEvent, timeEnd: e.target.value });
+                    }}
+                  />
+                </div>
               </div>
             </div>
+          </div>
+
+          {/* LIEN VERS LA BILLETERIE */}
+          <div className="grid flex-1">
+            <label htmlFor="ticketLink">Lien vers la billetterie</label>
+            <input
+              type="url"
+              id="ticketLink"
+              value={newEvent.ticketLink}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, ticketLink: e.target.value })
+              }
+              className="bg-gray-200 px-4 py-2 rounded"
+            />
           </div>
         </div>
 
@@ -301,8 +299,10 @@ const UpcomingEvents = () => {
               onChange={(e) =>
                 setNewEvent({ ...newEvent, location: e.target.value })
               }
-              className="bg-gray-200 px-4 py-2"
+              className="bg-gray-200 px-4 py-2 rounded"
             />
+          </div>
+          <div className="grid flex-1">
             <label htmlFor="location">Adresse du lieu</label>
             <input
               type="text"
@@ -311,208 +311,74 @@ const UpcomingEvents = () => {
               onChange={(e) =>
                 setNewEvent({ ...newEvent, address: e.target.value })
               }
-              className="bg-gray-200 px-4 py-2"
-            />
-          </div>
-
-          {/* LIEN VERS LA BILLETERIE */}
-          <div className="grid flex-1">
-            <label htmlFor="ticketLink">Lien vers la billetterie</label>
-            <input
-              type="url"
-              id="ticketLink"
-              value={newEvent.ticketLink}
-              onChange={(e) =>
-                setNewEvent({ ...newEvent, ticketLink: e.target.value })
-              }
-              className="bg-gray-200 px-4 py-2"
+              className="bg-gray-200 px-4 py-2 rounded"
             />
           </div>
         </div>
+
+        <button
+          type="submit"
+          className="bg-orange-400 text-white px-4 py-2 w-fit self-end mt-4 rounded"
+          onClick={addEvent}
+        >
+          Ajouter aux événements à venir
+        </button>
       </form>
 
-      {/* DESCRIPTION */}
-      <h2 className="text-xl font-semi bold mb-4">Description</h2>
-      <label htmlFor="tagline">Tagline de la description</label>
-      <input
-        type="text"
-        id="tagline"
-        className="bg-gray-200 px-4 py-2 w-full"
-        onChange={(e) => setNewEvent({ ...newEvent, tagline: e.target.value })}
-      />
+      <hr className="my-8" />
 
-      <label htmlFor="description">Description de l'événement</label>
-      <textarea
-        id="description"
-        className="bg-gray-200 px-4 py-2 w-full field-sizing-content min-h-16"
-        onChange={(e) =>
-          setNewEvent({ ...newEvent, description: e.target.value })
-        }
-      ></textarea>
-
-      {/* PROGRAMME */}
-      <h2 className="text-xl font-semi bold mb-4">Cartes programme</h2>
-      <FileUploaderRegular
-        key={uploaderKey}
-        sourceList="local, camera, gdrive"
-        cameraModes="photo"
-        classNameUploader="uc-light uc-orange"
-        pubkey="1f20d7f5d1614fe8cf9a"
-        multiple={false}
-        onChange={(file) => {
-          console.log(file.successEntries);
-          setNewCard({
-            ...newCard,
-            image: {
-              uuid: file.successEntries[0].uuid,
-              name: file.successEntries[0].name,
-            },
-          });
-        }}
-      />
-      {newCard.image.uuid && (
-        <div
-          key={newCard.image.uuid}
-          className="flex items-center justify-between gap-2 bg-gray-100 p-2 mb-2 h-14"
-        >
-          <Image
-            src={`https://ucarecdn.com/${newCard.image.uuid}/`}
-            alt="File icon"
-            width={200}
-            height={200}
-            className="h-full w-auto"
-          />
-          <div className="truncate">{newCard.image.name}</div>
-          <div
-            className="flex items-center"
-            onClick={() => {
-              deleteUcareImg(newCard.image.uuid);
-              setNewCard({ ...newCard, image: { uuid: "", name: "" } });
-            }}
-          >
-            <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
-          </div>
-        </div>
-      )}
-      <label htmlFor="title">Titre de la carte</label>
-      <input
-        type="text"
-        id="title"
-        className="bg-gray-200 px-4 py-2 w-full"
-        value={newCard.title}
-        onChange={(e) => setNewCard({ ...newCard, title: e.target.value })}
-      />
-      <label htmlFor="content">Contenu de la carte</label>
-      <textarea
-        id="content"
-        className="bg-gray-200 px-4 py-2 w-full field-sizing-content min-h-16"
-        value={newCard.content}
-        onChange={(e) => setNewCard({ ...newCard, content: e.target.value })}
-      ></textarea>
-      <button onClick={addNewCard}>Ajouter la carte programme</button>
-      {/* List of cards */}
-      <ul className="mt-6 space-y-2 flex flex-wrap gap-4">
-        {newEvent.programCards.map((card, index) => (
-          <li key={index} className="border flex w-1/2 p-4 rounded-lg">
-            <div className="flex-1">
-              <div className="h-40 w-40">
-                <Image
-                  src={`https://ucarecdn.com/${card.image.uuid}/`}
-                  alt="File icon"
-                  width={200}
-                  height={200}
-                  className="h-full w-auto"
-                />
-              </div>
-              <strong>{card.title}</strong> <br />
-              <p>{card.content}</p>
-            </div>
-            <div className="flex gap-2 float-right">
-              <PencilEdit02Icon
-                size={24}
-                color={"blue"}
-                className="cursor-pointer"
-              />
-              <Delete02Icon
-                size={24}
-                color={"red"}
-                onClick={() => deleteCard(index)}
-                className="cursor-pointer"
-              />
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      <button
-        type="submit"
-        className="bg-orange-400 text-white px-4 py-2"
-        onClick={addEvent}
-      >
-        Ajouter aux événements à venir
-      </button>
-
-      {/* List of Events */}
-      <ul className="mt-6 space-y-2 flex flex-wrap gap-4">
+      {/* LIST OF EXISTING EVENTS */}
+      <h2 className="text-xl font-semi bold mb-4">Événements existants</h2>
+      <ul className="mt-6 grid grid-cols-2 gap-4">
         {events.map((event, index) => (
-          <li key={index} className="border flex w-1/2 p-4 rounded-lg">
-            <div className="flex-1">
-              {event.images.map((img, index) => (
-                <div key={index}>
-                  <div>
-                    <Image
-                      src={`https://ucarecdn.com/${img.uuid}/`}
-                      alt="File icon"
-                      width={200}
-                      height={200}
-                      className=""
-                    />
-                  </div>
-                  {/* <button onClick={() => deleteImage(event.images[0])}>
-                    delete img
-                  </button> */}
+          <li key={index} className="border flex p-4 rounded-lg shadow">
+            <div className="flex-1 space-y-2">
+              <div className="text-gray-500 text-sm">
+                <div className="flex gap-2 float-right">
+                  <PencilEdit02Icon
+                    size={24}
+                    color={"blue"}
+                    className="cursor-pointer"
+                  />
+                  <Delete02Icon
+                    size={24}
+                    color={"red"}
+                    // onClick={() => deleteReview(review._id)}
+                    className="cursor-pointer"
+                  />
                 </div>
-              ))}
-              <h1>{event.name}</h1>
-              <p>{event.type}</p>
+                {event.type}
+              </div>
+              <h1 className="font-bold text-lg">{event.name}</h1>
               <p>
                 {new Date(event.date).toLocaleDateString()} de {event.timeStart}{" "}
                 à {event.timeEnd}
               </p>
-              <p>{event.location}</p>
+              <p className="italic">
+                <span className="font-semibold not-italic">
+                  {event.location}
+                </span>
+                , {event.address}
+              </p>
               <p>{event.ticketLink}</p>
-              <p>{event.tagline}</p>
-              <p>{event.description}</p>
-              <ul>
-                {event.programCards.map((card) => (
-                  <li key={card.title}>
-                    <div>
+              <div className="grid grid-cols-3 gap-4">
+                {event.images.map((img, index) => (
+                  <div key={index} className="aspect-square">
+                    <div className="h-full">
                       <Image
-                        src={`https://ucarecdn.com/${card.image.uuid}/`}
+                        src={`https://ucarecdn.com/${img.uuid}/`}
                         alt="File icon"
                         width={200}
                         height={200}
-                        className=""
+                        className="w-full h-full object-cover"
                       />
                     </div>
-                    <strong>{card.title}</strong>
-                    <p>{card.content}</p>
-                  </li>
+                    {/* <button onClick={() => deleteImage(event.images[0])}>
+                    delete img
+                  </button> */}
+                  </div>
                 ))}
-              </ul>
-            </div>
-            <div className="flex gap-2 float-right">
-              <PencilEdit02Icon
-                size={24}
-                color={"blue"}
-                className="cursor-pointer"
-              />
-              <Delete02Icon
-                size={24}
-                color={"red"}
-                // onClick={() => deleteReview(review._id)}
-                className="cursor-pointer"
-              />
+              </div>
             </div>
           </li>
         ))}

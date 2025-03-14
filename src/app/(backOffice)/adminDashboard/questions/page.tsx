@@ -34,55 +34,65 @@ const Questions = () => {
   };
 
   return (
-    <div className="p-12">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">FAQ</h1>
 
+      <h2 className="text-xl font-semi bold mb-4">
+        Ajouter une nouvelle question
+      </h2>
       {/* Form */}
-      <form onSubmit={addQuestion} className="flex flex-col space-y-4">
-        <label htmlFor="question">Question</label>
-        <input
-          type="text"
-          id="question"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          className="bg-gray-200 px-4 py-2"
-        />
-
-        <label htmlFor="answer">Réponse</label>
-        <input
-          type="text"
-          id="answer"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          className="bg-gray-200 px-4 py-2"
-        />
-
-        <button type="submit" className="bg-orange-400 text-white px-4 py-2">
+      <form onSubmit={addQuestion} className="flex flex-col gap-4">
+        <div className="grid flex-1 gap-1">
+          <label htmlFor="question">Question</label>
+          <input
+            type="text"
+            id="question"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            className="bg-gray-200 px-4 py-2 rounded"
+          />
+        </div>
+        <div className="grid flex-1 gap-1">
+          <label htmlFor="answer">Réponse</label>
+          <textarea
+            id="answer"
+            className="bg-gray-200 px-4 py-2 w-full field-sizing-content min-h-16 rounded"
+            onChange={(e) => setAnswer(e.target.value)}
+          ></textarea>
+        </div>
+        <button
+          type="submit"
+          className="bg-orange-400 text-white px-4 py-2 w-fit self-end mt-4 rounded"
+        >
           Ajouter à la FAQ
         </button>
       </form>
 
+      <hr className="my-8" />
+
+      <h2 className="text-xl font-semi bold mb-4">Questions existantes</h2>
+
       {/* List of Questions */}
-      <ul className="mt-6 space-y-2 flex flex-wrap gap-4">
+      <ul className="mt-6 grid grid-cols-2 gap-4">
         {questions.map((q) => (
-          <li key={q._id} className="border flex w-1/2 p-4 rounded-lg">
+          <li key={q._id} className="border grid gap-4 p-4 rounded-lg shadow">
             <div className="flex-1">
-              <strong>{q.question}</strong> <br />
-              <p>{q.answer}</p>
+              <div className="flex gap-2 float-right">
+                <PencilEdit02Icon
+                  size={24}
+                  color={"blue"}
+                  className="cursor-pointer"
+                />
+                <Delete02Icon
+                  size={24}
+                  color={"red"}
+                  onClick={() => deleteUser(q._id)}
+                  className="cursor-pointer"
+                />
+              </div>
+              <strong>{q.question}</strong>
             </div>
-            <div className="flex gap-2 float-right">
-              <PencilEdit02Icon
-                size={24}
-                color={"blue"}
-                className="cursor-pointer"
-              />
-              <Delete02Icon
-                size={24}
-                color={"red"}
-                onClick={() => deleteUser(q._id)}
-                className="cursor-pointer"
-              />
-            </div>
+            <p>{q.answer}</p>
           </li>
         ))}
       </ul>

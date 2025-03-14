@@ -33,8 +33,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   try {
-    const { name, desc } = await req.json();
-    if (!name || !desc) {
+    const { name, summary, leading, description } = await req.json();
+    if (!name || !summary || !leading || !description) {
       return NextResponse.json(
         { error: "Name and description are required" },
         { status: 400 }
@@ -42,7 +42,12 @@ export async function POST(req: Request) {
     }
 
     await mongooseConnect();
-    const newType = await EventType.create({ name, desc });
+    const newType = await EventType.create({
+      name,
+      summary,
+      leading,
+      description,
+    });
 
     return NextResponse.json(newType);
   } catch (error) {

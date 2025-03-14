@@ -61,9 +61,14 @@ const bgImages = [
   "/sticky-note-pink.png",
 ];
 
-const quotes = ["/quote-pink.png", "/quote-yellow.png", "/quote-pastel.png"];
+const quotes = [
+  "/quote-pink.png",
+  "/quote-yellow.png",
+  "/quote-pastel.png",
+  "/quote-orange.png",
+];
 
-const ReviewSwiper = () => {
+const ReviewSwiper2 = () => {
   const [reviews, setReviews] = useState<
     { _id: string; name: string; content: string }[]
   >([]);
@@ -94,11 +99,11 @@ const ReviewSwiper = () => {
         className="reviewSwiper"
       >
         {reviews.map((review, index) => (
-          <SwiperSlide key={review._id}>
+          <SwiperSlide key={review._id} className="p-4">
             <div
-              className="grid items-center bg-contain bg-no-repeat p-8 aspect-square overflow-scroll relative"
+              className="grid items-center sticky-note p-8 aspect-square overflow-scroll relative shadow-lg"
               style={{
-                backgroundImage: `url(${bgImages[index % bgImages.length]})`,
+                // backgroundImage: `url(${quotes[index % quotes.length]})`,
                 transform: `rotate(${randomRotation(index)})`,
               }}
             >
@@ -109,12 +114,13 @@ const ReviewSwiper = () => {
                 width={500}
                 height={500}
                 className="h-auto w-1/3 absolute top-8 left-8"
+                priority
               />
               <div className="flex flex-col gap-4 z-10">
                 <blockquote className="mt-2 italic">
                   {review.content}
                 </blockquote>
-                <cite className="block font-bold h-fit text-right">
+                <cite className="block not-italic font-bold h-fit text-right">
                   {review.name}
                 </cite>
               </div>
@@ -126,4 +132,4 @@ const ReviewSwiper = () => {
   );
 };
 
-export default ReviewSwiper;
+export default ReviewSwiper2;

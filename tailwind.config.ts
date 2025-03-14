@@ -12,6 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      minHeight: {
+        "screen-minus-header": "calc(100dvh - 5rem)",
+      },
       height: {
         "screen-minus-header": "calc(100dvh - 5rem)",
         "screen-minus-header-mobile": "calc(100vh - 3.5rem)",

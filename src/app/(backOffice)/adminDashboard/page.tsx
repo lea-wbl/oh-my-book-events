@@ -65,13 +65,77 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="p-12">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Gallerie photos</h1>
+
+      {/* ADDING NEW IMAGES */}
+      <h2 className="text-xl font-semi bold mb-4">
+        Ajouter de nouvelles images
+      </h2>
+
+      <div className="flex flex-col gap-4">
+        <span className="text-sm text-gray-500">
+          TIPS: Alterner les formats d'images (portrait, paysage, carré) pour un
+          meilleur rendu.
+        </span>
+        <div className="flex items-center gap-4">
+          <FileUploaderRegular
+            sourceList="local, camera, gdrive"
+            cameraModes="photo"
+            classNameUploader="uc-light uc-orange"
+            pubkey="1f20d7f5d1614fe8cf9a"
+            onChange={(file) => handleImages(file)}
+          />
+        </div>
+        <div className="flex flex-col">
+          <p className="text-lg font-bold">
+            {newImages.length} nouvelle{newImages.length > 1 && "s"} image
+            {newImages.length > 1 && "s"}
+          </p>
+          <div className="grid grid-cols-4 gap-2 mt-4">
+            {newImages.length > 0 &&
+              newImages.map((image, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between gap-2 bg-gray-100 p-2 mb-2 h-14"
+                >
+                  <Image
+                    src={`https://ucarecdn.com/${image.uuid}/`}
+                    alt="File icon"
+                    width={200}
+                    height={200}
+                    className="h-full w-auto"
+                  />
+                  <div className="truncate">{image.name}</div>
+                  <div
+                    className="flex items-center"
+                    onClick={() => deleteImage(image.uuid, "new")}
+                  >
+                    <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
+                  </div>
+                </div>
+              ))}
+          </div>
+          {newImages.length > 0 && (
+            <button
+              onClick={updateGallery}
+              className="bg-orange-400 text-white px-4 py-2 w-fit self-end mt-4 rounded"
+            >
+              Valider la sélection
+            </button>
+          )}
+        </div>
+      </div>
+
+      <hr className="my-8" />
+
       {/* DISPLAYING EXISTING IMAGES */}
-      <div className="py-4">
+      <h2 className="text-xl font-semi bold mb-4">Images existantes</h2>
+
+      <div>
         {images.length > 0 ? (
           <div className="flex items-baseline gap-4 mb-4">
-            <h2 className="text-xl font-bold">
+            <h2 className="text-lg font-bold">
               {images.length} images existantes
             </h2>
             <span>(min. 10 - max. 20)</span>
@@ -104,60 +168,6 @@ const AdminDashboard = () => {
                 </div>
               </div>
             ))}
-        </div>
-      </div>
-
-      <hr />
-
-      {/* ADDING NEW IMAGES */}
-      <div className="py-4 flex flex-col gap-4">
-        <div className="flex items-center gap-4">
-          <span>Ajouter de nouvelles images:</span>
-          <FileUploaderRegular
-            sourceList="local, camera, gdrive"
-            cameraModes="photo"
-            classNameUploader="uc-light uc-orange"
-            pubkey="1f20d7f5d1614fe8cf9a"
-            onChange={(file) => handleImages(file)}
-          />
-        </div>
-        <div>
-          <span className="text-lg font-bold">
-            {newImages.length} nouvelle{newImages.length > 1 && "s"} image
-            {newImages.length > 1 && "s"}
-          </span>
-          <div className="grid grid-cols-4 gap-2">
-            {newImages.length > 0 &&
-              newImages.map((image, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between gap-2 bg-gray-100 p-2 mb-2 h-14"
-                >
-                  <Image
-                    src={`https://ucarecdn.com/${image.uuid}/`}
-                    alt="File icon"
-                    width={200}
-                    height={200}
-                    className="h-full w-auto"
-                  />
-                  <div className="truncate">{image.name}</div>
-                  <div
-                    className="flex items-center"
-                    onClick={() => deleteImage(image.uuid, "new")}
-                  >
-                    <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
-                  </div>
-                </div>
-              ))}
-          </div>
-          {newImages.length > 0 && (
-            <button
-              onClick={updateGallery}
-              className="bg-orange-400 text-white px-4 py-2 mt-4"
-            >
-              Valider la sélection
-            </button>
-          )}
         </div>
       </div>
     </div>
