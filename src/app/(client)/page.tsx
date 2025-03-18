@@ -17,7 +17,7 @@ import {
 } from "hugeicons-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Event } from "@/interfaces/event.interface";
+import { Event } from "@/interfaces/interfaces";
 import ReviewSwiper2 from "@/components/ReviewSwiper2";
 
 const objectifs = [

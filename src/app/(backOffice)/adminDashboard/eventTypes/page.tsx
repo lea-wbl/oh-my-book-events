@@ -125,7 +125,7 @@ const EventTypes = () => {
         Types d'événement existants
       </h2>
       {/* List of Questions */}
-      <ul className="mt-6 grid grid-cols-2 gap-4">
+      <ul className="mt-6 grid md:grid-cols-2 gap-4">
         {types.map((type) => (
           <li
             key={type._id}

@@ -1,102 +1,236 @@
 "use client";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { PencilEdit02Icon, Delete02Icon } from "hugeicons-react";
+import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
+import { Toaster, toast } from "react-hot-toast";
+import { Review } from "@/interfaces/interfaces";
 
 const Reviews = () => {
-  const [reviews, setReviews] = useState<
-    { _id: string; name: string; content: string }[]
-  >([]);
-  const [name, setName] = useState("");
-  const [content, setContent] = useState("");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [newReview, setNewReview] = useState<Review>({ name: "", content: "" });
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const reversedReviews = useMemo(() => [...reviews].reverse(), [reviews]);
 
   useEffect(() => {
-    axios.get("/api/reviews").then((res) => setReviews(res.data));
+    axios
+      .get("/api/reviews")
+      .then((res) => setReviews(res.data))
+      .catch((error) => {
+        console.error("Erreur lors du chargement des avis", error);
+        toast.error("Erreur lors du chargement des avis");
+      });
   }, []);
 
-  const addReview = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !content) return alert("Veuillez remplir tous les champs");
-
+    if (!newReview.name || !newReview.content)
+      return toast.error("Tous les champs doivent être remplis");
     try {
-      const { data } = await axios.post("/api/reviews", { name, content });
-      setReviews([...reviews, data]);
-      setName("");
-      setContent("");
+      if (isEditing) {
+        const response = await axios.put("/api/reviews", {
+          id: selectedId,
+          ...newReview,
+        });
+        if (response.status === 200) {
+          setReviews((prev) =>
+            prev.map((review) =>
+              review._id === selectedId ? response.data : review
+            )
+          );
+          setIsEditing(false);
+          toast.success("Avis mis à jour !", {
+            duration: 4000,
+          });
+        }
+      } else {
+        const response = await axios.post("/api/reviews", newReview);
+        if (response.status === 201) {
+          setReviews((prev) => [...prev, response.data]);
+          setNewReview({ name: "", content: "" });
+          toast.success("Avis ajouté !", {
+            duration: 4000,
+          });
+        }
+      }
     } catch (error) {
-      console.error("Erreur lors de l'ajout de l'avis", error);
+      if (isEditing) {
+        toast.error("Erreur lors de la mise à jour de l'avis");
+      } else {
+        toast.error("Erreur lors de l'ajout de l'avis");
+      }
     }
   };
 
-  const deleteReview = async (id: string) => {
-    await axios.delete("/api/reviews", { data: { id } });
-    setReviews(reviews.filter((review) => review._id !== id));
+  const deleteReview = async () => {
+    try {
+      const response = await axios.delete("/api/reviews", {
+        data: { id: selectedId },
+      });
+
+      if (response.status === 200) {
+        setReviews((prev) =>
+          prev.filter((review) => review._id !== selectedId)
+        );
+        toast.success("Avis supprimé !", {
+          duration: 4000,
+        });
+      }
+    } catch (error) {
+      toast.error("Erreur lors de la suppression de l'avis");
+    }
+  };
+
+  const handleOpenConfirmation = (id: string) => {
+    setOpenConfirmation(true);
+    setSelectedId(id);
+  };
+
+  const startEditing = (review: Review) => {
+    setIsEditing(true);
+    setNewReview({
+      name: review.name,
+      content: review.content,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => {
+      if (review._id) {
+        setSelectedId(review._id);
+      }
+    }, 1000);
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Avis de la communauté</h1>
+      <Toaster position="top-right" />
 
-      <h2 className="text-xl font-semi bold mb-4">Ajouter un nouvel avis</h2>
+      <h1 className="text-2xl font-bold mb-8">Avis de la communauté</h1>
+
+      <h2 className="text-xl mb-4">
+        {isEditing ? "Modifier un avis" : "Ajouter un nouvel avis"}
+      </h2>
       {/* Form */}
-      <form onSubmit={addReview} className="flex flex-col space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid flex-1 gap-1">
           <label htmlFor="name">Nom du client</label>
           <input
             type="text"
             id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={newReview.name}
+            onChange={(e) =>
+              setNewReview({ ...newReview, name: e.target.value })
+            }
             className="bg-gray-200 px-4 py-2 rounded"
           />
         </div>
+
         <div className="grid flex-1 gap-1">
           <label htmlFor="content">Contenu de l'avis</label>
           <textarea
             id="content"
-            className="bg-gray-200 px-4 py-2 w-full field-sizing-content min-h-16"
-            onChange={(e) => setContent(e.target.value)}
+            value={newReview.content}
+            onChange={(e) =>
+              setNewReview({ ...newReview, content: e.target.value })
+            }
+            className="bg-gray-200 px-4 py-2 rounded field-sizing-content min-h-16"
           ></textarea>
         </div>
 
-        <button
-          type="submit"
-          className="bg-orange-400 text-white px-4 py-2 w-fit self-end mt-4 rounded"
-        >
-          Ajouter aux avis
-        </button>
+        <div className="flex justify-end gap-4">
+          {isEditing && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditing(false);
+                setNewReview({ name: "", content: "" });
+                setSelectedId("");
+              }}
+              className="bg-gray-300 px-4 py-2 rounded font-semibold hover:bg-white border-2 border-gray-300"
+            >
+              Annuler
+            </button>
+          )}
+          <button
+            type="submit"
+            className="bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold hover:text-orange-400 hover:bg-white border-2 border-orange-400"
+          >
+            {isEditing ? "Modifier l'avis" : "Ajouter aux avis"}
+          </button>
+        </div>
       </form>
 
       <hr className="my-8" />
 
-      <h2 className="text-xl font-semi bold mb-4">Avis existants</h2>
-      {/* List of Questions */}
-      <ul className="mt-6 grid grid-cols-2 gap-4">
-        {reviews.map((review) => (
-          <li
-            key={review._id}
-            className="border grid gap-4 p-4 rounded-lg shadow"
-          >
-            <div className="flex-1">
-              <div className="flex gap-2 float-right">
-                <PencilEdit02Icon
-                  size={24}
-                  color={"blue"}
-                  className="cursor-pointer"
-                />
-                <Delete02Icon
-                  size={24}
-                  color={"red"}
-                  onClick={() => deleteReview(review._id)}
-                  className="cursor-pointer"
-                />
+      <h2 className="text-xl mb-4">Avis existants</h2>
+      {/* List of reviews */}
+      {reviews.length === 0 ? (
+        <p className="text-center text-gray-500">
+          Aucun avis n'a été ajouté pour le moment
+        </p>
+      ) : (
+        <ul className="grid md:grid-cols-2 gap-4">
+          {reversedReviews.map((review) => (
+            <li
+              key={review._id}
+              className={
+                isEditing && selectedId === review._id
+                  ? "text-gray-500 border grid gap-4 p-4 rounded-lg shadow bg-gray-100 cursor-not-allowed"
+                  : "border grid gap-4 p-4 rounded-lg shadow"
+              }
+            >
+              <div className="flex-1">
+                <div className="flex gap-2 float-right">
+                  <button
+                    className={
+                      isEditing && selectedId === review._id
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer"
+                    }
+                    onClick={() => startEditing(review)}
+                    disabled={isEditing && selectedId === review._id}
+                  >
+                    <PencilEdit02Icon
+                      size={24}
+                      color={
+                        isEditing && selectedId === review._id ? "gray" : "blue"
+                      }
+                    />
+                  </button>
+                  <button
+                    className={
+                      isEditing && selectedId === review._id
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer"
+                    }
+                    onClick={() =>
+                      review._id && handleOpenConfirmation(review._id)
+                    }
+                    disabled={isEditing && selectedId === review._id}
+                  >
+                    <Delete02Icon
+                      size={24}
+                      color={
+                        isEditing && selectedId === review._id ? "gray" : "red"
+                      }
+                    />
+                  </button>
+                </div>
+                <strong>{review.name}</strong>
               </div>
-              <strong>{review.name}</strong>
-            </div>
-            <p>{review.content}</p>
-          </li>
-        ))}
-      </ul>
+              <p className="whitespace-pre-line">{review.content}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <DeleteConfirmationModal
+        isOpen={openConfirmation}
+        onClose={() => setOpenConfirmation(false)}
+        onConfirm={deleteReview}
+        message="Es-tu sûre de vouloir supprimer cet avis ?"
+      />
     </div>
   );
 };

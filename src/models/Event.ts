@@ -16,6 +16,7 @@ const EventSchema = new Schema({
   location: { type: String, required: false },
   address: { type: String, required: true },
   ticketLink: { type: String, required: true },
+  partners: [{ type: { uuid: String, name: String } }],
 });
 
 const Event = models.Event || model("Event", EventSchema);

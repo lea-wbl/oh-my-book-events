@@ -38,7 +38,7 @@ const Contact = () => {
 
       {/* Form */}
       <form onSubmit={updateInfo} className="flex flex-col gap-4">
-        <div className="flex gap-4">
+        <div className="grid md:flex gap-4">
           <div className="grid flex-1 gap-1">
             <label htmlFor="email">Adresse email</label>
             <input
@@ -68,7 +68,7 @@ const Contact = () => {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="grid md:flex gap-4">
           <div className="grid flex-1 gap-1">
             <label htmlFor="ig">
               Lien Instagram <span>(optionel)</span>

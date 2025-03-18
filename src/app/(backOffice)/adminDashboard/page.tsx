@@ -92,7 +92,7 @@ const AdminDashboard = () => {
             {newImages.length} nouvelle{newImages.length > 1 && "s"} image
             {newImages.length > 1 && "s"}
           </p>
-          <div className="grid grid-cols-4 gap-2 mt-4">
+          <div className="grid md:grid-cols-4 gap-2 mt-4">
             {newImages.length > 0 &&
               newImages.map((image, index) => (
                 <div
@@ -145,7 +145,7 @@ const AdminDashboard = () => {
             Aucune images existantes pour le moment
           </h2>
         )}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid md:grid-cols-4 gap-2">
           {images.length > 0 &&
             images.map((image, index) => (
               <div

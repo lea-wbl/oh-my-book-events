@@ -11,7 +11,7 @@ import Image from "next/image";
 import PartnersSlider from "@/components/PartnersSlider";
 import Countdown from "@/components/Countdown";
 import axios from "axios";
-import { Event } from "@/interfaces/event.interface";
+import { Event } from "@/interfaces/interfaces";
 
 const programation = [
   {

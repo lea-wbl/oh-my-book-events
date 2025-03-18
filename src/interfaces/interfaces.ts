@@ -10,4 +10,11 @@ export interface Event {
   location: string;
   address: string;
   ticketLink: string;
+  partners: { uuid: string; name: string }[];
+}
+
+export interface Review {
+  _id?: string;
+  name: string;
+  content: string;
 }

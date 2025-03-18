@@ -73,7 +73,7 @@ const Questions = () => {
       <h2 className="text-xl font-semi bold mb-4">Questions existantes</h2>
 
       {/* List of Questions */}
-      <ul className="mt-6 grid grid-cols-2 gap-4">
+      <ul className="mt-6 grid md:grid-cols-2 gap-4">
         {questions.map((q) => (
           <li key={q._id} className="border grid gap-4 p-4 rounded-lg shadow">
             <div className="flex-1">
