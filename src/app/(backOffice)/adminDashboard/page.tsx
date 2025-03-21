@@ -1,22 +1,27 @@
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Delete02Icon } from "hugeicons-react";
 import { FileUploaderRegular } from "@uploadcare/react-uploader/next";
 import "@uploadcare/react-uploader/core.css";
-import Image from "next/image";
+import UploadedImagesGrid from "@/components/UploadedImagesGrid";
+import { Toaster, toast } from "react-hot-toast";
 
 const AdminDashboard = () => {
   const [images, setImages] = useState<{ uuid: ""; name: "" }[]>([]);
   const [newImages, setNewImages] = useState<{ uuid: ""; name: "" }[]>([]);
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
 
-  // get existging images from database
+  // get existing images from database
   useEffect(() => {
-    axios.get("/api/gallery").then((res) => {
-      console.log(res.data);
-      setImages(res.data);
-    });
+    axios
+      .get("/api/gallery")
+      .then((res) => {
+        setImages(res.data);
+      })
+      .catch((error) => {
+        console.error("Erreur lors du chargement des images", error);
+        toast.error("Erreur lors du chargement des images");
+      });
   }, []);
 
   // adding new images to the state
@@ -42,36 +47,48 @@ const AdminDashboard = () => {
         setNewImages(newImages.filter((image) => image.uuid !== uuid));
       }
       if (type === "initial") {
-        await axios.delete("/api/gallery", { data: { uuid } });
-        setImages(images.filter((image) => image.uuid !== uuid));
+        const response = await axios.delete("/api/gallery", { data: { uuid } });
+        if (response.status === 200) {
+          setImages(images.filter((image) => image.uuid !== uuid));
+          toast.success("Image supprimée !", {
+            duration: 4000,
+          });
+        }
       }
     } catch (error) {
-      console.error("Error deleting image:", error);
+      toast.error("Erreur lors de la suppression de l'image");
     }
   };
 
-  // updating images in database (adding new and deleting existing)
+  // updating images in database (adding new and deleting existing that were deleted)
   const updateGallery = async () => {
     try {
-      await axios.post("/api/gallery", {
+      const response = await axios.post("/api/gallery", {
         newImages: newImages,
         deletedImages: deletedImages,
       });
-      setImages([...images, ...newImages]);
-      setNewImages([]);
+
+      if (response.status === 200) {
+        setImages([...images, ...newImages]);
+        setNewImages([]);
+      }
+
+      toast.success("Gallerie d'images mise à jour !", {
+        duration: 4000,
+      });
     } catch (error) {
-      console.error("Error updating gallery:", error);
+      toast.error("Erreur lors de la mise à jour de la gallerie d'images");
     }
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Gallerie photos</h1>
+      <Toaster position="top-right" />
+
+      <h1 className="text-2xl font-bold mb-8">Gallerie photos</h1>
 
       {/* ADDING NEW IMAGES */}
-      <h2 className="text-xl font-semi bold mb-4">
-        Ajouter de nouvelles images
-      </h2>
+      <h2 className="text-xl mb-4">Ajouter de nouvelles images</h2>
 
       <div className="flex flex-col gap-4">
         <span className="text-sm text-gray-500">
@@ -92,37 +109,35 @@ const AdminDashboard = () => {
             {newImages.length} nouvelle{newImages.length > 1 && "s"} image
             {newImages.length > 1 && "s"}
           </p>
-          <div className="grid md:grid-cols-4 gap-2 mt-4">
-            {newImages.length > 0 &&
-              newImages.map((image, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between gap-2 bg-gray-100 p-2 mb-2 h-14"
-                >
-                  <Image
-                    src={`https://ucarecdn.com/${image.uuid}/`}
-                    alt="File icon"
-                    width={200}
-                    height={200}
-                    className="h-full w-auto"
-                  />
-                  <div className="truncate">{image.name}</div>
-                  <div
-                    className="flex items-center"
-                    onClick={() => deleteImage(image.uuid, "new")}
-                  >
-                    <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
-                  </div>
-                </div>
-              ))}
-          </div>
           {newImages.length > 0 && (
-            <button
-              onClick={updateGallery}
-              className="bg-orange-400 text-white px-4 py-2 w-fit self-end mt-4 rounded"
-            >
-              Valider la sélection
-            </button>
+            <UploadedImagesGrid
+              images={newImages}
+              deleteHandler={(uuid) => {
+                deleteImage(uuid, "new");
+              }}
+              gridCols={"md:grid-cols-4"}
+            />
+          )}
+
+          {newImages.length > 0 && (
+            <div className="flex justify-end gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setNewImages([]);
+                }}
+                className="bg-gray-300 px-4 py-2 rounded font-semibold hover:bg-white border-2 border-gray-300"
+              >
+                Annuler
+              </button>
+
+              <button
+                onClick={updateGallery}
+                className="bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold hover:text-orange-400 hover:bg-white border-2 border-orange-400"
+              >
+                Valider la sélection
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -134,7 +149,7 @@ const AdminDashboard = () => {
 
       <div>
         {images.length > 0 ? (
-          <div className="flex items-baseline gap-4 mb-4">
+          <div className="flex items-baseline gap-2 mb-4">
             <h2 className="text-lg font-bold">
               {images.length} images existantes
             </h2>
@@ -145,30 +160,15 @@ const AdminDashboard = () => {
             Aucune images existantes pour le moment
           </h2>
         )}
-        <div className="grid md:grid-cols-4 gap-2">
-          {images.length > 0 &&
-            images.map((image, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between gap-2 bg-gray-100 p-2 mb-2 h-14"
-              >
-                <Image
-                  src={`https://ucarecdn.com/${image.uuid}/`}
-                  alt="File icon"
-                  width={200}
-                  height={200}
-                  className="h-full w-auto"
-                />
-                <div className="truncate">{image.name}</div>
-                <div
-                  className="flex items-center"
-                  onClick={() => deleteImage(image.uuid, "initial")}
-                >
-                  <Delete02Icon className="h-6 w-6 text-gray-500 cursor-pointer ml-2" />
-                </div>
-              </div>
-            ))}
-        </div>
+        {images.length > 0 && (
+          <UploadedImagesGrid
+            images={images}
+            deleteHandler={(uuid) => {
+              deleteImage(uuid, "initial");
+            }}
+            gridCols={"md:grid-cols-4"}
+          />
+        )}
       </div>
     </div>
   );

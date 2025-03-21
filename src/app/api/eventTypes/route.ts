@@ -9,7 +9,6 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const field = searchParams.get("field");
     const id = searchParams.get("id");
-    console.log(field, id);
 
     if (field === "name") {
       const types = await EventType.find().select("name");
@@ -22,10 +21,53 @@ export async function GET(req: NextRequest) {
     }
 
     const types = await EventType.find();
+
     return NextResponse.json(types);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch event types" },
+      { error: "Erreur lors de la récupération des types d'événement" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const { id, name, summary, leading, description } = await req.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "L'ID est manquant" },
+        { status: 400 }
+      );
+    }
+
+    if (!name || !summary || !leading || !description) {
+      return NextResponse.json(
+        { message: "Tous les champs sont requis" },
+        { status: 400 }
+      );
+    }
+
+    await mongooseConnect();
+
+    const updatedEventType = await EventType.findByIdAndUpdate(
+      id,
+      { name, summary, leading, description },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedEventType) {
+      return NextResponse.json(
+        { message: "Type d'événement non trouvé" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedEventType, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Erreur lors de la mise à jour du type d'événement" },
       { status: 500 }
     );
   }
@@ -34,14 +76,16 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   try {
     const { name, summary, leading, description } = await req.json();
+
     if (!name || !summary || !leading || !description) {
       return NextResponse.json(
-        { error: "Name and description are required" },
+        { error: "Tous les champs sont requis" },
         { status: 400 }
       );
     }
 
     await mongooseConnect();
+
     const newType = await EventType.create({
       name,
       summary,
@@ -49,18 +93,45 @@ export async function POST(req: Request) {
       description,
     });
 
-    return NextResponse.json(newType);
+    return NextResponse.json(newType, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to add event type" },
+      { error: "Erreur lors de l'ajout du type d'événement" },
       { status: 500 }
     );
   }
 }
 
 export async function DELETE(req: Request) {
-  const { id } = await req.json();
-  await mongooseConnect();
-  await EventType.findByIdAndDelete(id);
-  return NextResponse.json({ message: "Event type deleted" });
+  try {
+    const { id } = await req.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "L'ID est manquant" },
+        { status: 400 }
+      );
+    }
+
+    await mongooseConnect();
+
+    const deletedEventType = await EventType.findByIdAndDelete(id);
+
+    if (!deletedEventType) {
+      return NextResponse.json(
+        { message: "Type d'événement non trouvé" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Type d'événement supprimé" },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Erreur lors de la suppression du type d'événement" },
+      { status: 500 }
+    );
+  }
 }

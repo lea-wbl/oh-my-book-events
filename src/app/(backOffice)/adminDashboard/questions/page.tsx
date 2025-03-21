@@ -1,101 +1,239 @@
 "use client";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { PencilEdit02Icon, Delete02Icon } from "hugeicons-react";
+import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
+import { Toaster, toast } from "react-hot-toast";
+import { Question } from "@/interfaces/interfaces";
 
 const Questions = () => {
-  const [questions, setQuestions] = useState<
-    { _id: string; question: string; answer: string }[]
-  >([]);
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [newQuestion, setNewQuestion] = useState<Question>({
+    question: "",
+    answer: "",
+  });
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [selectedId, setSelectedId] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const reversedQuestions = useMemo(
+    () => [...questions].reverse(),
+    [questions]
+  );
 
   useEffect(() => {
-    axios.get("/api/questions").then((res) => setQuestions(res.data));
+    axios
+      .get("/api/questions")
+      .then((res) => setQuestions(res.data))
+      .catch((error) => {
+        console.error("Erreur lors du chargement des questions", error);
+        toast.error("Erreur lors du chargement des questions");
+      });
   }, []);
 
-  const addQuestion = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!question || !answer) return alert("Veuillez remplir tous les champs");
-
+    if (!newQuestion.question || !newQuestion.answer)
+      return toast.error("Tous les champs doivent être remplis");
     try {
-      const { data } = await axios.post("/api/questions", { question, answer });
-      setQuestions([...questions, data]); // Update state with new question
-      setQuestion(""); // Clear input
-      setAnswer("");
+      if (isEditing) {
+        const response = await axios.put("/api/questions", {
+          id: selectedId,
+          ...newQuestion,
+        });
+        if (response.status === 200) {
+          setQuestions((prev) =>
+            prev.map((question) =>
+              question._id === selectedId ? response.data : question
+            )
+          );
+          setIsEditing(false);
+          setNewQuestion({ question: "", answer: "" });
+          toast.success("Question mise à jour !", {
+            duration: 4000,
+          });
+        }
+      } else {
+        const response = await axios.post("/api/questions", newQuestion);
+        if (response.status === 201) {
+          setQuestions((prev) => [...prev, response.data]);
+          setNewQuestion({ question: "", answer: "" });
+          toast.success("Question ajoutée !", {
+            duration: 4000,
+          });
+        }
+      }
     } catch (error) {
-      console.error("Erreur lors de l'ajout de la question", error);
+      if (isEditing) {
+        toast.error("Erreur lors de la mise à jour de la question");
+      } else {
+        toast.error("Erreur lors de l'ajout de la question");
+      }
     }
   };
 
-  const deleteUser = async (id: string) => {
-    await axios.delete("/api/questions", { data: { id } });
-    setQuestions(questions.filter((question) => question._id !== id));
+  const deleteQuestion = async () => {
+    try {
+      const response = await axios.delete("/api/questions", {
+        data: { id: selectedId },
+      });
+
+      if (response.status === 200) {
+        setQuestions((prev) =>
+          prev.filter((question) => question._id !== selectedId)
+        );
+        toast.success("Question supprimée !", {
+          duration: 4000,
+        });
+      }
+    } catch (error) {
+      toast.error("Erreur lors de la suppression de la question");
+    }
+  };
+
+  const handleOpenConfirmation = (id: string) => {
+    setOpenConfirmation(true);
+    setSelectedId(id);
+  };
+
+  const startEditing = (question: Question) => {
+    setIsEditing(true);
+    setNewQuestion({
+      question: question.question,
+      answer: question.answer,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => {
+      if (question._id) {
+        setSelectedId(question._id);
+      }
+    }, 1000);
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">FAQ</h1>
+      <Toaster position="top-right" />
 
-      <h2 className="text-xl font-semi bold mb-4">
-        Ajouter une nouvelle question
+      <h1 className="text-2xl font-bold mb-8">FAQ</h1>
+
+      <h2 className="text-xl mb-4">
+        {isEditing ? "Modifier une question" : "Ajouter une nouvelle question"}
       </h2>
       {/* Form */}
-      <form onSubmit={addQuestion} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid flex-1 gap-1">
           <label htmlFor="question">Question</label>
           <input
             type="text"
             id="question"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
+            value={newQuestion.question}
+            onChange={(e) =>
+              setNewQuestion({ ...newQuestion, question: e.target.value })
+            }
             className="bg-gray-200 px-4 py-2 rounded"
           />
         </div>
+
         <div className="grid flex-1 gap-1">
           <label htmlFor="answer">Réponse</label>
           <textarea
             id="answer"
-            className="bg-gray-200 px-4 py-2 w-full field-sizing-content min-h-16 rounded"
-            onChange={(e) => setAnswer(e.target.value)}
+            value={newQuestion.answer}
+            onChange={(e) =>
+              setNewQuestion({ ...newQuestion, answer: e.target.value })
+            }
+            className="bg-gray-200 px-4 py-2 rounded field-sizing-content min-h-16"
           ></textarea>
         </div>
-        <button
-          type="submit"
-          className="bg-orange-400 text-white px-4 py-2 w-fit self-end mt-4 rounded"
-        >
-          Ajouter à la FAQ
-        </button>
+
+        <div className="flex justify-end gap-4">
+          {isEditing && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditing(false);
+                setNewQuestion({ question: "", answer: "" });
+                setSelectedId("");
+              }}
+              className="bg-gray-300 px-4 py-2 rounded font-semibold hover:bg-white border-2 border-gray-300"
+            >
+              Annuler
+            </button>
+          )}
+          <button
+            type="submit"
+            className="bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold hover:text-orange-400 hover:bg-white border-2 border-orange-400"
+          >
+            {isEditing ? "Modifier la question" : "Ajouter à la FAQ"}
+          </button>
+        </div>
       </form>
 
       <hr className="my-8" />
 
-      <h2 className="text-xl font-semi bold mb-4">Questions existantes</h2>
-
+      <h2 className="text-xl mb-4">Questions existantes</h2>
       {/* List of Questions */}
-      <ul className="mt-6 grid md:grid-cols-2 gap-4">
-        {questions.map((q) => (
-          <li key={q._id} className="border grid gap-4 p-4 rounded-lg shadow">
-            <div className="flex-1">
-              <div className="flex gap-2 float-right">
-                <PencilEdit02Icon
-                  size={24}
-                  color={"blue"}
-                  className="cursor-pointer"
-                />
-                <Delete02Icon
-                  size={24}
-                  color={"red"}
-                  onClick={() => deleteUser(q._id)}
-                  className="cursor-pointer"
-                />
+      {questions.length === 0 ? (
+        <p className="text-center text-gray-500">
+          Aucune question n'a été ajouté pour le moment
+        </p>
+      ) : (
+        <ul className="grid md:grid-cols-2 gap-4">
+          {reversedQuestions.map((q) => (
+            <li
+              key={q._id}
+              className={
+                isEditing && selectedId === q._id
+                  ? "text-gray-500 border grid gap-4 p-4 rounded-lg shadow bg-gray-100 cursor-not-allowed"
+                  : "border grid gap-4 p-4 rounded-lg shadow"
+              }
+            >
+              <div className="flex-1">
+                <div className="flex gap-2 float-right">
+                  <button
+                    className={
+                      isEditing && selectedId === q._id
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer"
+                    }
+                    onClick={() => startEditing(q)}
+                    disabled={isEditing && selectedId === q._id}
+                  >
+                    <PencilEdit02Icon
+                      size={24}
+                      color={
+                        isEditing && selectedId === q._id ? "gray" : "blue"
+                      }
+                    />
+                  </button>
+                  <button
+                    className={
+                      isEditing && selectedId === q._id
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer"
+                    }
+                    onClick={() => q._id && handleOpenConfirmation(q._id)}
+                    disabled={isEditing && selectedId === q._id}
+                  >
+                    <Delete02Icon
+                      size={24}
+                      color={isEditing && selectedId === q._id ? "gray" : "red"}
+                    />
+                  </button>
+                </div>
+                <strong>{q.question}</strong>
               </div>
-              <strong>{q.question}</strong>
-            </div>
-            <p>{q.answer}</p>
-          </li>
-        ))}
-      </ul>
+              <p className="whitespace-pre-line">{q.answer}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <DeleteConfirmationModal
+        isOpen={openConfirmation}
+        onClose={() => setOpenConfirmation(false)}
+        onConfirm={deleteQuestion}
+        message="Es-tu sûre de vouloir supprimer cette question ?"
+      />
     </div>
   );
 };

@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json(reviews);
   } catch (error) {
     return NextResponse.json(
-      { error: "Échec lors de la récupération des avis" },
+      { error: "Erreur lors de la récupération des avis" },
       { status: 500 }
     );
   }
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     return NextResponse.json(newReview, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Échec lors de l'ajout de l'avis" },
+      { error: "Erreur lors de l'ajout de l'avis" },
       { status: 500 }
     );
   }

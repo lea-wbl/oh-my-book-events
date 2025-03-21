@@ -10,24 +10,72 @@ export async function GET(req: Request) {
     const closest = searchParams.get("closest");
     const typeId = searchParams.get("byType");
 
+    const today = new Date().toISOString().split("T")[0];
+
     let events;
 
     if (closest) {
-      const today = new Date().toISOString().split("T")[0];
       events = await Event.findOne({ date: { $gte: today } }).sort({
         date: 1,
       });
-      console.log("EVENT", events);
     } else if (typeId) {
       events = await Event.find({ typeId });
     } else {
-      events = await Event.find();
+      events = await Event.find({ date: { $gte: today } }).sort({
+        date: "ascending",
+      });
     }
 
     return NextResponse.json(events);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch events" },
+      { error: "Erreur lors de la récupération des événements" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const eventData = await req.json();
+
+    if (!eventData._id) {
+      return NextResponse.json(
+        { message: "L'ID est manquant" },
+        { status: 400 }
+      );
+    }
+
+    const hasEmptyField = Object.values(eventData).some(
+      (value: any) => value.length === 0
+    );
+
+    if (hasEmptyField) {
+      return NextResponse.json(
+        { error: "Tous les champs sont requis" },
+        { status: 400 }
+      );
+    }
+
+    await mongooseConnect();
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventData._id,
+      eventData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedEvent) {
+      return NextResponse.json(
+        { message: "Événement non trouvé" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedEvent, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Erreur lors de la mise à jour de l'événement" },
       { status: 500 }
     );
   }
@@ -35,18 +83,29 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    await mongooseConnect();
-
     const eventData = await req.json();
 
-    console.log("Received event data:", eventData);
+    const hasEmptyField = Object.values(eventData).some(
+      (value: any) => value.length === 0
+    );
+
+    if (hasEmptyField) {
+      return NextResponse.json(
+        { error: "Tous les champs sont requis" },
+        { status: 400 }
+      );
+    }
+
+    await mongooseConnect();
 
     const newEvent = await Event.create(eventData);
 
     return NextResponse.json(newEvent, { status: 201 });
   } catch (error) {
-    console.error("Error saving event:", error);
-    return NextResponse.json({ error: "Failed to add event" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erreur lors de l'ajout de l'événement" },
+      { status: 500 }
+    );
   }
 }
 

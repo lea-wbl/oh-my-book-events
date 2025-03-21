@@ -18,3 +18,25 @@ export interface Review {
   name: string;
   content: string;
 }
+
+export interface Question {
+  _id?: string;
+  question: string;
+  answer: string;
+}
+
+export interface EventType {
+  _id?: string;
+  name: string;
+  summary: string;
+  leading: string;
+  description: string;
+}
+
+export interface ContactInfo {
+  _id?: string;
+  email: string;
+  tel: string;
+  ig: string;
+  tiktok: string;
+}

@@ -41,6 +41,7 @@ const Reviews = () => {
             )
           );
           setIsEditing(false);
+          setNewReview({ name: "", content: "" });
           toast.success("Avis mis à jour !", {
             duration: 4000,
           });
