@@ -6,12 +6,14 @@ import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import { Toaster, toast } from "react-hot-toast";
 import { Question } from "@/interfaces/interfaces";
 
+const initialState = {
+  question: "",
+  answer: "",
+};
+
 const Questions = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [newQuestion, setNewQuestion] = useState<Question>({
-    question: "",
-    answer: "",
-  });
+  const [newQuestion, setNewQuestion] = useState<Question>(initialState);
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -47,7 +49,7 @@ const Questions = () => {
             )
           );
           setIsEditing(false);
-          setNewQuestion({ question: "", answer: "" });
+          setNewQuestion(initialState);
           toast.success("Question mise à jour !", {
             duration: 4000,
           });
@@ -56,7 +58,7 @@ const Questions = () => {
         const response = await axios.post("/api/questions", newQuestion);
         if (response.status === 201) {
           setQuestions((prev) => [...prev, response.data]);
-          setNewQuestion({ question: "", answer: "" });
+          setNewQuestion(initialState);
           toast.success("Question ajoutée !", {
             duration: 4000,
           });
@@ -109,6 +111,14 @@ const Questions = () => {
     }, 1000);
   };
 
+  const handleCancel = () => {
+    if (isEditing) {
+      setIsEditing(false);
+      setSelectedId("");
+    }
+    setNewQuestion(initialState);
+  };
+
   return (
     <div>
       <Toaster position="top-right" />
@@ -146,22 +156,30 @@ const Questions = () => {
         </div>
 
         <div className="flex justify-end gap-4">
-          {isEditing && (
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditing(false);
-                setNewQuestion({ question: "", answer: "" });
-                setSelectedId("");
-              }}
-              className="bg-gray-300 px-4 py-2 rounded font-semibold hover:bg-white border-2 border-gray-300"
-            >
-              Annuler
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleCancel}
+            className={`bg-gray-300 px-4 py-2 rounded font-semibold border-2 border-gray-300 ${
+              JSON.stringify(newQuestion) === JSON.stringify(initialState)
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-white"
+            }`}
+            disabled={
+              JSON.stringify(newQuestion) === JSON.stringify(initialState)
+            }
+          >
+            Annuler
+          </button>
           <button
             type="submit"
-            className="bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold hover:text-orange-400 hover:bg-white border-2 border-orange-400"
+            className={`bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold border-2 border-orange-400 ${
+              JSON.stringify(newQuestion) === JSON.stringify(initialState)
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:text-orange-400 hover:bg-white"
+            }`}
+            disabled={
+              JSON.stringify(newQuestion) === JSON.stringify(initialState)
+            }
           >
             {isEditing ? "Modifier la question" : "Ajouter à la FAQ"}
           </button>

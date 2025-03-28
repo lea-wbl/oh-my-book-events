@@ -5,11 +5,13 @@ import { FileUploaderRegular } from "@uploadcare/react-uploader/next";
 import "@uploadcare/react-uploader/core.css";
 import UploadedImagesGrid from "@/components/UploadedImagesGrid";
 import { Toaster, toast } from "react-hot-toast";
+import { deleteUcareImg } from "@/app/utils/imageManager";
 
 const AdminDashboard = () => {
   const [images, setImages] = useState<{ uuid: ""; name: "" }[]>([]);
   const [newImages, setNewImages] = useState<{ uuid: ""; name: "" }[]>([]);
-  const [deletedImages, setDeletedImages] = useState<string[]>([]);
+  const [uploaderKey, setUploaderKey] = useState(0);
+  const remainingImages = 20 - images.length;
 
   // get existing images from database
   useEffect(() => {
@@ -45,6 +47,9 @@ const AdminDashboard = () => {
       });
       if (type === "new") {
         setNewImages(newImages.filter((image) => image.uuid !== uuid));
+        toast.success("Image supprimée !", {
+          duration: 4000,
+        });
       }
       if (type === "initial") {
         const response = await axios.delete("/api/gallery", { data: { uuid } });
@@ -65,11 +70,12 @@ const AdminDashboard = () => {
     try {
       const response = await axios.post("/api/gallery", {
         newImages: newImages,
-        deletedImages: deletedImages,
       });
 
-      if (response.status === 200) {
-        setImages([...images, ...newImages]);
+      if (response.status === 201) {
+        setUploaderKey((prevKey) => prevKey + 1);
+        setImages((prevImages) => [...prevImages, ...newImages]);
+        setUploaderKey((prevKey) => prevKey);
         setNewImages([]);
       }
 
@@ -78,6 +84,16 @@ const AdminDashboard = () => {
       });
     } catch (error) {
       toast.error("Erreur lors de la mise à jour de la gallerie d'images");
+    }
+  };
+
+  const handleCancel = async () => {
+    try {
+      await Promise.all(newImages.map((img) => deleteUcareImg(img.uuid)));
+      setNewImages([]);
+      setUploaderKey((prevKey) => prevKey + 1);
+    } catch (error) {
+      toast.error("Erreur lors de l'annulation de l'ajout d'images");
     }
   };
 
@@ -95,51 +111,68 @@ const AdminDashboard = () => {
           TIPS: Alterner les formats d'images (portrait, paysage, carré) pour un
           meilleur rendu.
         </span>
-        <div className="flex items-center gap-4">
-          <FileUploaderRegular
-            sourceList="local, camera, gdrive"
-            cameraModes="photo"
-            classNameUploader="uc-light uc-orange"
-            pubkey="1f20d7f5d1614fe8cf9a"
-            onChange={(file) => handleImages(file)}
-          />
-        </div>
-        <div className="flex flex-col">
-          <p className="text-lg font-bold">
-            {newImages.length} nouvelle{newImages.length > 1 && "s"} image
-            {newImages.length > 1 && "s"}
+        {remainingImages === 0 ? (
+          <p className="text-lg font-bold mb-4">
+            Nombre maximum d'images atteint.
           </p>
-          {newImages.length > 0 && (
-            <UploadedImagesGrid
-              images={newImages}
-              deleteHandler={(uuid) => {
-                deleteImage(uuid, "new");
-              }}
-              gridCols={"md:grid-cols-4"}
-            />
-          )}
-
-          {newImages.length > 0 && (
-            <div className="flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setNewImages([]);
-                }}
-                className="bg-gray-300 px-4 py-2 rounded font-semibold hover:bg-white border-2 border-gray-300"
-              >
-                Annuler
-              </button>
-
-              <button
-                onClick={updateGallery}
-                className="bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold hover:text-orange-400 hover:bg-white border-2 border-orange-400"
-              >
-                Valider la sélection
-              </button>
+        ) : (
+          <>
+            <div className="flex items-center gap-4">
+              <FileUploaderRegular
+                key={uploaderKey}
+                sourceList="local, camera, gdrive"
+                cameraModes="photo"
+                classNameUploader="uc-light uc-orange"
+                multiple={true}
+                multipleMax={remainingImages}
+                pubkey="1f20d7f5d1614fe8cf9a"
+                onChange={(file) => handleImages(file)}
+              />
             </div>
-          )}
-        </div>
+            <div className="flex flex-col">
+              <p className="text-lg font-bold mb-2">
+                {newImages.length} nouvelle{newImages.length > 1 && "s"} image
+                {newImages.length > 1 && "s"}
+              </p>
+              {newImages.length > 0 && (
+                <UploadedImagesGrid
+                  images={newImages}
+                  deleteHandler={(uuid) => {
+                    deleteImage(uuid, "new");
+                  }}
+                  gridCols={"md:grid-cols-4"}
+                />
+              )}
+
+              <div className="flex justify-end gap-4 mt-4">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className={`bg-gray-300 px-4 py-2 rounded font-semibold border-2 border-gray-300 ${
+                    newImages.length <= 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-white"
+                  }`}
+                  disabled={newImages.length <= 0}
+                >
+                  Annuler
+                </button>
+
+                <button
+                  onClick={updateGallery}
+                  className={`bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold border-2 border-orange-400 ${
+                    newImages.length <= 0
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:text-orange-400 hover:bg-white"
+                  }`}
+                  disabled={newImages.length <= 0}
+                >
+                  Valider la sélection
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       <hr className="my-8" />
@@ -149,14 +182,14 @@ const AdminDashboard = () => {
 
       <div>
         {images.length > 0 ? (
-          <div className="flex items-baseline gap-2 mb-4">
+          <div className="flex items-baseline gap-2 mb-2">
             <h2 className="text-lg font-bold">
               {images.length} images existantes
             </h2>
             <span>(min. 10 - max. 20)</span>
           </div>
         ) : (
-          <h2 className="text-xl font-bold mb-4">
+          <h2 className="text-lg font-bold mb-4">
             Aucune images existantes pour le moment
           </h2>
         )}
@@ -167,6 +200,7 @@ const AdminDashboard = () => {
               deleteImage(uuid, "initial");
             }}
             gridCols={"md:grid-cols-4"}
+            min={10}
           />
         )}
       </div>

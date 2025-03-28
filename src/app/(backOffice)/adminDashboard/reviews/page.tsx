@@ -6,9 +6,14 @@ import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import { Toaster, toast } from "react-hot-toast";
 import { Review } from "@/interfaces/interfaces";
 
+const initialState = {
+  name: "",
+  content: "",
+};
+
 const Reviews = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [newReview, setNewReview] = useState<Review>({ name: "", content: "" });
+  const [newReview, setNewReview] = useState<Review>(initialState);
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -41,7 +46,7 @@ const Reviews = () => {
             )
           );
           setIsEditing(false);
-          setNewReview({ name: "", content: "" });
+          setNewReview(initialState);
           toast.success("Avis mis à jour !", {
             duration: 4000,
           });
@@ -50,7 +55,7 @@ const Reviews = () => {
         const response = await axios.post("/api/reviews", newReview);
         if (response.status === 201) {
           setReviews((prev) => [...prev, response.data]);
-          setNewReview({ name: "", content: "" });
+          setNewReview(initialState);
           toast.success("Avis ajouté !", {
             duration: 4000,
           });
@@ -103,6 +108,14 @@ const Reviews = () => {
     }, 1000);
   };
 
+  const handleCancel = () => {
+    if (isEditing) {
+      setIsEditing(false);
+      setSelectedId("");
+    }
+    setNewReview(initialState);
+  };
+
   return (
     <div>
       <Toaster position="top-right" />
@@ -140,22 +153,30 @@ const Reviews = () => {
         </div>
 
         <div className="flex justify-end gap-4">
-          {isEditing && (
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditing(false);
-                setNewReview({ name: "", content: "" });
-                setSelectedId("");
-              }}
-              className="bg-gray-300 px-4 py-2 rounded font-semibold hover:bg-white border-2 border-gray-300"
-            >
-              Annuler
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleCancel}
+            className={`bg-gray-300 px-4 py-2 rounded font-semibold border-2 border-gray-300 ${
+              JSON.stringify(newReview) === JSON.stringify(initialState)
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-white"
+            }`}
+            disabled={
+              JSON.stringify(newReview) === JSON.stringify(initialState)
+            }
+          >
+            Annuler
+          </button>
           <button
             type="submit"
-            className="bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold hover:text-orange-400 hover:bg-white border-2 border-orange-400"
+            className={`bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold border-2 border-orange-400 ${
+              JSON.stringify(newReview) === JSON.stringify(initialState)
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:text-orange-400 hover:bg-white"
+            }`}
+            disabled={
+              JSON.stringify(newReview) === JSON.stringify(initialState)
+            }
           >
             {isEditing ? "Modifier l'avis" : "Ajouter aux avis"}
           </button>

@@ -22,7 +22,10 @@ export async function POST(req: Request) {
     if (newImages.length > 0) {
       await GalleryImg.insertMany(newImages);
     }
-    return NextResponse.json({ message: "Gallery updated successfully" });
+    return NextResponse.json(
+      { message: "Gallerie photo mise à jour" },
+      { status: 201 }
+    );
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to update gallery" },

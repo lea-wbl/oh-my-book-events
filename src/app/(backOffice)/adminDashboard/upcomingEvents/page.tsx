@@ -26,8 +26,9 @@ const initialState = {
 };
 
 const UpcomingEvents = () => {
+  const [initialEvent, setInitialEvent] = useState(initialState);
   const [events, setEvents] = useState<Event[]>([]);
-  const [newEvent, setNewEvent] = useState<Event>(initialState);
+  const [newEvent, setNewEvent] = useState<Event>(initialEvent);
   const [eventTypes, setEventTypes] = useState<{ _id: string; name: string }[]>(
     []
   );
@@ -56,6 +57,11 @@ const UpcomingEvents = () => {
         type: eventTypes[0].name,
         typeId: eventTypes[0]._id,
       });
+      setInitialEvent({
+        ...initialState,
+        type: eventTypes[0].name,
+        typeId: eventTypes[0]._id,
+      });
     }
   }, [eventTypes]);
 
@@ -75,14 +81,24 @@ const UpcomingEvents = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (newEvent.images.length < 3) {
+      toast.error(
+        `Il manque ${3 - newEvent.images.length} image${
+          3 - newEvent.images.length > 1 ? "s" : ""
+        } de présentation`
+      );
+      return;
+    }
+
     const emptyFields = Object.entries(newEvent)
       .filter(([key, value]) => value.length === 0) // Find empty fields
       .map(([key]) => key); // Extract field names
 
     if (emptyFields.length > 0) {
-      toast.error(
+      console.log(
         `Les champs suivants sont requis : ${emptyFields.join(", ")}`
       );
+      toast.error("Tous les champs sont requis");
       return;
     }
 
@@ -96,17 +112,17 @@ const UpcomingEvents = () => {
             )
           );
           setIsEditing(false);
-          setNewEvent(initialState);
+          setNewEvent(initialEvent);
           toast.success("Événement mis à jour !", {
             duration: 4000,
           });
         }
       } else {
-        const response = await axios.post("/api/reviews", newEvent);
+        const response = await axios.post("/api/events", newEvent);
 
         if (response.status === 201) {
           setEvents([response.data, ...events]);
-          setNewEvent(initialState);
+          setNewEvent(initialEvent);
           setUploaderKey((prevKey) => prevKey + 1);
           toast.success("Événement ajouté !", {
             duration: 4000,
@@ -154,31 +170,6 @@ const UpcomingEvents = () => {
     });
   };
 
-  const deleteImage = async (uuid: string) => {
-    try {
-      const response = await axios.delete(
-        `https://api.uploadcare.com/files/${uuid}/`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Uploadcare.Simple ${process.env.UPLOADCARE_PUBLIC_KEY}:${process.env.UPLOADCARE_SECRET_KEY}`,
-          },
-        }
-      );
-
-      return Response.json({
-        success: true,
-        message: "Image deleted successfully",
-        data: response.data,
-      });
-    } catch (error: any) {
-      return Response.json(
-        { success: false, error: error.response?.data || error.message },
-        { status: 500 }
-      );
-    }
-  };
-
   const handleOpenConfirmation = (id: string) => {
     setOpenConfirmation(true);
     setSelectedId(id);
@@ -199,6 +190,30 @@ const UpcomingEvents = () => {
     }, 1000);
   };
 
+  const handleCancel = async () => {
+    const deleteImages = async (images: { uuid: string }[]) => {
+      if (images.length > 0) {
+        await Promise.all(images.map(({ uuid }) => deleteUcareImg(uuid)));
+      }
+    };
+    if (isEditing) {
+      const initialEvent = events.find((event) => event._id === selectedId);
+      if (initialEvent) {
+        const imgIdsToDelete = initialEvent.images
+          .map((img) => img.uuid)
+          .filter((uuid) => !newEvent.images.some((img) => img.uuid === uuid));
+
+        await deleteImages(imgIdsToDelete.map((uuid) => ({ uuid })));
+      }
+      setIsEditing(false);
+      setSelectedId("");
+    }
+    await deleteImages(newEvent.images);
+    await deleteImages(newEvent.partners);
+    setNewEvent(initialEvent);
+    setUploaderKey((prevKey) => prevKey + 1);
+  };
+
   return (
     <div>
       <Toaster position="top-right" />
@@ -213,7 +228,8 @@ const UpcomingEvents = () => {
       <div className="mb-4 grid md:flex gap-4">
         <div className="grid gap-1">
           <label>
-            Images de présentation <span>(3 requises)</span>
+            Images de présentation{" "}
+            <span className="text-gray-500 text-sm">(3 requises)</span>
           </label>
           <FileUploaderRegular
             key={uploaderKey}
@@ -229,7 +245,7 @@ const UpcomingEvents = () => {
         <UploadedImagesGrid
           images={newEvent.images}
           deleteHandler={(uuid) => {
-            deleteUcareImg(uuid);
+            if (!isEditing) deleteUcareImg(uuid);
             setNewEvent({
               ...newEvent,
               images: newEvent.images.filter((img) => img.uuid !== uuid),
@@ -395,7 +411,7 @@ const UpcomingEvents = () => {
         <UploadedImagesGrid
           images={newEvent.partners}
           deleteHandler={(uuid) => {
-            deleteUcareImg(uuid);
+            if (!isEditing) deleteUcareImg(uuid);
             setNewEvent({
               ...newEvent,
               partners: newEvent.partners.filter(
@@ -408,22 +424,28 @@ const UpcomingEvents = () => {
       </div>
 
       <div className="flex justify-end gap-4 mt-6">
-        {isEditing && (
+    
           <button
             type="button"
-            onClick={() => {
-              setIsEditing(false);
-              setNewEvent(initialState);
-              setSelectedId("");
-            }}
-            className="bg-gray-300 px-4 py-2 rounded font-semibold hover:bg-white border-2 border-gray-300"
+            onClick={handleCancel}
+            className={`bg-gray-300 px-4 py-2 rounded font-semibold border-2 border-gray-300 ${
+              JSON.stringify(newEvent) === JSON.stringify(initialEvent)
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-white"
+            }`}
+            disabled={JSON.stringify(newEvent) === JSON.stringify(initialEvent)}
           >
             Annuler
           </button>
-        )}
+
         <button
           onClick={handleSubmit}
-          className="bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold hover:text-orange-400 hover:bg-white border-2 border-orange-400"
+          className={`bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold border-2 border-orange-400 ${
+            JSON.stringify(newEvent) === JSON.stringify(initialEvent)
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:text-orange-400 hover:bg-white"
+          }`}
+          disabled={JSON.stringify(newEvent) === JSON.stringify(initialEvent)}
         >
           {isEditing
             ? "Modifier l'événement"
