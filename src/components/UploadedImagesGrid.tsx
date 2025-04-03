@@ -47,7 +47,7 @@ const UploadedImagesGrid: FC<UploadedImagesGridProps> = ({
               alt="File icon"
               width={200}
               height={200}
-              className="h-full w-auto"
+              className="h-full w-auto max-w-[50%]"
             />
             <div className="truncate">{img.name}</div>
             <div

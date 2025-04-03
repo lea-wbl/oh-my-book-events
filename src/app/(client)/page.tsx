@@ -22,7 +22,6 @@ import ReviewSwiper2 from "@/components/ReviewSwiper2";
 
 const objectifs = [
   {
-    icon: <Agreement01Icon size={34} color="black" className="" />,
     title: "Rencontrer de nouvelles personnes",
     text: (
       <p className="text-justify">
@@ -43,7 +42,6 @@ const objectifs = [
     ),
   },
   {
-    icon: <BookBookmark01Icon size={34} color="black" className="" />,
     title: "Vivre des expériences uniques",
     text: (
       <p className="text-justify">
@@ -63,7 +61,6 @@ const objectifs = [
     ),
   },
   {
-    icon: <PaintBoardIcon size={34} color="black" className="" />,
     title: "Découvrir des pépites littéraires",
     text: (
       <p className="text-justify">
@@ -107,9 +104,7 @@ export default function Home() {
     location: "",
     address: "",
     ticketLink: "",
-    tagline: "",
-    description: "",
-    programCards: [],
+    partners: [],
   });
 
   useEffect(() => {
@@ -118,7 +113,6 @@ export default function Home() {
     });
 
     axios.get("/api/events?closest=true").then((res) => {
-      console.log("ndsjknvkj", res.data);
       setNextEvent(res.data);
     });
   }, []);
@@ -192,34 +186,6 @@ export default function Home() {
             Prochain événement
           </h1>
           {/* POLAROIDS */}
-          {/* <div className="hidden md:flex justify-center items-center">
-            <div className="shadow-md w-1/2 border rounded-t -rotate-6 h-fit">
-              <div className="border-[1.2rem] border-white w-full aspect-square relative rounded-t">
-                <Image
-                  aria-hidden
-                  src="/brunch.jpg"
-                  alt="File icon"
-                  objectFit="cover"
-                  fill
-                  className="shadow"
-                />
-              </div>
-              <div className="bg-white w-full h-12 -mt-1 rounded-b"> </div>
-            </div>
-            <div className="shadow-md w-1/2 border rounded-t rotate-12 -ml-10 h-fit">
-              <div className="border-[1.2rem] border-white w-full aspect-square relative rounded-t">
-                <Image
-                  aria-hidden
-                  src="/books.jpg"
-                  alt="File icon"
-                  objectFit="cover"
-                  fill
-                  className="shadow"
-                />
-              </div>
-              <div className="bg-white w-full h-12 -mt-1 rounded-b"></div>
-            </div>
-          </div> */}
           <div className="h-full w-full flex -mt-2">
             {/* pol 1 */}
             <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-x-12 rotate-6 z-0 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-left ease-in">
@@ -310,15 +276,6 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <p className="hidden">
-            Lorem ipsum odor amet, consectetuer adipiscing elit. Et amet
-            convallis adipiscing hac posuere turpis. Malesuada tincidunt
-            vulputate eget elit sed fringilla habitasse felis? Malesuada
-            malesuada varius inceptos; volutpat eros quis. Est vulputate
-            porttitor blandit accumsan nascetur nisl odio. Efficitur consectetur
-            erat ornare velit tristique suspendisse. Porta inceptos quis dolor
-            maximus habitasse semper tortor netus nibh.
-          </p>
 
           <div className="m-auto mt-4">
             <Countdown

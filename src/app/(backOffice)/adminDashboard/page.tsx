@@ -6,25 +6,40 @@ import "@uploadcare/react-uploader/core.css";
 import UploadedImagesGrid from "@/components/UploadedImagesGrid";
 import { Toaster, toast } from "react-hot-toast";
 import { deleteUcareImg } from "@/app/utils/imageManager";
+import Loader from "@/components/Loader";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const AdminDashboard = () => {
-  const [images, setImages] = useState<{ uuid: ""; name: "" }[]>([]);
-  const [newImages, setNewImages] = useState<{ uuid: ""; name: "" }[]>([]);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  const [images, setImages] = useState<{ uuid: string; name: string }[]>([]);
+  const [newImages, setNewImages] = useState<{ uuid: string; name: string }[]>(
+    []
+  );
   const [uploaderKey, setUploaderKey] = useState(0);
   const remainingImages = 20 - images.length;
 
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/adminDashboard/login");
+    }
+  }, [status, router]);
+
   // get existing images from database
   useEffect(() => {
-    axios
-      .get("/api/gallery")
-      .then((res) => {
-        setImages(res.data);
-      })
-      .catch((error) => {
-        console.error("Erreur lors du chargement des images", error);
-        toast.error("Erreur lors du chargement des images");
-      });
-  }, []);
+    if (status === "authenticated") {
+      axios
+        .get("/api/gallery")
+        .then((res) => setImages(res.data))
+        .catch((error) => {
+          console.error("Erreur lors du chargement des images", error);
+          toast.error("Erreur lors du chargement des images");
+        })
+        .finally(() => setIsLoading(false));
+    }
+  }, [status]);
 
   // adding new images to the state
   const handleImages = (file: any) => {
@@ -46,7 +61,7 @@ const AdminDashboard = () => {
         },
       });
       if (type === "new") {
-        setNewImages(newImages.filter((image) => image.uuid !== uuid));
+        setNewImages((prev) => prev.filter((img) => img.uuid !== uuid));
         toast.success("Image supprimée !", {
           duration: 4000,
         });
@@ -54,13 +69,14 @@ const AdminDashboard = () => {
       if (type === "initial") {
         const response = await axios.delete("/api/gallery", { data: { uuid } });
         if (response.status === 200) {
-          setImages(images.filter((image) => image.uuid !== uuid));
+          setImages((prev) => prev.filter((img) => img.uuid !== uuid));
           toast.success("Image supprimée !", {
             duration: 4000,
           });
         }
       }
     } catch (error) {
+      console.error("Erreur lors de la suppression de l'image", error);
       toast.error("Erreur lors de la suppression de l'image");
     }
   };
@@ -75,7 +91,6 @@ const AdminDashboard = () => {
       if (response.status === 201) {
         setUploaderKey((prevKey) => prevKey + 1);
         setImages((prevImages) => [...prevImages, ...newImages]);
-        setUploaderKey((prevKey) => prevKey);
         setNewImages([]);
       }
 
@@ -83,6 +98,10 @@ const AdminDashboard = () => {
         duration: 4000,
       });
     } catch (error) {
+      console.error(
+        "Erreur lors de la mise à jour de la gallerie d'images",
+        error
+      );
       toast.error("Erreur lors de la mise à jour de la gallerie d'images");
     }
   };
@@ -93,9 +112,13 @@ const AdminDashboard = () => {
       setNewImages([]);
       setUploaderKey((prevKey) => prevKey + 1);
     } catch (error) {
+      console.error("Erreur lors de l'annulation de l'ajout d'images", error);
       toast.error("Erreur lors de l'annulation de l'ajout d'images");
     }
   };
+
+  if (isLoading || status === "loading")
+    return <Loader fullWidth={status !== "authenticated"} />;
 
   return (
     <div>
@@ -140,7 +163,7 @@ const AdminDashboard = () => {
                   deleteHandler={(uuid) => {
                     deleteImage(uuid, "new");
                   }}
-                  gridCols={"md:grid-cols-4"}
+                  gridCols={"md:grid-cols-3 lg:grid-cols-4"}
                 />
               )}
 
@@ -199,7 +222,7 @@ const AdminDashboard = () => {
             deleteHandler={(uuid) => {
               deleteImage(uuid, "initial");
             }}
-            gridCols={"md:grid-cols-4"}
+            gridCols={"md:grid-cols-3 lg:grid-cols-4"}
             min={10}
           />
         )}

@@ -5,6 +5,9 @@ import { PencilEdit02Icon, Delete02Icon } from "hugeicons-react";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import { Toaster, toast } from "react-hot-toast";
 import { Review } from "@/interfaces/interfaces";
+import Loader from "@/components/Loader";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const initialState = {
   name: "",
@@ -12,22 +15,34 @@ const initialState = {
 };
 
 const Reviews = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [newReview, setNewReview] = useState<Review>(initialState);
   const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const reversedReviews = useMemo(() => [...reviews].reverse(), [reviews]);
 
   useEffect(() => {
-    axios
-      .get("/api/reviews")
-      .then((res) => setReviews(res.data))
-      .catch((error) => {
-        console.error("Erreur lors du chargement des avis", error);
-        toast.error("Erreur lors du chargement des avis");
-      });
-  }, []);
+    if (status === "unauthenticated") {
+      router.replace("/adminDashboard/login");
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      axios
+        .get("/api/reviews")
+        .then((res) => setReviews(res.data))
+        .catch((error) => {
+          console.error("Erreur lors du chargement des avis", error);
+          toast.error("Erreur lors du chargement des avis");
+        })
+        .finally(() => setIsLoading(false));
+    }
+  }, [status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,8 +78,10 @@ const Reviews = () => {
       }
     } catch (error) {
       if (isEditing) {
+        console.error("Erreur lors de la mise à jour de l'avis", error);
         toast.error("Erreur lors de la mise à jour de l'avis");
       } else {
+        console.error("Erreur lors de l'ajout de l'avis", error);
         toast.error("Erreur lors de l'ajout de l'avis");
       }
     }
@@ -85,6 +102,7 @@ const Reviews = () => {
         });
       }
     } catch (error) {
+      console.error("Erreur lors de la suppression de l'avis", error);
       toast.error("Erreur lors de la suppression de l'avis");
     }
   };
@@ -111,10 +129,13 @@ const Reviews = () => {
   const handleCancel = () => {
     if (isEditing) {
       setIsEditing(false);
-      setSelectedId("");
+      setSelectedId(null);
     }
     setNewReview(initialState);
   };
+
+  if (isLoading || status === "loading")
+    return <Loader fullWidth={status !== "authenticated"} />;
 
   return (
     <div>
@@ -134,8 +155,9 @@ const Reviews = () => {
             id="name"
             value={newReview.name}
             onChange={(e) =>
-              setNewReview({ ...newReview, name: e.target.value })
+              setNewReview({ ...newReview, name: e.target.value.trimStart() })
             }
+            minLength={2}
             className="bg-gray-200 px-4 py-2 rounded"
           />
         </div>
@@ -146,8 +168,12 @@ const Reviews = () => {
             id="content"
             value={newReview.content}
             onChange={(e) =>
-              setNewReview({ ...newReview, content: e.target.value })
+              setNewReview({
+                ...newReview,
+                content: e.target.value.trimStart(),
+              })
             }
+            minLength={3}
             className="bg-gray-200 px-4 py-2 rounded field-sizing-content min-h-16"
           ></textarea>
         </div>
@@ -192,7 +218,7 @@ const Reviews = () => {
           Aucun avis n'a été ajouté pour le moment
         </p>
       ) : (
-        <ul className="grid md:grid-cols-2 gap-4">
+        <ul className="grid lg:grid-cols-2 gap-4">
           {reversedReviews.map((review) => (
             <li
               key={review._id}

@@ -33,7 +33,7 @@ const PartnersSlider = () => {
                   src={`/partenaire${partner}.png`}
                   alt="Partenaire 1" // dynamic when back office okay
                   fill
-                  objectFit="contain"
+                  className="object-contain"
                 />
               </div>
             </SwiperSlide>

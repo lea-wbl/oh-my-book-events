@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import { Caprasimo, Raleway, Sacramento } from "next/font/google";
-import MarkerShapeFilter from "@/components/MarkerShapeFilter";
-import Sidebar from "@/components/Sidebar";
+import Providers from "@/app/providers";
 
 const caprasimo = Caprasimo({
   variable: "--font-caprasimo",
@@ -32,7 +31,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default function BackOfficeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -42,9 +41,7 @@ export default function RootLayout({
       <body
         className={`${sacramento.variable} ${caprasimo.variable} ${raleway.className} antialiased flex min-h-screen`}
       >
-        <MarkerShapeFilter />
-        <Sidebar />
-        <main className="flex-1 p-8 pt-16 md:p-16 lg:ml-64">{children}</main>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

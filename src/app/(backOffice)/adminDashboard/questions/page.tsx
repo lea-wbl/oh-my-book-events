@@ -5,6 +5,9 @@ import { PencilEdit02Icon, Delete02Icon } from "hugeicons-react";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import { Toaster, toast } from "react-hot-toast";
 import { Question } from "@/interfaces/interfaces";
+import Loader from "@/components/Loader";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const initialState = {
   question: "",
@@ -12,10 +15,13 @@ const initialState = {
 };
 
 const Questions = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState<Question>(initialState);
   const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const reversedQuestions = useMemo(
     () => [...questions].reverse(),
@@ -23,14 +29,23 @@ const Questions = () => {
   );
 
   useEffect(() => {
-    axios
-      .get("/api/questions")
-      .then((res) => setQuestions(res.data))
-      .catch((error) => {
-        console.error("Erreur lors du chargement des questions", error);
-        toast.error("Erreur lors du chargement des questions");
-      });
-  }, []);
+    if (status === "unauthenticated") {
+      router.replace("/adminDashboard/login");
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      axios
+        .get("/api/questions")
+        .then((res) => setQuestions(res.data))
+        .catch((error) => {
+          console.error("Erreur lors du chargement des questions", error);
+          toast.error("Erreur lors du chargement des questions");
+        })
+        .finally(() => setIsLoading(false));
+    }
+  }, [status]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,8 +81,10 @@ const Questions = () => {
       }
     } catch (error) {
       if (isEditing) {
+        console.error("Erreur lors de la mise à jour de la question", error);
         toast.error("Erreur lors de la mise à jour de la question");
       } else {
+        console.error("Erreur lors de l'ajout de la question", error);
         toast.error("Erreur lors de l'ajout de la question");
       }
     }
@@ -88,6 +105,7 @@ const Questions = () => {
         });
       }
     } catch (error) {
+      console.error("Erreur lors de la suppression de la question", error);
       toast.error("Erreur lors de la suppression de la question");
     }
   };
@@ -114,13 +132,16 @@ const Questions = () => {
   const handleCancel = () => {
     if (isEditing) {
       setIsEditing(false);
-      setSelectedId("");
+      setSelectedId(null);
     }
     setNewQuestion(initialState);
   };
 
+  if (isLoading || status === "loading")
+    return <Loader fullWidth={status !== "authenticated"} />;
+
   return (
-    <div>
+    <div className="mx-auto max-w-screen-xl ">
       <Toaster position="top-right" />
 
       <h1 className="text-2xl font-bold mb-8">FAQ</h1>
@@ -137,7 +158,10 @@ const Questions = () => {
             id="question"
             value={newQuestion.question}
             onChange={(e) =>
-              setNewQuestion({ ...newQuestion, question: e.target.value })
+              setNewQuestion({
+                ...newQuestion,
+                question: e.target.value.trimStart(),
+              })
             }
             className="bg-gray-200 px-4 py-2 rounded"
           />
@@ -149,7 +173,10 @@ const Questions = () => {
             id="answer"
             value={newQuestion.answer}
             onChange={(e) =>
-              setNewQuestion({ ...newQuestion, answer: e.target.value })
+              setNewQuestion({
+                ...newQuestion,
+                answer: e.target.value.trimStart(),
+              })
             }
             className="bg-gray-200 px-4 py-2 rounded field-sizing-content min-h-16"
           ></textarea>
@@ -195,7 +222,7 @@ const Questions = () => {
           Aucune question n'a été ajouté pour le moment
         </p>
       ) : (
-        <ul className="grid md:grid-cols-2 gap-4">
+        <ul className="grid lg:grid-cols-2 gap-4">
           {reversedQuestions.map((q) => (
             <li
               key={q._id}

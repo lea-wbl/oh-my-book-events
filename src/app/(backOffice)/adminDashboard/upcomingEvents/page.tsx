@@ -10,6 +10,9 @@ import { Event } from "@/interfaces/interfaces";
 import { Toaster, toast } from "react-hot-toast";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import UploadedImagesGrid from "@/components/UploadedImagesGrid";
+import Loader from "@/components/Loader";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const initialState = {
   images: [],
@@ -26,6 +29,9 @@ const initialState = {
 };
 
 const UpcomingEvents = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [initialEvent, setInitialEvent] = useState(initialState);
   const [events, setEvents] = useState<Event[]>([]);
   const [newEvent, setNewEvent] = useState<Event>(initialEvent);
@@ -34,36 +40,45 @@ const UpcomingEvents = () => {
   );
   const [uploaderKey, setUploaderKey] = useState(0);
   const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/adminDashboard/login");
+    }
+  }, [status, router]);
 
   // EVENT TYPES HANDLING **********************************************
   // Retrieve event types name for the select input
   useEffect(() => {
-    axios
-      .get("/api/eventTypes?field=name")
-      .then((res) => setEventTypes(res.data))
-      .catch((error) => {
-        console.error("Erreur lors du chargement des types d'événement", error);
-        toast.error("Erreur lors du chargement des types d'événement");
-      });
-  }, []);
+    if (status === "authenticated") {
+      axios
+        .get("/api/eventTypes?field=name")
+        .then((res) => {
+          setEventTypes(res.data);
 
-  // Adding the first event type as default
-  useEffect(() => {
-    if (eventTypes.length > 0) {
-      setNewEvent({
-        ...newEvent,
-        type: eventTypes[0].name,
-        typeId: eventTypes[0]._id,
-      });
-      setInitialEvent({
-        ...initialState,
-        type: eventTypes[0].name,
-        typeId: eventTypes[0]._id,
-      });
+          // Adding the first event type as default
+          setInitialEvent({
+            ...initialState,
+            type: res.data[0].name,
+            typeId: res.data[0]._id,
+          });
+          setNewEvent({
+            ...initialState,
+            type: res.data[0].name,
+            typeId: res.data[0]._id,
+          });
+        })
+        .catch((error) => {
+          console.error(
+            "Erreur lors du chargement des types d'événement",
+            error
+          );
+          toast.error("Erreur lors du chargement des types d'événement");
+        });
     }
-  }, [eventTypes]);
+  }, [status]);
 
   // EVENT HANDLING ****************************************************
   // Retrieve existing events
@@ -74,7 +89,8 @@ const UpcomingEvents = () => {
       .catch((error) => {
         console.error("Erreur lors du chargement des événements", error);
         toast.error("Erreur lors du chargement des événements");
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   // Create or update an event
@@ -131,8 +147,10 @@ const UpcomingEvents = () => {
       }
     } catch (error) {
       if (isEditing) {
+        console.error("Erreur lors de la mise à jour de l'événement", error);
         toast.error("Erreur lors de la mise à jour de l'événement");
       } else {
+        console.error("Erreur lors de l'ajout de l'événement", error);
         toast.error("Erreur lors de l'ajout de l'événement");
       }
     }
@@ -152,6 +170,7 @@ const UpcomingEvents = () => {
         });
       }
     } catch (error) {
+      console.error("Erreur lors de la suppression de l'événement", error);
       toast.error("Erreur lors de la suppression de l'événement");
     }
   };
@@ -206,13 +225,16 @@ const UpcomingEvents = () => {
         await deleteImages(imgIdsToDelete.map((uuid) => ({ uuid })));
       }
       setIsEditing(false);
-      setSelectedId("");
+      setSelectedId(null);
     }
     await deleteImages(newEvent.images);
     await deleteImages(newEvent.partners);
     setNewEvent(initialEvent);
     setUploaderKey((prevKey) => prevKey + 1);
   };
+
+  if (isLoading || status === "loading")
+    return <Loader fullWidth={status !== "authenticated"} />;
 
   return (
     <div>
@@ -255,7 +277,7 @@ const UpcomingEvents = () => {
         />
       </div>
       {/* FORM */}
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="grid md:flex gap-4">
           {/* NOM */}
           <div className="grid flex-1 gap-1">
@@ -265,8 +287,9 @@ const UpcomingEvents = () => {
               id="name"
               value={newEvent.name}
               onChange={(e) =>
-                setNewEvent({ ...newEvent, name: e.target.value })
+                setNewEvent({ ...newEvent, name: e.target.value.trimStart() })
               }
+              minLength={3}
               className="bg-gray-200 px-4 py-2 rounded"
             />
           </div>
@@ -277,7 +300,7 @@ const UpcomingEvents = () => {
             <select
               name="eventType"
               id="eventType"
-              className="bg-gray-200 px-4 py-2 rounded"
+              className="bg-gray-200 px-4 py-2 rounded h-10"
               value={newEvent.type}
               onChange={(e) => {
                 const selectedType = eventTypes.find(
@@ -301,10 +324,10 @@ const UpcomingEvents = () => {
           </div>
         </div>
 
-        <div className="grid md:flex gap-4">
+        <div className="grid lg:flex gap-4">
           <div className="flex gap-4 flex-1">
             {/* DATE */}
-            <div className="grid flex-1 gap-1">
+            <div className="flex flex-col gap-1">
               <label htmlFor="date">Date de l'événement</label>
               <input
                 type="date"
@@ -313,20 +336,20 @@ const UpcomingEvents = () => {
                 onChange={(e) =>
                   setNewEvent({ ...newEvent, date: e.target.value })
                 }
-                className="bg-gray-200 px-4 py-2 rounded"
+                className="bg-gray-200 px-4 py-2 rounded h-10"
               />
             </div>
 
             {/* HORAIRES */}
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1 flex-1">
               <span>Horaires de l'événement</span>
-              <div className="flex gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="flex gap-4 items-baseline flex-1 md:flex-0">
                   <label htmlFor="timeStart">De:</label>
                   <input
                     type="time"
                     id="timeStart"
-                    className="bg-gray-200 px-4 py-2 rounded flex-1 md:flex-0"
+                    className="bg-gray-200 px-4 py-2 rounded flex-1 md:flex-0 h-10"
                     value={newEvent.timeStart}
                     onChange={(e) => {
                       setNewEvent({ ...newEvent, timeStart: e.target.value });
@@ -339,7 +362,7 @@ const UpcomingEvents = () => {
                   <input
                     type="time"
                     id="timeEnd"
-                    className="bg-gray-200 px-4 py-2 rounded flex-1 md:flex-0"
+                    className="bg-gray-200 px-4 py-2 rounded flex-1 md:flex-0 h-10"
                     value={newEvent.timeEnd}
                     onChange={(e) => {
                       setNewEvent({ ...newEvent, timeEnd: e.target.value });
@@ -358,7 +381,10 @@ const UpcomingEvents = () => {
               id="ticketLink"
               value={newEvent.ticketLink}
               onChange={(e) =>
-                setNewEvent({ ...newEvent, ticketLink: e.target.value })
+                setNewEvent({
+                  ...newEvent,
+                  ticketLink: e.target.value.trimStart(),
+                })
               }
               className="bg-gray-200 px-4 py-2 rounded"
             />
@@ -374,8 +400,12 @@ const UpcomingEvents = () => {
               id="location"
               value={newEvent.location}
               onChange={(e) =>
-                setNewEvent({ ...newEvent, location: e.target.value })
+                setNewEvent({
+                  ...newEvent,
+                  location: e.target.value.trimStart(),
+                })
               }
+              minLength={2}
               className="bg-gray-200 px-4 py-2 rounded"
             />
           </div>
@@ -386,45 +416,47 @@ const UpcomingEvents = () => {
               id="location"
               value={newEvent.address}
               onChange={(e) =>
-                setNewEvent({ ...newEvent, address: e.target.value })
+                setNewEvent({
+                  ...newEvent,
+                  address: e.target.value.trimStart(),
+                })
               }
+              minLength={2}
               className="bg-gray-200 px-4 py-2 rounded"
             />
           </div>
         </div>
-      </form>
 
-      {/* PARTNERSHIPS */}
-      <div className="mt-4 grid gap-4">
-        <div className="grid gap-1">
-          <label>Logos des partenaires</label>
-          <FileUploaderRegular
-            key={uploaderKey + 1}
-            sourceList="local, camera, gdrive"
-            cameraModes="photo"
-            classNameUploader="uc-light uc-orange"
-            pubkey="1f20d7f5d1614fe8cf9a"
-            multiple={true}
-            onChange={(file) => handleNewEventImages(file, "partners")}
+        {/* PARTNERSHIPS */}
+        <div className="mt-4 grid gap-4">
+          <div className="grid gap-1">
+            <label>Logos des partenaires</label>
+            <FileUploaderRegular
+              key={uploaderKey + 1}
+              sourceList="local, camera, gdrive"
+              cameraModes="photo"
+              classNameUploader="uc-light uc-orange"
+              pubkey="1f20d7f5d1614fe8cf9a"
+              multiple={true}
+              onChange={(file) => handleNewEventImages(file, "partners")}
+            />
+          </div>
+          <UploadedImagesGrid
+            images={newEvent.partners}
+            deleteHandler={(uuid) => {
+              if (!isEditing) deleteUcareImg(uuid);
+              setNewEvent({
+                ...newEvent,
+                partners: newEvent.partners.filter(
+                  (partner) => partner.uuid !== uuid
+                ),
+              });
+            }}
+            gridCols={"md:grid-cols-3 lg:grid-cols-4"}
           />
         </div>
-        <UploadedImagesGrid
-          images={newEvent.partners}
-          deleteHandler={(uuid) => {
-            if (!isEditing) deleteUcareImg(uuid);
-            setNewEvent({
-              ...newEvent,
-              partners: newEvent.partners.filter(
-                (partner) => partner.uuid !== uuid
-              ),
-            });
-          }}
-          gridCols={"md:grid-cols-4"}
-        />
-      </div>
 
-      <div className="flex justify-end gap-4 mt-6">
-    
+        <div className="flex justify-end gap-4 mt-6">
           <button
             type="button"
             onClick={handleCancel}
@@ -438,20 +470,22 @@ const UpcomingEvents = () => {
             Annuler
           </button>
 
-        <button
-          onClick={handleSubmit}
-          className={`bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold border-2 border-orange-400 ${
-            JSON.stringify(newEvent) === JSON.stringify(initialEvent)
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:text-orange-400 hover:bg-white"
-          }`}
-          disabled={JSON.stringify(newEvent) === JSON.stringify(initialEvent)}
-        >
-          {isEditing
-            ? "Modifier l'événement"
-            : "Ajouter aux événements à venir"}
-        </button>
-      </div>
+          <button
+            type="submit"
+            // onClick={handleSubmit}
+            className={`bg-orange-400 text-white px-4 py-2 w-fit self-end rounded font-semibold border-2 border-orange-400 ${
+              JSON.stringify(newEvent) === JSON.stringify(initialEvent)
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:text-orange-400 hover:bg-white"
+            }`}
+            disabled={JSON.stringify(newEvent) === JSON.stringify(initialEvent)}
+          >
+            {isEditing
+              ? "Modifier l'événement"
+              : "Ajouter aux événements à venir"}
+          </button>
+        </div>
+      </form>
 
       <hr className="my-8" />
 
@@ -463,7 +497,7 @@ const UpcomingEvents = () => {
           Aucun événement à venir n'a été ajouté pour le moment
         </p>
       ) : (
-        <ul className="grid md:grid-cols-2 gap-4">
+        <ul className="grid lg:grid-cols-2 gap-4">
           {events.map((event, index) => (
             <li
               key={index}
