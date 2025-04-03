@@ -3,22 +3,16 @@
 import CardsSwiper from "@/components/CardsSwiper";
 import Countdown from "@/components/Countdown";
 import DynamicSwiper from "@/components/DynamicSwiper";
-import FlipCountdown from "@/components/FlipCountdown";
 import LandingSwiper from "@/components/LandingSwiper";
 import PartnersSlider from "@/components/PartnersSlider";
-import ReviewSwiper from "@/components/ReviewSwiper";
 import Image from "next/image";
-import {
-  Location04Icon,
-  Clock05Icon,
-  Agreement01Icon,
-  BookBookmark01Icon,
-  PaintBoardIcon,
-} from "hugeicons-react";
+import { Location04Icon, Clock05Icon } from "hugeicons-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Event } from "@/interfaces/interfaces";
 import ReviewSwiper2 from "@/components/ReviewSwiper2";
+import toast from "react-hot-toast";
+import Loader from "@/components/Loader";
 
 const objectifs = [
   {
@@ -106,21 +100,31 @@ export default function Home() {
     ticketLink: "",
     partners: [],
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     axios.get("/api/gallery").then((res) => {
       setSliderImages(res.data);
     });
 
-    axios.get("/api/events?closest=true").then((res) => {
-      setNextEvent(res.data);
-    });
+    axios
+      .get("/api/events?closest=true")
+      .then((res) => {
+        setNextEvent(res.data);
+      })
+      .catch((error) => {
+        console.error("Erreur lors du chargement de l'événement", error);
+        toast.error("Erreur lors du chargement de l'événement");
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const mixUpArray = (arr: any[]) => {
     let middle = Math.floor(arr.length / 2);
     return arr.slice(middle).concat(arr.slice(0, middle));
   };
+
+  if (isLoading) return <Loader />;
 
   return (
     <div>
@@ -157,7 +161,7 @@ export default function Home() {
             </p>{" "}
             <p className="relative z-10 text-3xl md:text-[2.5rem] text-center font-bold leading-[3.2rem] -mt-6 highlighter px-6 text-white">
               en{" "}
-              <span className="mx-2 text-5xl md:text-7xl font-handwritten align-bottom">
+              <span className="mx-2 text-5xl md:text-7xl !leading-[3.2rem] font-handwritten align-bottom">
                 souvenirs
               </span>{" "}
               uniques
@@ -192,7 +196,8 @@ export default function Home() {
               <div className="bg-gray-300 w-52 aspect-square">
                 <Image
                   aria-hidden
-                  src="/presentation.jpg"
+                  // src="/presentation.jpg"
+                  src={`https://ucarecdn.com/${nextEvent.images[0].uuid}/`}
                   alt="File icon"
                   fill
                   className="shadow object-cover"
@@ -204,7 +209,8 @@ export default function Home() {
               <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
                 <Image
                   aria-hidden
-                  src="/library.jpg"
+                  // src="/library.jpg"
+                  src={`https://ucarecdn.com/${nextEvent.images[1].uuid}/`}
                   alt="File icon"
                   fill
                   className="shadow object-cover"
@@ -216,7 +222,8 @@ export default function Home() {
               <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
                 <Image
                   aria-hidden
-                  src="/books.jpg"
+                  // src="/books.jpg"
+                  src={`https://ucarecdn.com/${nextEvent.images[2].uuid}/`}
                   alt="File icon"
                   fill
                   className="shadow object-cover"

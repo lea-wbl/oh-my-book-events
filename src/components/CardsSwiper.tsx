@@ -84,7 +84,9 @@ export default function CardsSwiper() {
           >
             <div className="w-full aspect-square flex flex-col justify-center p-2">
               <cite className="block font-bold">{review.name}</cite>
-              <blockquote className="mt-4 italic">{review.content}</blockquote>
+              <blockquote className="mt-4 italic whitespace-pre-line">
+                {review.content}
+              </blockquote>
             </div>
           </SwiperSlide>
         ))}

@@ -4,7 +4,6 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { InstagramIcon, TiktokIcon } from "hugeicons-react";
-import MaxWidthWrapper from "./MaxWidthWrapper";
 
 const Footer = () => {
   return (
@@ -15,7 +14,7 @@ const Footer = () => {
           className="absolute top-0 left-0 h-full w-full rotate-180 z-0"
           style={{ boxShadow: "0px 5px 10px 0px rgb(179 96 103 / 10%)" }}
         ></div>
-        <MaxWidthWrapper>
+        <div className="mx-auto w-full max-w-screen-2xl px-6 md:px-12 py-8 md:py-12">
           <div className="bg-[#FCC0C5] flex flex-col md:flex-row gap-8 md:gap-4 justify-around relative z-10">
             <Image
               src="/heart-doodle.png"
@@ -119,7 +118,7 @@ const Footer = () => {
               />
             </div>
           </div>
-        </MaxWidthWrapper>
+        </div>
       </div>
 
       {/* FOOTER INFOS */}

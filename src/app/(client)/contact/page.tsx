@@ -4,7 +4,6 @@ import axios from "axios";
 import { InstagramIcon, TiktokIcon } from "hugeicons-react";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import Link from "next/link";
 
 const Contact = () => {
@@ -57,7 +56,7 @@ const Contact = () => {
 
   return (
     <div className="bg-[#F6838D]">
-      <MaxWidthWrapper className="flex flex-col md:flex-row gap-4 md:gap-0 items-center bg-[#F6838D] bg-chiant md:h-screen-minus-header h-fit">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-0 items-center bg-[#F6838D] bg-chiant md:h-screen-minus-header h-fit">
         <div className="md:w-1/2">
           <div className="relative">
             <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
@@ -83,7 +82,9 @@ const Contact = () => {
               <div className="flex-col gap-4 hidden md:flex">
                 <p className="font-semibold">{contactInfo.email}</p>
                 {contactInfo.tel && (
-                  <p className="font-semibold">{contactInfo.tel.replace(/(.{2})/g, "$1 ")}</p>
+                  <p className="font-semibold">
+                    {contactInfo.tel.replace(/(.{2})/g, "$1 ")}
+                  </p>
                 )}
                 <div className="flex gap-4 ml-[-2px]">
                   {contactInfo.ig && (
@@ -205,7 +206,7 @@ const Contact = () => {
             <TiktokIcon size={32} color="white" className="cursor-pointer" />
           </div>
         </div>
-      </MaxWidthWrapper>
+      </div>
     </div>
   );
 };

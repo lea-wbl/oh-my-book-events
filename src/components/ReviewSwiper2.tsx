@@ -101,9 +101,8 @@ const ReviewSwiper2 = () => {
         {reviews.map((review, index) => (
           <SwiperSlide key={review._id} className="p-4">
             <div
-              className="grid items-center sticky-note p-8 aspect-square overflow-scroll relative shadow-lg"
+              className="grid items-center sticky-note p-8 aspect-square overflow-scroll relative shadow-lg overflow-y-scroll"
               style={{
-                // backgroundImage: `url(${quotes[index % quotes.length]})`,
                 transform: `rotate(${randomRotation(index)})`,
               }}
             >
@@ -117,7 +116,7 @@ const ReviewSwiper2 = () => {
                 priority
               />
               <div className="flex flex-col gap-4 z-10">
-                <blockquote className="mt-2 italic">
+                <blockquote className="mt-2 italic whitespace-pre-line">
                   {review.content}
                 </blockquote>
                 <cite className="block not-italic font-bold h-fit text-right">

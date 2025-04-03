@@ -36,8 +36,7 @@ const LandingSwiper: FC<LandingSwiperProps> = ({
           delay: 3000,
           disableOnInteraction: false,
         }}
-        loop={false}
-        // centeredSlides
+        loop={true}
         className={`${mobileOnly && "block md:hidden"} landingSwiper`}
       >
         {images.map((image, index) => (
