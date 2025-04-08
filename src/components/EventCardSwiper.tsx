@@ -19,7 +19,7 @@ const EventCardSwiper: FC<EventCardSwiperProps> = ({
   const boop = [...slides, ...slides, ...slides];
   return (
     <Swiper
-      slidesPerView={2}
+      slidesPerView={1}
       spaceBetween={32}
       pagination={true}
       modules={[Pagination]}

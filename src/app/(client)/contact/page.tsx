@@ -55,8 +55,8 @@ const Contact = () => {
   };
 
   return (
-    <div className="bg-[#F6838D]">
-      <div className="flex flex-col md:flex-row gap-4 md:gap-0 items-center bg-[#F6838D] bg-chiant md:h-screen-minus-header h-fit">
+    <section className="grid bg-OMBpink bg-chiant px-6 py-8 md:p-12 md:h-screen-minus-header h-fit">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-0 items-center w-full max-w-screen-2xl mx-auto">
         <div className="md:w-1/2">
           <div className="relative">
             <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
@@ -131,9 +131,9 @@ const Contact = () => {
           </div>
         </div>
 
-        <div className="w-full md:w-1/2 grid content-center shadow-md rounded-xl md:rounded-3xl">
+        <div className="w-full md:w-1/2 grid content-center shadow-lg rounded-xl">
           <form
-            className="flex flex-col gap-4 bg-white rounded-xl md:rounded-3xl p-6 md:p-8"
+            className="flex flex-col gap-4 bg-white rounded-xl p-6 md:p-8"
             onSubmit={handleSubmit}
           >
             <label htmlFor="name" className="sr-only">
@@ -207,7 +207,7 @@ const Contact = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

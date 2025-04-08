@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
+import styles from "./BurgerMenuBtn.module.css";
 
 interface IProps {
   open: boolean;
@@ -8,8 +9,7 @@ interface IProps {
 const BurgerMenuBtn = ({ open, setOpen }: IProps) => {
   return (
     <div
-      id="nav-icon3"
-      className={`${open && "open"} md:hidden`}
+      className={`${styles.burgerIcon} ${open ? styles.open : ""} md:hidden`}
       onClick={() => setOpen(!open)}
     >
       <span className="bg-red-200"></span>

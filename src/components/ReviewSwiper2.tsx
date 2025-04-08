@@ -12,55 +12,6 @@ import { Pagination } from "swiper/modules";
 import axios from "axios";
 import Image from "next/image";
 
-// const reviews = [
-//   {
-//     id: 0,
-//     user: "Utilisatrice1",
-//     text: "Vous allez réaliser le rêve de plein de gens, je crois en vous !",
-//   },
-//   {
-//     id: 1,
-//     user: "Utilisateur2",
-//     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud aliquip ex ea commodo consequat.",
-//   },
-//   {
-//     id: 2,
-//     user: "Utilisatrice3",
-//     text: "Merci beaucoup pour votre travail exceptionnel !",
-//   },
-//   {
-//     id: 3,
-//     user: "Utilisatrice4",
-//     text: "Juste merci d'avoir eu cette idée folle. J'ai hâte de découvrir.",
-//   },
-//   {
-//     id: 4,
-//     user: "Utilisateur5",
-//     text: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-//   },
-//   {
-//     id: 5,
-//     user: "Utilisatrice6",
-//     text: "Vous allez réaliser le rêve de plein de gens, je crois en vous !",
-//   },
-//   {
-//     id: 6,
-//     user: "Utilisateur7",
-//     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud aliquip ex ea commodo consequat.",
-//   },
-//   {
-//     id: 7,
-//     user: "Utilisatrice8",
-//     text: "Merci beaucoup pour votre travail exceptionnel !",
-//   },
-// ];
-
-const bgImages = [
-  "/sticky-note-coral.png",
-  "/sticky-note-yellow.png",
-  "/sticky-note-pink.png",
-];
-
 const quotes = [
   "/quote-pink.png",
   "/quote-yellow.png",

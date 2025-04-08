@@ -15,7 +15,7 @@ const Footer = () => {
           style={{ boxShadow: "0px 5px 10px 0px rgb(179 96 103 / 10%)" }}
         ></div>
         <div className="mx-auto w-full max-w-screen-2xl px-6 md:px-12 py-8 md:py-12">
-          <div className="bg-[#FCC0C5] flex flex-col md:flex-row gap-8 md:gap-4 justify-around relative z-10">
+          <div className="bg-[#FCC0C5] flex flex-col md:flex-row gap-4 justify-around relative z-10">
             <Image
               src="/heart-doodle.png"
               alt="heart"
@@ -23,9 +23,9 @@ const Footer = () => {
               height={50}
               priority
               aria-hidden
-              className="w-10 md:w-16 h-auto absolute top-6 left-6 md:-top-4 md:left-6 rotate-[30deg] md:-rotate-6"
+              className="w-14 md:w-16 h-auto absolute top-0 left-8 md:-top-4 md:left-6 md:-rotate-6"
             />
-            <div className="flex gap-8 relative">
+            <div className="flex gap-8 relative justify-center md:justify-start">
               <div className="md:w-2/3">
                 <div className="grid justify-items-center gap-1 text-white">
                   <span className="text-4xl">Inscription</span>

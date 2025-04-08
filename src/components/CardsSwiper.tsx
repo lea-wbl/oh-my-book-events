@@ -57,7 +57,7 @@ export default function CardsSwiper() {
 
   return (
     <>
-      <svg style={{ display: "none" }}>
+      {/* <svg style={{ display: "none" }}>
         <defs>
           <filter id="noiseFilter">
             <feTurbulence
@@ -68,7 +68,7 @@ export default function CardsSwiper() {
             />
           </filter>
         </defs>
-      </svg>
+      </svg> */}
       <Swiper
         effect={"cards"}
         grabCursor={true}

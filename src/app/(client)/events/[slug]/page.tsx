@@ -7,7 +7,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Event } from "@/interfaces/interfaces";
-import DynamicSwiper from "@/components/DynamicSwiper";
 import EventCardSwiper from "@/components/EventCardSwiper";
 
 const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
@@ -22,7 +21,7 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
   });
   const [typeEvents, setTypeEvents] = useState<Event[]>([]);
   const slides = typeEvents.map((event) => (
-    <div className="bg-white rounded-xl w-full p-6 md:p-8 shadow-md relative flex gap-8">
+    <div className="bg-white rounded-xl w-full p-6 md:p-8 shadow-lg relative flex gap-8">
       <div className="w-2/3">
         <Image
           aria-hidden
@@ -115,55 +114,57 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
 
   return (
     <div>
-      <section className="px-6 py-8 md:px-16 md:py-16 h-screen-minus-header w-full bg-[#F6838D] custom-bg3 flex gap-12 relative text-white items-center">
-        {/* POLAROIDS */}
-        <div className="w-1/2 mx-auto relative h-full -ml-12">
-          {/* pol 1 */}
-          <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute bottom-0 left-1/2 transform rotate-12 z-20 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-bottom-right ease-in">
-            <div className="bg-gray-300 w-52 aspect-square">
-              <Image
-                aria-hidden
-                src="/presentation.jpg"
-                alt="File icon"
-                fill
-                className="shadow object-cover"
-              />
+      <section className="grid px-6 py-8 md:p-12 h-screen-minus-header w-full bg-OMBpink custom-bg3 text-white ">
+        <div className="flex gap-12 items-center max-w-screen-2xl mx-auto relative">
+          {/* POLAROIDS */}
+          <div className="w-1/2 mx-auto relative h-full -ml-12">
+            {/* pol 1 */}
+            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute bottom-0 left-1/2 transform rotate-12 z-20 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-bottom-right ease-in">
+              <div className="bg-gray-300 w-52 aspect-square">
+                <Image
+                  aria-hidden
+                  src="/presentation.jpg"
+                  alt="File icon"
+                  fill
+                  className="shadow object-cover"
+                />
+              </div>
+            </div>
+            {/* pol 2 */}
+            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute bottom-0 right-1/2 transform -rotate-6 z-0 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-bottom-left ease-in">
+              <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
+                <Image
+                  aria-hidden
+                  src="/books.jpg"
+                  alt="File icon"
+                  fill
+                  className="shadow object-cover"
+                />
+              </div>
+            </div>
+            {/* pol 3 */}
+            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute top-0 left-1/2 transform -translate-x-1/2 rotate-3 z-10 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-top ease-in">
+              <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
+                <Image
+                  aria-hidden
+                  src="/library.jpg"
+                  alt="File icon"
+                  fill
+                  className="shadow object-cover"
+                />
+              </div>
             </div>
           </div>
-          {/* pol 2 */}
-          <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute bottom-0 right-1/2 transform -rotate-6 z-0 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-bottom-left ease-in">
-            <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
-              <Image
-                aria-hidden
-                src="/books.jpg"
-                alt="File icon"
-                fill
-                className="shadow object-cover"
-              />
-            </div>
-          </div>
-          {/* pol 3 */}
-          <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute top-0 left-1/2 transform -translate-x-1/2 rotate-3 z-10 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-top ease-in">
-            <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
-              <Image
-                aria-hidden
-                src="/library.jpg"
-                alt="File icon"
-                fill
-                className="shadow object-cover"
-              />
-            </div>
-          </div>
-        </div>
 
-        {/* TEXT CONTENT */}
-        <div className="grid flex-1 h-fit gap-16">
-          <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
-            {eventType.name}
-          </h1>
-          <div className="flex flex-col gap-8">
-            <span className="font-bold text-lg">{eventType.leading}</span>
-            <p className="leading-7 font-semibold">{eventType.description}</p>
+          {/* TEXT CONTENT */}
+          <div className="grid flex-1 h-fit gap-16">
+            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
+              {eventType.name}
+            </h1>
+            <div className="flex flex-col gap-8">
+              <span className="font-bold text-lg">{eventType.leading}</span>
+              <p className="leading-7 font-semibold">{eventType.description}</p>
+            </div>
           </div>
         </div>
       </section>

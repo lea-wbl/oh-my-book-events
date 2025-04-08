@@ -11,6 +11,9 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        OMBpink: "var(--OMBpink)",
+        pastelPink: "var(--pastelPink)",
+        OMBorange: "var(--OMBorange)",
       },
       minHeight: {
         "screen-minus-header": "calc(100dvh - 5rem)",

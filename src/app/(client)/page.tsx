@@ -13,6 +13,8 @@ import { Event } from "@/interfaces/interfaces";
 import ReviewSwiper2 from "@/components/ReviewSwiper2";
 import toast from "react-hot-toast";
 import Loader from "@/components/Loader";
+import CustomSwiper from "@/components/CustomSwiper";
+import { randomRotation } from "../utils/tools";
 
 const objectifs = [
   {
@@ -85,8 +87,18 @@ const goalsSlides = objectifs.map((obj) => (
   </div>
 ));
 
+const quotes = [
+  "/quote-pink.png",
+  "/quote-yellow.png",
+  "/quote-pastel.png",
+  "/quote-orange.png",
+];
+
 export default function Home() {
   const [sliderImages, setSliderImages] = useState([]);
+  const [reviews, setReviews] = useState<
+    { _id: string; name: string; content: string }[]
+  >([]);
   const [nextEvent, setNextEvent] = useState<Event>({
     images: [],
     name: "",
@@ -101,10 +113,22 @@ export default function Home() {
     partners: [],
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize(); // Run on first mount
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     axios.get("/api/gallery").then((res) => {
       setSliderImages(res.data);
+    });
+
+    axios.get("/api/reviews").then((res) => {
+      setReviews(res.data);
     });
 
     axios
@@ -129,7 +153,7 @@ export default function Home() {
   return (
     <div>
       {/* LANDING V2 */}
-      <section className="flex flex-col h-screen-minus-header-mobile md:h-screen-minus-header bg-[#F6838D] md:py-6 py-0 gap-4 relative">
+      <section className="flex flex-col h-screen-minus-header-mobile md:h-screen-minus-header bg-OMBpink md:py-6 py-0 gap-4 relative">
         <LandingSwiper images={sliderImages} dir="ltr" mobileOnly={false} />
         <LandingSwiper
           images={mixUpArray(sliderImages)}
@@ -171,8 +195,8 @@ export default function Home() {
       </section>
 
       {/* GOALS */}
-      <section className="h-fit md:h-screen-minus-header bg-amber-200 custom-bg1 md:px-12 md:py-6 px-6 py-8 relative  overflow-hidden">
-        <div className="flex flex-col justify-center h-full gap-12 md:-mt-6">
+      <section className="h-fit md:h-screen-minus-header bg-amber-200 custom-bg1 md:p-12 px-6 py-8 relative overflow-hidden">
+        <div className="flex flex-col justify-center h-full gap-12 max-w-screen-2xl mx-auto">
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight2 relative z-0 w-fit">
             Pourquoi nous rejoindre ?
           </h1>
@@ -184,122 +208,124 @@ export default function Home() {
       </section>
 
       {/* UPCOMING EVENT */}
-      <section className="flex flex-col md:flex-row gap-12 h-fit md:h-screen-minus-header bg-[#FCC0C5] custom-bg2 md:p-12 py-12 items-center">
-        <div className="flex-1 flex flex-col justify-center gap-12 w-full md:w-1/2 self-start">
-          <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight4 relative z-0 w-fit">
-            Prochain événement
-          </h1>
-          {/* POLAROIDS */}
-          <div className="h-full w-full flex -mt-2">
-            {/* pol 1 */}
-            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-x-12 rotate-6 z-0 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-left ease-in">
-              <div className="bg-gray-300 w-52 aspect-square">
-                <Image
-                  aria-hidden
-                  // src="/presentation.jpg"
-                  src={`https://ucarecdn.com/${nextEvent.images[0].uuid}/`}
-                  alt="File icon"
-                  fill
-                  className="shadow object-cover"
-                />
-              </div>
-            </div>
-            {/* pol 2 */}
-            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-y-12 -rotate-2 z-10 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-center ease-in">
-              <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
-                <Image
-                  aria-hidden
-                  // src="/library.jpg"
-                  src={`https://ucarecdn.com/${nextEvent.images[1].uuid}/`}
-                  alt="File icon"
-                  fill
-                  className="shadow object-cover"
-                />
-              </div>
-            </div>
-            {/* pol 3 */}
-            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform -translate-x-12 rotate-[4deg] z-20 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-right ease-in">
-              <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
-                <Image
-                  aria-hidden
-                  // src="/books.jpg"
-                  src={`https://ucarecdn.com/${nextEvent.images[2].uuid}/`}
-                  alt="File icon"
-                  fill
-                  className="shadow object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* EVENT INFOS */}
-        <div className="bg-white rounded-xl w-full md:w-2/5 p-6 md:p-8 shadow-md h-fit">
-          {/* header */}
-          <div className="flex justify-between items-center border-b-2 pb-2">
-            <div>
-              <h3 className="font-headline text-2xl">{nextEvent.name}</h3>
-              <h4 className="text-gray-500">{nextEvent.type}</h4>
-            </div>
-            <div className="grid justify-items-center content-center py-1 px-3 bg-red-200 rounded-md shadow-sm -mt-2">
-              <span className="font-bold text-3xl leading-7">
-                {new Date(nextEvent.date).toLocaleDateString("fr-FR", {
-                  day: "numeric",
-                })}
-              </span>
-              <span>
-                {new Date(nextEvent.date)
-                  .toLocaleDateString("fr-FR", {
-                    month: "short",
-                  })
-                  .toUpperCase()}
-              </span>
-            </div>
-          </div>
-
-          <div className="py-4 gap-4 grid">
-            <div className="flex gap-4 items-center">
-              <Location04Icon size={34} color="black" className="" />
-              <p>
-                <span className="font-bold">{nextEvent.location}</span>
-                <br />
-                <span>{nextEvent.address}</span>
-              </p>
-            </div>
-            <div className="flex justify-between">
-              <div className="flex gap-4 items-center">
-                <div className="w-[34px]">
-                  <Clock05Icon size={28} color="black" className="" />
+      <section className="h-fit md:h-screen-minus-header bg-pastelPink custom-bg2 px-6 py-8 md:p-12">
+        <div className="flex flex-col items-center md:flex-row gap-12 max-w-screen-2xl mx-auto">
+          <div className="flex-1 flex flex-col justify-center gap-12 w-full md:w-1/2 self-start">
+            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight4 relative z-0 w-fit">
+              Prochain événement
+            </h1>
+            {/* POLAROIDS */}
+            <div className="h-full w-full hidden md:flex -mt-2 md:mt-4">
+              {/* pol 1 */}
+              <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-x-12 rotate-6 z-0 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-left ease-in">
+                <div className="bg-gray-300 w-52 aspect-square">
+                  <Image
+                    aria-hidden
+                    // src="/presentation.jpg"
+                    src={`https://ucarecdn.com/${nextEvent.images[0].uuid}/`}
+                    alt="File icon"
+                    fill
+                    className="shadow object-cover"
+                  />
                 </div>
+              </div>
+              {/* pol 2 */}
+              <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-y-12 -rotate-2 z-10 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-center ease-in">
+                <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
+                  <Image
+                    aria-hidden
+                    // src="/library.jpg"
+                    src={`https://ucarecdn.com/${nextEvent.images[1].uuid}/`}
+                    alt="File icon"
+                    fill
+                    className="shadow object-cover"
+                  />
+                </div>
+              </div>
+              {/* pol 3 */}
+              <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform -translate-x-12 rotate-[4deg] z-20 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-right ease-in">
+                <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
+                  <Image
+                    aria-hidden
+                    // src="/books.jpg"
+                    src={`https://ucarecdn.com/${nextEvent.images[2].uuid}/`}
+                    alt="File icon"
+                    fill
+                    className="shadow object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* EVENT INFOS */}
+          <div className="bg-white rounded-xl w-full md:w-2/5 p-6 md:p-8 shadow-md h-fit">
+            {/* header */}
+            <div className="flex justify-between items-center border-b-2 pb-2">
+              <div>
+                <h3 className="font-headline text-2xl">{nextEvent.name}</h3>
+                <h4 className="text-gray-500">{nextEvent.type}</h4>
+              </div>
+              <div className="grid justify-items-center content-center py-1 px-3 bg-red-200 rounded-md shadow-sm -mt-2">
+                <span className="font-bold text-3xl leading-7">
+                  {new Date(nextEvent.date).toLocaleDateString("fr-FR", {
+                    day: "numeric",
+                  })}
+                </span>
+                <span>
+                  {new Date(nextEvent.date)
+                    .toLocaleDateString("fr-FR", {
+                      month: "short",
+                    })
+                    .toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            <div className="py-4 gap-4 grid">
+              <div className="flex gap-4 items-center">
+                <Location04Icon size={34} color="black" className="" />
                 <p>
-                  De {nextEvent.timeStart} à {nextEvent.timeEnd}
+                  <span className="font-bold">{nextEvent.location}</span>
+                  <br />
+                  <span>{nextEvent.address}</span>
                 </p>
               </div>
-              <button
-                onClick={() => window.open(nextEvent.ticketLink, "_blank")}
-                className="shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]"
-              >
-                En savoir plus
-              </button>
+              <div className="flex justify-between">
+                <div className="flex gap-4 items-center">
+                  <div className="w-[34px]">
+                    <Clock05Icon size={28} color="black" className="" />
+                  </div>
+                  <p>
+                    De {nextEvent.timeStart} à {nextEvent.timeEnd}
+                  </p>
+                </div>
+                <button
+                  onClick={() => window.open(nextEvent.ticketLink, "_blank")}
+                  className="shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]"
+                >
+                  En savoir plus
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="m-auto mt-4">
-            <Countdown
-              targetDate={`${nextEvent.date.toString().slice(0, 10)}T${
-                nextEvent.timeStart
-              }:00.000`}
-            />
-          </div>
+            <div className="m-auto mt-4">
+              <Countdown
+                targetDate={`${nextEvent.date.toString().slice(0, 10)}T${
+                  nextEvent.timeStart
+                }:00.000`}
+              />
+            </div>
 
-          <div className="py-2">
-            <PartnersSlider />
+            <div className="py-2">
+              <PartnersSlider />
+            </div>
           </div>
         </div>
       </section>
 
       {/* CUSTOMERS REVIEWS */}
-      <section className="bg-[#F6838D] custom-bg3 h-fit md:h-screen-minus-header pt-10 pb-16 md:pb-8 gap-4 overflow-x-hidden relative">
+      <section className="bg-OMBpink custom-bg3 h-fit md:h-screen-minus-header pt-10 pb-16 md:py-12 gap-4 overflow-x-hidden relative">
         {/* <Image
           aria-hidden
           src="/3hearts-doodle.png"
@@ -308,24 +334,53 @@ export default function Home() {
           height={500}
           className="h-auto md:w-[10%] w-1/4 absolute right-4 md:right-20"
         /> */}
-        <div className="flex flex-col justify-center h-full gap-12 md:-mt-6">
+        <div className="flex flex-col justify-center h-full gap-12 md:-mt-2">
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit ml-12">
             Vos avis
           </h1>
-          <div className="hidden md:block">
-            <ReviewSwiper2 />
-          </div>
-          <div className="md:hidden">
-            <CardsSwiper />
-          </div>
-          {/* <Image
-            aria-hidden
-            src="/what-doodle.png"
-            alt="doodle"
-            width={500}
-            height={500}
-            className="h-12 w-auto absolute left-[8%] bottom-6 m-auto z-0 -rotate-[80deg] md:hidden"
-          /> */}
+          <CustomSwiper
+            classes={
+              isMobile ? "cardsEffectSwiper" : "fullWidthSwiper !h-[350px]"
+            }
+            effect={isMobile ? "cards" : undefined}
+            slidesPerView={isMobile ? 1 : 4}
+            centeredSlides={true}
+            spaceBetween={isMobile ? 0 : 30}
+            loop={true}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
+            items={reviews}
+            renderItem={(review, index) => (
+              <div
+                className="grid items-center sticky-note p-8 aspect-square relative shadow-lg overflow-y-scroll"
+                style={{
+                  ...(!isMobile && {
+                    transform: `rotate(${randomRotation(index)})`,
+                  }),
+                }}
+              >
+                <Image
+                  aria-hidden
+                  src={`${quotes[index % quotes.length]}`}
+                  alt="quotation marks"
+                  width={500}
+                  height={500}
+                  className="h-auto w-1/3 absolute top-8 left-8"
+                  priority
+                />
+                <div className="flex flex-col gap-4 z-10">
+                  <blockquote className="mt-2 italic whitespace-pre-line">
+                    {review.content}
+                  </blockquote>
+                  <cite className="block not-italic font-bold h-fit text-right">
+                    {review.name}
+                  </cite>
+                </div>
+              </div>
+            )}
+          />
         </div>
       </section>
     </div>

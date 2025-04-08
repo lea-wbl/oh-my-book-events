@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { addLeadingZero } from "@/app/utils/formatter";
+import { addLeadingZero } from "@/app/utils/tools";
 
 interface TimeLeft {
   jours: number;
