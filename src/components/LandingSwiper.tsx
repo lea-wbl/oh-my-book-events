@@ -12,42 +12,41 @@ import Image from "next/image";
 
 type LandingSwiperProps = BaseSwiperProps & {
   images: { _id: string; uuid: string; name: string }[];
-  // dir: string;
   mobileOnly: boolean;
 };
 
 const LandingSwiper: FC<LandingSwiperProps> = ({
   images,
-  // dir,
   mobileOnly,
   ...swiperProps
 }) => {
+  console.log("mobile only", mobileOnly);
+
   return (
     // éviter de mettre 2 formats portrait à la suite - mauvais affichage
     <>
       <Swiper
         slidesPerView={"auto"}
         spaceBetween={20}
-        // dir={dir}
         {...swiperProps}
         pagination={false}
         modules={[Pagination, Autoplay]}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-        }}
-        loop={true}
-        className={`${mobileOnly && "block md:hidden"} landingSwiper`}
+        // autoplay={{
+        //   delay: 3000,
+        //   disableOnInteraction: false,
+        // }}
+        loop={false}
+        className={`${mobileOnly && "md:hidden"}`}
       >
         {images.map((image, index) => (
-          <SwiperSlide className="w-fit" key={image._id}>
+          <SwiperSlide className="!w-fit" key={image._id}>
             <Image
               aria-hidden
               src={`https://ucarecdn.com/${image.uuid}/`}
               alt="File icon"
               width={500}
               height={500}
-              className="h-full w-auto"
+              className="h-full w-auto object-cover"
               priority
             />
           </SwiperSlide>

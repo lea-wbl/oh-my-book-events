@@ -1,20 +1,15 @@
 "use client";
 
-import CardsSwiper from "@/components/CardsSwiper";
-import Countdown from "@/components/Countdown";
-import DynamicSwiper from "@/components/DynamicSwiper";
-import LandingSwiper from "@/components/LandingSwiper";
-import PartnersSlider from "@/components/PartnersSlider";
 import Image from "next/image";
-import { Location04Icon, Clock05Icon } from "hugeicons-react";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Event } from "@/interfaces/interfaces";
-import ReviewSwiper2 from "@/components/ReviewSwiper2";
 import toast from "react-hot-toast";
 import Loader from "@/components/Loader";
 import CustomSwiper from "@/components/CustomSwiper";
 import { randomRotation } from "../utils/tools";
+import EventCard from "@/components/EventCard";
+import LandingSwiper from "@/components/LandingSwiper";
 
 const objectifs = [
   {
@@ -77,16 +72,6 @@ const objectifs = [
   },
 ];
 
-const goalsSlides = objectifs.map((obj) => (
-  <div
-    className="notes shadow-lg md:w-1/3 p-8 pt-12 h-full md:h-auto z-10"
-    key={obj.title}
-  >
-    <h3 className="text-xl font-medium font-headline pb-4">{obj.title}</h3>
-    {obj.text}
-  </div>
-));
-
 const quotes = [
   "/quote-pink.png",
   "/quote-yellow.png",
@@ -114,6 +99,28 @@ export default function Home() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isLoading) return;
+
+      if (!containerRef.current) return;
+
+      const scrollLeft = containerRef.current.scrollLeft;
+      const width = containerRef.current.offsetWidth;
+
+      const index = Math.round(scrollLeft / width);
+
+      setActiveIndex(index);
+    };
+
+    const ref = containerRef.current;
+    ref?.addEventListener("scroll", handleScroll);
+
+    return () => ref?.removeEventListener("scroll", handleScroll);
+  }, [isLoading]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -124,6 +131,7 @@ export default function Home() {
 
   useEffect(() => {
     axios.get("/api/gallery").then((res) => {
+      console.log(res.data);
       setSliderImages(res.data);
     });
 
@@ -152,24 +160,52 @@ export default function Home() {
 
   return (
     <div>
-      {/* LANDING V2 */}
-      <section className="flex flex-col h-screen-minus-header-mobile md:h-screen-minus-header bg-OMBpink md:py-6 py-0 gap-4 relative">
-        <LandingSwiper images={sliderImages} dir="ltr" mobileOnly={false} />
+      {/* LANDING */}
+      <section className="h-screen-minus-header-mobile md:h-screen-minus-header bg-OMBpink py-0 gap-4 relative grid">
+        <div className="flex flex-col h-screen-minus-header pt-6">
+          <div className="flex gap-6 h-1/2 px-6 pb-6">
+            {sliderImages
+              .slice(0, 5)
+              .map((image: { _id: string; uuid: string; name: string }, i) => (
+                <div
+                  key={image._id}
+                  className="relative w-fit h-full max-w-[25%] overflow-hidden bg-green-300"
+                >
+                  <Image
+                    src={`https://ucarecdn.com/${image.uuid}/`}
+                    alt={`Gallery image ${i}`}
+                    fill
+                    className="object-cover h-full !static"
+                  />
+                </div>
+              ))}
+          </div>
+          <div className="flex gap-6 h-1/2 px-6 pb-6">
+            {sliderImages
+              .slice(5, 10)
+              .map((image: { _id: string; uuid: string; name: string }, i) => (
+                <div
+                  key={image._id}
+                  className="relative w-fit h-full max-w-[25%] overflow-hidden bg-green-300"
+                >
+                  <Image
+                    src={`https://ucarecdn.com/${image.uuid}/`}
+                    alt={`Gallery image ${i}`}
+                    fill
+                    className="object-cover h-full !static"
+                  />
+                </div>
+              ))}
+          </div>
+        </div>
+
+        {/* <LandingSwiper images={sliderImages} dir="ltr" mobileOnly={false} />
         <LandingSwiper
           images={mixUpArray(sliderImages)}
           dir="rtl"
           mobileOnly={false}
-        />
-        <LandingSwiper
-          images={sliderImages.reverse()}
-          dir="ltr"
-          mobileOnly={true}
-        />
-        <LandingSwiper
-          images={mixUpArray(sliderImages).reverse()}
-          dir="rtl"
-          mobileOnly={true}
-        />
+        /> */}
+
         <div className="absolute top-0 left-0 z-10 flex flex-col justify-center items-center w-full h-full">
           <div className="flex flex-col justify-center items-center h-1/2 md:h-3/4 relative -mt-16 md:-mt-0">
             <Image
@@ -196,21 +232,57 @@ export default function Home() {
 
       {/* GOALS */}
       <section className="h-fit md:h-screen-minus-header bg-amber-200 custom-bg1 md:p-12 px-6 py-8 relative overflow-hidden">
-        <div className="flex flex-col justify-center h-full gap-12 max-w-screen-2xl mx-auto">
+        <div className="flex flex-col justify-center h-full gap-8 md:gap-12 max-w-screen-2xl mx-auto">
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight2 relative z-0 w-fit">
             Pourquoi nous rejoindre ?
           </h1>
-          <div className="hidden md:flex md:gap-4">{goalsSlides}</div>
-          <div className="md:hidden">
-            <DynamicSwiper slides={goalsSlides} />
+
+          <div className="w-full">
+            <div
+              ref={containerRef}
+              className="overflow-x-auto snap-x snap-mandatory scrollbar-hide shadow-lg md:shadow-none"
+            >
+              <div className="grid md:grid-cols-3 grid-flow-col auto-cols-[100%] w-full gap-6 md:gap-0">
+                {objectifs.map((objectif, index) => (
+                  <div
+                    className="notes shadow-lg md:mx-2 md:mb-6 p-8 pt-12 h-full md:h-auto z-10 snap-start [scroll-snap-stop:always]"
+                    key={objectif.title}
+                  >
+                    <h3 className="text-xl font-medium font-headline pb-4">
+                      {objectif.title}
+                    </h3>
+                    {objectif.text}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bullets */}
+            <div className="flex justify-center mt-4 gap-[8px] md:hidden">
+              {objectifs.map((_, i) => (
+                <button
+                  key={i}
+                  className={`w-[8px] h-[8px] rounded-full ${
+                    i === activeIndex ? "bg-white" : "bg-gray-500/30"
+                  }`}
+                  onClick={() => {
+                    containerRef.current?.scrollTo({
+                      left: i * containerRef.current.offsetWidth,
+                      behavior: "smooth",
+                    });
+                  }}
+                />
+              ))}
+            </div>
           </div>
+          {/* </div> */}
         </div>
       </section>
 
       {/* UPCOMING EVENT */}
       <section className="h-fit md:h-screen-minus-header bg-pastelPink custom-bg2 px-6 py-8 md:p-12">
-        <div className="flex flex-col items-center md:flex-row gap-12 max-w-screen-2xl mx-auto">
-          <div className="flex-1 flex flex-col justify-center gap-12 w-full md:w-1/2 self-start">
+        <div className="flex flex-col items-center md:flex-row gap-8 md:gap-12 max-w-screen-2xl mx-auto h-full">
+          <div className="flex-1 flex flex-col justify-center gap-12 w-full md:w-1/2 self-start 2xl:my-auto 2xl:-translate-y-4">
             <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight4 relative z-0 w-fit">
               Prochain événement
             </h1>
@@ -221,7 +293,6 @@ export default function Home() {
                 <div className="bg-gray-300 w-52 aspect-square">
                   <Image
                     aria-hidden
-                    // src="/presentation.jpg"
                     src={`https://ucarecdn.com/${nextEvent.images[0].uuid}/`}
                     alt="File icon"
                     fill
@@ -234,7 +305,6 @@ export default function Home() {
                 <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
                   <Image
                     aria-hidden
-                    // src="/library.jpg"
                     src={`https://ucarecdn.com/${nextEvent.images[1].uuid}/`}
                     alt="File icon"
                     fill
@@ -247,7 +317,6 @@ export default function Home() {
                 <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
                   <Image
                     aria-hidden
-                    // src="/books.jpg"
                     src={`https://ucarecdn.com/${nextEvent.images[2].uuid}/`}
                     alt="File icon"
                     fill
@@ -259,67 +328,12 @@ export default function Home() {
           </div>
 
           {/* EVENT INFOS */}
-          <div className="bg-white rounded-xl w-full md:w-2/5 p-6 md:p-8 shadow-md h-fit">
-            {/* header */}
-            <div className="flex justify-between items-center border-b-2 pb-2">
-              <div>
-                <h3 className="font-headline text-2xl">{nextEvent.name}</h3>
-                <h4 className="text-gray-500">{nextEvent.type}</h4>
-              </div>
-              <div className="grid justify-items-center content-center py-1 px-3 bg-red-200 rounded-md shadow-sm -mt-2">
-                <span className="font-bold text-3xl leading-7">
-                  {new Date(nextEvent.date).toLocaleDateString("fr-FR", {
-                    day: "numeric",
-                  })}
-                </span>
-                <span>
-                  {new Date(nextEvent.date)
-                    .toLocaleDateString("fr-FR", {
-                      month: "short",
-                    })
-                    .toUpperCase()}
-                </span>
-              </div>
-            </div>
-
-            <div className="py-4 gap-4 grid">
-              <div className="flex gap-4 items-center">
-                <Location04Icon size={34} color="black" className="" />
-                <p>
-                  <span className="font-bold">{nextEvent.location}</span>
-                  <br />
-                  <span>{nextEvent.address}</span>
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <div className="flex gap-4 items-center">
-                  <div className="w-[34px]">
-                    <Clock05Icon size={28} color="black" className="" />
-                  </div>
-                  <p>
-                    De {nextEvent.timeStart} à {nextEvent.timeEnd}
-                  </p>
-                </div>
-                <button
-                  onClick={() => window.open(nextEvent.ticketLink, "_blank")}
-                  className="shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-white hover:text-[#f7a976]"
-                >
-                  En savoir plus
-                </button>
-              </div>
-            </div>
-
-            <div className="m-auto mt-4">
-              <Countdown
-                targetDate={`${nextEvent.date.toString().slice(0, 10)}T${
-                  nextEvent.timeStart
-                }:00.000`}
-              />
-            </div>
-
-            <div className="py-2">
-              <PartnersSlider />
-            </div>
+          <div className="w-full md:w-2/5">
+            <EventCard
+              event={nextEvent}
+              isMobile={isMobile}
+              hasCountdown={true}
+            />
           </div>
         </div>
       </section>
@@ -334,7 +348,7 @@ export default function Home() {
           height={500}
           className="h-auto md:w-[10%] w-1/4 absolute right-4 md:right-20"
         /> */}
-        <div className="flex flex-col justify-center h-full gap-12 md:-mt-2">
+        <div className="flex flex-col justify-center h-full gap-8 md:gap-12 md:-mt-2">
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit ml-12">
             Vos avis
           </h1>

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 import {
   Swiper,
   SwiperSlide,
@@ -7,27 +7,39 @@ import {
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import EventCard from "./EventCard";
+import { Event } from "@/interfaces/interfaces";
 
 type EventCardSwiperProps = BaseSwiperProps & {
-  slides: ReactNode[];
+  events: Event[];
 };
 
 const EventCardSwiper: FC<EventCardSwiperProps> = ({
-  slides,
+  events,
   ...swiperProps
 }) => {
-  const boop = [...slides, ...slides, ...slides];
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize(); // Run on first mount
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <Swiper
-      slidesPerView={1}
+      slidesPerView={isMobile ? 1 : 2}
       spaceBetween={32}
       pagination={true}
       modules={[Pagination]}
       {...swiperProps}
       className="eventCardSwiper w-full"
     >
-      {boop.map((slide, index) => (
-        <SwiperSlide key={index}>{slide}</SwiperSlide>
+      {events.map((event, index) => (
+        <SwiperSlide key={index}>
+          <EventCard event={event} isMobile={isMobile} hasCountdown={false} />
+        </SwiperSlide>
       ))}
     </Swiper>
   );

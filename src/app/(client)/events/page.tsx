@@ -39,7 +39,7 @@ const Events = () => {
 
   return (
     <section className="grid px-6 py-8 md:p-12 h-fit md:h-screen-minus-header bg-OMBpink custom-bg3">
-      <div className="grid content-center gap-8 max-w-screen-2xl mx-auto">
+      <div className="grid content-center gap-8 max-w-screen-2xl mx-auto justify-items-center">
         <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
           Nos événements
         </h1>
