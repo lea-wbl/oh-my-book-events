@@ -4,7 +4,7 @@ import {
   SwiperSlide,
   SwiperProps as BaseSwiperProps,
 } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Navigation, Keyboard } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import EventCard from "./EventCard";
@@ -32,7 +32,11 @@ const EventCardSwiper: FC<EventCardSwiperProps> = ({
       slidesPerView={isMobile ? 1 : 2}
       spaceBetween={32}
       pagination={true}
-      modules={[Pagination]}
+      keyboard={{
+        enabled: true,
+      }}
+      navigation={isMobile ? false : true}
+      modules={[Pagination, Navigation, Keyboard]}
       {...swiperProps}
       className="eventCardSwiper w-full"
     >

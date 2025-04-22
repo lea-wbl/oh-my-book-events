@@ -10,7 +10,7 @@ export interface Event {
   location: string;
   address: string;
   ticketLink: string;
-  partners: { uuid: string; name: string }[];
+  partners: { _id: string; uuid: string; name: string }[];
 }
 
 export interface Review {

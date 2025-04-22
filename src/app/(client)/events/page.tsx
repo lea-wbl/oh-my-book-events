@@ -1,47 +1,41 @@
 "use client";
 
+import Loader from "@/components/Loader";
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
-
-const eventTypes = [
-  {
-    id: "1",
-    title: "Événements immersifs",
-    text: "Eu molestie nascetur conubia fermentum luctus sed cubilia euismod curae. Tempus finibus vestibulum arcu torquent habitasse lacus. Orci justo turpis justo; feugiat consequat eleifend.",
-  },
-  {
-    id: "2",
-    title: "Ateliers créatifs",
-    text: "Libero ullamcorper augue tincidunt dis parturient. Erat sollicitudin dis lacinia felis amet velit commodo.",
-  },
-  {
-    id: "3",
-    title: "Rencontres littéraires",
-    text: "Elementum etiam nec nulla tristique cras quis diam hendrerit. Interdum ridiculus vivamus ipsum ante himenaeos curabitur sollicitudin semper lobortis. Feugiat diam quisque quis porta scelerisque.",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
 
 const Events = () => {
   const router = useRouter();
   const [eventTypes, setEventTypes] = React.useState<
     { _id: string; name: string; summary: string }[]
   >([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const discover = (id: string) => {
     router.push(`/events/${id}`);
   };
 
   useEffect(() => {
-    axios.get("/api/eventTypes").then((res) => setEventTypes(res.data));
+    axios
+      .get("/api/eventTypes")
+      .then((res) => setEventTypes(res.data))
+      .catch((error) => {
+        console.error("Erreur lors du chargement des types d'événement", error);
+        toast.error("Erreur lors du chargement des types d'événement");
+      })
+      .finally(() => setIsLoading(false));
   }, []);
+
+  if (isLoading) return <Loader admin={false} />;
 
   return (
     <section className="grid px-6 py-8 md:p-12 h-fit md:h-screen-minus-header bg-OMBpink custom-bg3">
+      <Toaster />
       <div className="grid content-center gap-8 max-w-screen-2xl mx-auto justify-items-center">
-        <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
-          Nos événements
+        <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white relative z-0 w-fit">
+          <span className="realistic-marker-highlight">Nos événements</span>
         </h1>
         <p className="text-center text-white font-semibold leading-7">
           Oh My Book, ce ne sont pas juste des événements, mais des moments qui

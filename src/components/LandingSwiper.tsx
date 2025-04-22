@@ -20,8 +20,6 @@ const LandingSwiper: FC<LandingSwiperProps> = ({
   mobileOnly,
   ...swiperProps
 }) => {
-  console.log("mobile only", mobileOnly);
-
   return (
     // éviter de mettre 2 formats portrait à la suite - mauvais affichage
     <>

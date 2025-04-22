@@ -1,5 +1,6 @@
 "use client";
 import CustomSwiper from "@/components/CustomSwiper";
+import Polaroids from "@/components/Polaroids";
 import Image from "next/image";
 import { useState, useEffect, JSX, useRef } from "react";
 
@@ -50,10 +51,10 @@ const About = () => {
     <div>
       {/* OUR STORY */}
       <section className="px-6 py-8 md:px-16 md:py-16 h-fit md:h-screen-minus-header w-full bg-OMBpink custom-bg3 text-white grid">
-        <div className="max-w-screen-2xl mx-auto flex items-center relative">
+        <div className="max-w-screen-2xl mx-auto flex items-center relative gap-8">
           <div className="grid flex-1 h-fit gap-10">
-            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit">
-              Notre histoire
+            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit">
+              <span className="realistic-marker-highlight">Notre histoire</span>
             </h1>
             <p className="text-xl font-bold">
               On va pas se mentir : on aurait pu juste être deux lectrices qui
@@ -74,44 +75,10 @@ const About = () => {
               Alors on a décidé de créer Oh My Book.
             </span>
           </div>
-          {/* POLAROIDS */}
-          <div className="w-1/2 mx-auto relative h-full -ml-12 hidden md:block">
-            {/* pol 1 */}
-            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute bottom-0 left-1/2 transform rotate-12 z-20 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-bottom-right ease-in">
-              <div className="bg-gray-300 w-52 aspect-square">
-                <Image
-                  aria-hidden
-                  src="/presentation.jpg"
-                  alt="File icon"
-                  fill
-                  className="shadow object-cover"
-                />
-              </div>
-            </div>
-            {/* pol 2 */}
-            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute bottom-0 right-1/2 transform -rotate-6 z-0 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-bottom-left ease-in">
-              <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
-                <Image
-                  aria-hidden
-                  src="/books.jpg"
-                  alt="File icon"
-                  fill
-                  className="shadow object-cover"
-                />
-              </div>
-            </div>
-            {/* pol 3 */}
-            <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white absolute top-0 left-1/2 transform -translate-x-1/2 rotate-3 z-10 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-top ease-in">
-              <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
-                <Image
-                  aria-hidden
-                  src="/library.jpg"
-                  alt="File icon"
-                  fill
-                  className="shadow object-cover"
-                />
-              </div>
-            </div>
+          <div className="w-1/2">
+            <Polaroids
+              images={["/books.jpg", "/presentation.jpg", "/library.jpg"]}
+            />
           </div>
         </div>
       </section>
@@ -182,8 +149,8 @@ const About = () => {
       <section className="px-6 py-8 md:px-16 md:py-6 h-fit md:h-screen-minus-header w-full bg-pastelPink custom-bg2 overflow-hidden grid">
         <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row-reverse gap-8">
           <div className="flex-1 flex flex-col justify-center">
-            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight4 relative z-0 w-fit mb-8">
-              Et nous ?
+            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit mb-8">
+              <span className="realistic-marker-highlight4">Et nous ?</span>
             </h1>
             <p className="mb-4">
               <span className="font-medium font-headline text-lg">Chloé</span>,

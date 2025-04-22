@@ -1,15 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { JSX, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Event } from "@/interfaces/interfaces";
-import toast from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import Loader from "@/components/Loader";
 import CustomSwiper from "@/components/CustomSwiper";
 import { randomRotation } from "../utils/tools";
 import EventCard from "@/components/EventCard";
 import LandingSwiper from "@/components/LandingSwiper";
+import Polaroids from "@/components/Polaroids";
 
 const objectifs = [
   {
@@ -131,7 +132,6 @@ export default function Home() {
 
   useEffect(() => {
     axios.get("/api/gallery").then((res) => {
-      console.log(res.data);
       setSliderImages(res.data);
     });
 
@@ -156,10 +156,11 @@ export default function Home() {
     return arr.slice(middle).concat(arr.slice(0, middle));
   };
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <Loader admin={false} />;
 
   return (
     <div>
+      <Toaster />
       {/* LANDING */}
       <section className="h-screen-minus-header-mobile md:h-screen-minus-header bg-OMBpink py-0 gap-4 relative grid">
         <div className="flex flex-col h-screen-minus-header pt-6">
@@ -169,7 +170,7 @@ export default function Home() {
               .map((image: { _id: string; uuid: string; name: string }, i) => (
                 <div
                   key={image._id}
-                  className="relative w-fit h-full max-w-[25%] overflow-hidden bg-green-300"
+                  className="relative w-fit h-full max-w-[25%] overflow-hidden bg-red-200"
                 >
                   <Image
                     src={`https://ucarecdn.com/${image.uuid}/`}
@@ -186,7 +187,7 @@ export default function Home() {
               .map((image: { _id: string; uuid: string; name: string }, i) => (
                 <div
                   key={image._id}
-                  className="relative w-fit h-full max-w-[25%] overflow-hidden bg-green-300"
+                  className="relative w-fit h-full max-w-[25%] overflow-hidden bg-red-200"
                 >
                   <Image
                     src={`https://ucarecdn.com/${image.uuid}/`}
@@ -233,8 +234,10 @@ export default function Home() {
       {/* GOALS */}
       <section className="h-fit md:h-screen-minus-header bg-amber-200 custom-bg1 md:p-12 px-6 py-8 relative overflow-hidden">
         <div className="flex flex-col justify-center h-full gap-8 md:gap-12 max-w-screen-2xl mx-auto">
-          <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight2 relative z-0 w-fit">
-            Pourquoi nous rejoindre ?
+          <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit">
+            <span className="realistic-marker-highlight2">
+              Pourquoi nous rejoindre ?
+            </span>
           </h1>
 
           <div className="w-full">
@@ -280,67 +283,38 @@ export default function Home() {
       </section>
 
       {/* UPCOMING EVENT */}
-      <section className="h-fit md:h-screen-minus-header bg-pastelPink custom-bg2 px-6 py-8 md:p-12">
-        <div className="flex flex-col items-center md:flex-row gap-8 md:gap-12 max-w-screen-2xl mx-auto h-full">
-          <div className="flex-1 flex flex-col justify-center gap-12 w-full md:w-1/2 self-start 2xl:my-auto 2xl:-translate-y-4">
-            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight4 relative z-0 w-fit">
-              Prochain événement
-            </h1>
-            {/* POLAROIDS */}
-            <div className="h-full w-full hidden md:flex -mt-2 md:mt-4">
-              {/* pol 1 */}
-              <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-x-12 rotate-6 z-0 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-left ease-in">
-                <div className="bg-gray-300 w-52 aspect-square">
-                  <Image
-                    aria-hidden
-                    src={`https://ucarecdn.com/${nextEvent.images[0].uuid}/`}
-                    alt="File icon"
-                    fill
-                    className="shadow object-cover"
-                  />
-                </div>
-              </div>
-              {/* pol 2 */}
-              <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform translate-y-12 -rotate-2 z-10 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-center ease-in">
-                <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
-                  <Image
-                    aria-hidden
-                    src={`https://ucarecdn.com/${nextEvent.images[1].uuid}/`}
-                    alt="File icon"
-                    fill
-                    className="shadow object-cover"
-                  />
-                </div>
-              </div>
-              {/* pol 3 */}
-              <div className="w-fit h-fit border-x-[20px] border-t-[20px] border-b-[75px] border-white transform -translate-x-12 rotate-[4deg] z-20 rounded shadow-lg hover:z-30 hover:scale-150 transition-all duration-300 origin-right ease-in">
-                <div className="bg-gray-300 w-52 aspect-square overflow-hidden grid align-center">
-                  <Image
-                    aria-hidden
-                    src={`https://ucarecdn.com/${nextEvent.images[2].uuid}/`}
-                    alt="File icon"
-                    fill
-                    className="shadow object-cover"
-                  />
-                </div>
-              </div>
+      {nextEvent.name.length > 0 && (
+        <section className="h-fit md:h-screen-minus-header bg-pastelPink custom-bg2 px-6 py-8 md:p-12">
+          <div className="flex flex-col items-center md:flex-row gap-8 md:gap-12 max-w-screen-2xl mx-auto h-full">
+            <div className="flex-1 flex flex-col justify-center gap-2 w-full md:w-1/2 self-start 2xl:my-auto 2xl:-translate-y-4">
+              <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl md:mt-8 text-white w-fit">
+                <span className="realistic-marker-highlight4">
+                  Prochain événement
+                </span>
+              </h1>
+              <Polaroids
+                images={nextEvent.images.map((img) => img.uuid)}
+                hasTitleAbove
+                fromUCare
+              />
+            </div>
+
+            {/* event infos */}
+            <div className="w-full md:w-2/5">
+              <EventCard
+                event={nextEvent}
+                isMobile={isMobile}
+                hasCountdown={true}
+              />
             </div>
           </div>
-
-          {/* EVENT INFOS */}
-          <div className="w-full md:w-2/5">
-            <EventCard
-              event={nextEvent}
-              isMobile={isMobile}
-              hasCountdown={true}
-            />
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* CUSTOMERS REVIEWS */}
-      <section className="bg-OMBpink custom-bg3 h-fit md:h-screen-minus-header pt-10 pb-16 md:py-12 gap-4 overflow-x-hidden relative">
-        {/* <Image
+      {reviews.length > 0 && (
+        <section className="bg-OMBpink custom-bg3 h-fit md:h-screen-minus-header pt-10 pb-16 md:py-12 gap-4 overflow-x-hidden relative">
+          {/* <Image
           aria-hidden
           src="/3hearts-doodle.png"
           alt="doodle"
@@ -348,55 +322,57 @@ export default function Home() {
           height={500}
           className="h-auto md:w-[10%] w-1/4 absolute right-4 md:right-20"
         /> */}
-        <div className="flex flex-col justify-center h-full gap-8 md:gap-12 md:-mt-2">
-          <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white realistic-marker-highlight relative z-0 w-fit ml-12">
-            Vos avis
-          </h1>
-          <CustomSwiper
-            classes={
-              isMobile ? "cardsEffectSwiper" : "fullWidthSwiper !h-[350px]"
-            }
-            effect={isMobile ? "cards" : undefined}
-            slidesPerView={isMobile ? 1 : 4}
-            centeredSlides={true}
-            spaceBetween={isMobile ? 0 : 30}
-            loop={true}
-            pagination={{
-              clickable: true,
-              dynamicBullets: true,
-            }}
-            items={reviews}
-            renderItem={(review, index) => (
-              <div
-                className="grid items-center sticky-note p-8 aspect-square relative shadow-lg overflow-y-scroll"
-                style={{
-                  ...(!isMobile && {
-                    transform: `rotate(${randomRotation(index)})`,
-                  }),
-                }}
-              >
-                <Image
-                  aria-hidden
-                  src={`${quotes[index % quotes.length]}`}
-                  alt="quotation marks"
-                  width={500}
-                  height={500}
-                  className="h-auto w-1/3 absolute top-8 left-8"
-                  priority
-                />
-                <div className="flex flex-col gap-4 z-10">
-                  <blockquote className="mt-2 italic whitespace-pre-line">
-                    {review.content}
-                  </blockquote>
-                  <cite className="block not-italic font-bold h-fit text-right">
-                    {review.name}
-                  </cite>
+          <div className="flex flex-col justify-center h-full gap-8 md:gap-12 md:-mt-2">
+            <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit ml-12">
+              <span className="realistic-marker-highlight">Vos avis</span>
+            </h1>
+            <CustomSwiper
+              classes={
+                isMobile ? "cardsEffectSwiper" : "fullWidthSwiper !h-[350px]"
+              }
+              navigation={isMobile ? false : true}
+              effect={isMobile ? "cards" : undefined}
+              slidesPerView={isMobile ? 1 : 4}
+              centeredSlides={true}
+              spaceBetween={isMobile ? 0 : 30}
+              loop={true}
+              pagination={{
+                clickable: true,
+                dynamicBullets: true,
+              }}
+              items={reviews}
+              renderItem={(review, index) => (
+                <div
+                  className="grid items-center sticky-note p-8 aspect-square relative shadow-lg overflow-y-scroll"
+                  style={{
+                    ...(!isMobile && {
+                      transform: `rotate(${randomRotation(index)})`,
+                    }),
+                  }}
+                >
+                  <Image
+                    aria-hidden
+                    src={`${quotes[index % quotes.length]}`}
+                    alt="quotation marks"
+                    width={500}
+                    height={500}
+                    className="h-auto w-1/3 absolute top-8 left-8"
+                    priority
+                  />
+                  <div className="flex flex-col gap-4 z-10">
+                    <blockquote className="mt-2 italic whitespace-pre-line">
+                      {review.content}
+                    </blockquote>
+                    <cite className="block not-italic font-bold h-fit text-right">
+                      {review.name}
+                    </cite>
+                  </div>
                 </div>
-              </div>
-            )}
-          />
-        </div>
-      </section>
+              )}
+            />
+          </div>
+        </section>
+      )}
     </div>
   );
 }

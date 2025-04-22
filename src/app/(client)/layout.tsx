@@ -3,7 +3,6 @@ import "@/app/globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Caprasimo, Raleway, Sacramento } from "next/font/google";
-import MarkerShapeFilter from "@/components/MarkerShapeFilter";
 
 const caprasimo = Caprasimo({
   variable: "--font-caprasimo",
@@ -43,7 +42,6 @@ export default function RootLayout({
       <body
         className={`${sacramento.variable} ${caprasimo.variable} ${raleway.className} antialiased`}
       >
-        <MarkerShapeFilter />
         <Header />
         <main>{children}</main>
         <Footer />

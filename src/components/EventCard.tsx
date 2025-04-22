@@ -21,7 +21,7 @@ const EventCard: FC<EventCardProps> = ({ event, isMobile, hasCountdown }) => {
       {(isMobile || (!isMobile && !hasCountdown)) && (
         <div
           className={`${
-            !isMobile && !hasCountdown ? "w-2/3" : "w-full"
+            !isMobile && !hasCountdown ? "w-1/3 aspect-[4/5]" : "w-full"
           } relative`}
         >
           <Image
@@ -48,7 +48,7 @@ const EventCard: FC<EventCardProps> = ({ event, isMobile, hasCountdown }) => {
             <h3 className="font-headline text-2xl">{event.name}</h3>
             <h4 className="text-gray-500">{event.type}</h4>
           </div>
-          <div className="grid justify-items-center content-center py-1 px-3 bg-red-200 rounded-md shadow-sm -mt-2">
+          <div className="grid justify-items-center content-center py-1 px-3 bg-red-200 rounded-md shadow-sm -mt-2 w-1/5 md:max-w-16 md:min-w-fit">
             <span className="font-bold text-3xl leading-7">
               {new Date(event.date).toLocaleDateString("fr-FR", {
                 day: "numeric",
@@ -102,7 +102,7 @@ const EventCard: FC<EventCardProps> = ({ event, isMobile, hasCountdown }) => {
           </div>
         )}
 
-        <PartnersSlider />
+        <PartnersSlider partners={event.partners} />
       </div>
     </div>
   );

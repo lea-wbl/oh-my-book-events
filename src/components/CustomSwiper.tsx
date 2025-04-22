@@ -4,7 +4,13 @@ import {
   SwiperSlide,
   SwiperProps as BaseSwiperProps,
 } from "swiper/react";
-import { Autoplay, EffectCards, Pagination } from "swiper/modules";
+import {
+  Autoplay,
+  EffectCards,
+  Pagination,
+  Navigation,
+  Keyboard,
+} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -25,7 +31,10 @@ const CustomSwiper: FC<CustomSwiperProps> = ({
   return (
     <Swiper
       pagination={true}
-      modules={[Pagination, EffectCards, Autoplay]}
+      modules={[Pagination, EffectCards, Autoplay, Keyboard, Navigation]}
+      keyboard={{
+        enabled: true,
+      }}
       {...swiperProps}
       className={`customSwiper ${classes}`}
     >

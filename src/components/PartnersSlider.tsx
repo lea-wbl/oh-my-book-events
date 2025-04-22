@@ -11,7 +11,11 @@ import "swiper/css/pagination";
 // import required modules
 import { Autoplay } from "swiper/modules";
 
-const PartnersSlider = () => {
+const PartnersSlider = ({
+  partners,
+}: {
+  partners: { _id: string; uuid: string; name: string }[];
+}) => {
   return (
     <>
       <Swiper
@@ -25,13 +29,13 @@ const PartnersSlider = () => {
         spaceBetween={10}
         className="partnersSlider"
       >
-        {[1, 2, 3, 4, 5, 6, 7].map((partner) => {
+        {partners.map((partner) => {
           return (
-            <SwiperSlide key={partner}>
+            <SwiperSlide key={partner.uuid}>
               <div className="relative w-28 h-[50px]">
                 <Image
-                  src={`/partenaire${partner}.png`}
-                  alt="Partenaire 1" // dynamic when back office okay
+                  src={`https://ucarecdn.com/${partner.uuid}/`}
+                  alt="Partenaire de l'événement"
                   fill
                   className="object-contain"
                 />
