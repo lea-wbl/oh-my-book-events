@@ -8,12 +8,17 @@ import { EventType } from "@/interfaces/interfaces";
 import Loader from "@/components/Loader";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { FileUploaderRegular } from "@uploadcare/react-uploader";
+import UploadedImagesGrid from "@/components/UploadedImagesGrid";
+import { deleteUcareImg } from "@/app/utils/imageManager";
+import Image from "next/image";
 
-const initialState = {
+const initialState: EventType = {
   name: "",
   summary: "",
   leading: "",
   description: "",
+  images: [],
 };
 
 const EventTypes = () => {
@@ -26,6 +31,7 @@ const EventTypes = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const reversedTypes = useMemo(() => [...types].reverse(), [types]);
+  const [uploaderKey, setUploaderKey] = useState(0);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -74,6 +80,7 @@ const EventTypes = () => {
           toast.success("Type d'événement mis à jour !", {
             duration: 4000,
           });
+          setUploaderKey((prevKey) => prevKey + 1);
         }
       } else {
         const response = await axios.post("/api/eventTypes", newType);
@@ -83,6 +90,7 @@ const EventTypes = () => {
           toast.success("Type d'événement ajouté !", {
             duration: 4000,
           });
+          setUploaderKey((prevKey) => prevKey + 1);
         }
       }
     } catch (error) {
@@ -125,10 +133,8 @@ const EventTypes = () => {
   const startEditing = (type: EventType) => {
     setIsEditing(true);
     setNewType({
-      name: type.name,
-      summary: type.summary,
-      leading: type.leading,
-      description: type.description,
+      ...type,
+      images: type.images.map((img) => ({ ...img })),
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
     setTimeout(() => {
@@ -144,6 +150,19 @@ const EventTypes = () => {
       setSelectedId(null);
     }
     setNewType(initialState);
+    setUploaderKey((prevKey) => prevKey + 1);
+  };
+
+  const handleImages = (file: any, type: string) => {
+    const typeImg = file.successEntries.map((entry: any) => ({
+      uuid: entry.uuid,
+      name: entry.name,
+    }));
+
+    setNewType({
+      ...newType,
+      images: typeImg,
+    });
   };
 
   if (isLoading || status === "loading")
@@ -160,6 +179,37 @@ const EventTypes = () => {
           ? "Modifier un type d'événement"
           : "Ajouter un nouveau type d'événement"}
       </h2>
+
+      {/* IMAGES */}
+      <div className="mb-4 grid md:flex gap-4">
+        <div className="grid gap-1 min-w-fit">
+          <label>
+            Images de présentation{" "}
+            <span className="text-gray-500 text-sm">(3 requises)</span>
+          </label>
+          <FileUploaderRegular
+            key={uploaderKey}
+            sourceList="local, camera, gdrive"
+            cameraModes="photo"
+            classNameUploader="uc-light uc-orange"
+            pubkey="1f20d7f5d1614fe8cf9a"
+            multiple={true}
+            multipleMax={3}
+            onChange={(file) => handleImages(file, "images")}
+          />
+        </div>
+        <UploadedImagesGrid
+          images={newType.images}
+          deleteHandler={(uuid) => {
+            if (!isEditing) deleteUcareImg(uuid);
+            setNewType({
+              ...newType,
+              images: newType.images.filter((img: any) => img.uuid !== uuid),
+            });
+          }}
+          gridCols={"md:grid-cols-3"}
+        />
+      </div>
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid flex-1 gap-1">
@@ -320,6 +370,27 @@ const EventTypes = () => {
                 {type.leading}
               </p>
               <p className="whitespace-pre-line">{type.description}</p>
+              <div className="grid grid-cols-3 gap-4">
+                {type.images.map((img, index) => (
+                  <div key={index} className="aspect-square">
+                    <div
+                      className={`h-full ${
+                        isEditing && selectedId === type._id
+                          ? "grayscale opacity-50"
+                          : ""
+                      }`}
+                    >
+                      <Image
+                        src={`https://ucarecdn.com/${img.uuid}/`}
+                        alt="File icon"
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </li>
           ))}
         </ul>

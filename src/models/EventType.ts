@@ -5,6 +5,7 @@ const EventTypeSchema = new Schema({
   summary: { type: String, required: true },
   leading: { type: String, required: true },
   description: { type: String, required: true },
+  images: [{ type: { uuid: String, name: String } }],
 });
 
 const EventType = models.EventType || model("EventType", EventTypeSchema);

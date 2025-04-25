@@ -1,18 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import BurgerMenuBtn from "./BurgerMenuBtn/BurgerMenuBtn";
+import { ArrowDown01Icon } from "hugeicons-react";
+import axios from "axios";
+import { EventType } from "@/interfaces/interfaces";
 
 const Header = () => {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState(false);
+  const [eventTypes, setEventTypes] = useState([]);
+
+  useEffect(() => {
+    axios.get("/api/eventTypes?field=name").then((res) => {
+      console.log(res.data);
+      setEventTypes(res.data);
+    });
+  }, []);
 
   return (
-    <header className="bg-white shadow-md sticky top-0 h-14 md:h-20 w-full z-50">
-      <div className="max-w-screen-2xl w-full mx-auto px-6 md:px-12 py-2 flex justify-between items-center">
+    <header className="bg-white shadow-md sticky top-0 h-14 md:h-20 w-full z-50 flex">
+      <div className="max-w-screen-2xl w-full mx-auto px-6 md:px-12 flex justify-between items-center h-full">
         {/* Logo */}
         <div className="text-xl font-bold text-red-500 w-16 h-12 md:w-20 md:h-16 relative">
           <Link href="/">
@@ -32,33 +43,71 @@ const Header = () => {
         <BurgerMenuBtn open={openMenu} setOpen={setOpenMenu} />
 
         {/* Navigation */}
-        <nav className="header-desktop hidden md:block">
-          <ul className="flex gap-8">
+        <nav className="header-desktop hidden md:block h-full">
+          <ul className="flex gap-8 h-full">
             {[
               { href: "/", label: "Accueil" },
               { href: "/about", label: "À propos" },
               { href: "/events", label: "Événements" },
               { href: "/contact", label: "Contact" },
             ].map((link) => (
-              <li key={link.href} className="navlink-container">
-                <Link
-                  href={link.href}
-                  className={`navlink relative ${
-                    pathname.startsWith(link.href) && link.href !== "/"
-                      ? "active"
-                      : link.href === "/" && pathname === link.href
-                      ? "active"
-                      : ""
-                  }`}
-                  aria-current={pathname === link.href ? "page" : undefined}
-                >
-                  {link.label}
-                </Link>
+              <li key={link.href} className="navlink-container group">
+                <span className="h-full flex items-center">
+                  <Link
+                    href={link.href}
+                    className={`navlink relative flex ${
+                      pathname.startsWith(link.href) && link.href !== "/"
+                        ? "active"
+                        : link.href === "/" && pathname === link.href
+                        ? "active"
+                        : ""
+                    }`}
+                    aria-current={pathname === link.href ? "page" : undefined}
+                  >
+                    {link.label}{" "}
+                    {link.href === "/events" && (
+                      <ArrowDown01Icon
+                        className="ml-1 mt-[2px] -mr-[5px]"
+                        size={20}
+                        color="black"
+                      />
+                    )}
+                  </Link>
+                </span>
+                {link.href === "/events" && (
+                  <ul className="absolute bg-white shadow-md rounded-b-lg px-6 py-4 top-full transform -translate-x-1/4 scale-y-0 origin-top grid gap-4 group-hover:scale-y-100 transition-transform duration-300 ease-in-out border-t-2 border-OMBpink">
+                    <li className="sublink-container">
+                      <Link
+                        href="/events"
+                        className={`sublink relative z-0 ${
+                          pathname === "/events" ? "active" : ""
+                        }`}
+                      >
+                        Tous nos événements
+                      </Link>
+                    </li>
+                    {eventTypes.map((eventType: any) => (
+                      <li key={eventType._id} className="sublink-container">
+                        <Link
+                          href={`/events/${eventType._id}`}
+                          className={`sublink relative z-0 ${
+                            pathname === `/events/${eventType._id}`
+                              ? "active"
+                              : ""
+                          }`}
+                        >
+                          {eventType.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
         </nav>
 
+        {/* Mobile Navigation */}
         <nav
           className={`header-mobile bg-white fixed top-14 right-0 w-full h-screen-minus-header-mobile md:hidden ${
             openMenu && "show"
@@ -71,17 +120,50 @@ const Header = () => {
               { href: "/events", label: "Événements" },
               { href: "/contact", label: "Contact" },
             ].map((link) => (
-              <li key={link.href} className="navlink-container">
+              <li key={link.href} className="navlink-container text-center">
                 <Link
                   href={link.href}
                   className={`navlink relative ${
-                    pathname === link.href ? "active" : ""
+                    pathname.startsWith(link.href) && link.href !== "/"
+                      ? "active"
+                      : link.href === "/" && pathname === link.href
+                      ? "active"
+                      : ""
                   }`}
                   aria-current={pathname === link.href ? "page" : undefined}
                   onClick={() => setOpenMenu(false)}
                 >
                   {link.label}
                 </Link>
+                {link.href === "/events" && (
+                  <ul className="grid gap-4 text-[0.75em] text-center mt-2">
+                    <li className="sublink-container">
+                      <Link
+                        href="/events"
+                        className={`sublink relative z-0 ${
+                          pathname === "/events" ? "active" : ""
+                        }`}
+                      >
+                        Tous nos événements
+                      </Link>
+                    </li>
+                    {eventTypes.map((eventType: EventType) => (
+                      <li key={eventType._id} className="sublink-container">
+                        <Link
+                          href={`/events/${eventType._id}`}
+                          className={`sublink relative z-0 ${
+                            pathname === `/events/${eventType._id}`
+                              ? "active"
+                              : ""
+                          }`}
+                          onClick={() => setOpenMenu(false)}
+                        >
+                          {eventType.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>

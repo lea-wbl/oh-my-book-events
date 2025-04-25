@@ -31,6 +31,7 @@ export interface EventType {
   summary: string;
   leading: string;
   description: string;
+  images: { uuid: string; name: string }[];
 }
 
 export interface ContactInfo {

@@ -33,7 +33,8 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: Request) {
   try {
-    const { id, name, summary, leading, description } = await req.json();
+    const { id, name, summary, leading, description, images } =
+      await req.json();
 
     if (!id) {
       return NextResponse.json(
@@ -53,7 +54,7 @@ export async function PUT(req: Request) {
 
     const updatedEventType = await EventType.findByIdAndUpdate(
       id,
-      { name, summary, leading, description },
+      { name, summary, leading, description, images },
       { new: true, runValidators: true }
     );
 
@@ -75,9 +76,11 @@ export async function PUT(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { name, summary, leading, description } = await req.json();
+    const { name, summary, leading, description, images } = await req.json();
 
-    if (!name || !summary || !leading || !description) {
+    console.log("POST", { name, summary, leading, description, images });
+
+    if (!name || !summary || !leading || !description || images.length === 0) {
       return NextResponse.json(
         { error: "Tous les champs sont requis" },
         { status: 400 }
@@ -91,6 +94,7 @@ export async function POST(req: Request) {
       summary,
       leading,
       description,
+      images,
     });
 
     return NextResponse.json(newType, { status: 201 });

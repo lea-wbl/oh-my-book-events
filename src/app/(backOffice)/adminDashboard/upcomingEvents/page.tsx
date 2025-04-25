@@ -248,7 +248,7 @@ const UpcomingEvents = () => {
       </h2>
       {/* IMAGES */}
       <div className="mb-4 grid md:flex gap-4">
-        <div className="grid gap-1">
+        <div className="grid gap-1 min-w-fit">
           <label>
             Images de présentation{" "}
             <span className="text-gray-500 text-sm">(3 requises)</span>

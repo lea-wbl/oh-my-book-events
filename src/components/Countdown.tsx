@@ -11,10 +11,6 @@ interface TimeLeft {
 }
 
 const Countdown = ({ targetDate }: { targetDate: string }) => {
-  useEffect(() => {
-    console.log(targetDate);
-  }, []);
-
   const calculateTimeLeft = (): TimeLeft | null => {
     const difference = new Date(targetDate).getTime() - new Date().getTime();
 

@@ -35,7 +35,7 @@ const UploadedImagesGrid: FC<UploadedImagesGridProps> = ({
   if (!images || images.length === 0) return null;
 
   return (
-    <div>
+    <div className="w-full">
       <div className={`grid ${gridCols} gap-2 flex-1`}>
         {images.map((img) => (
           <div

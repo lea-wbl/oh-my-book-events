@@ -17,6 +17,7 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
     summary: "",
     leading: "",
     description: "",
+    images: [],
   });
   const [typeEvents, setTypeEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +53,8 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
           {/* POLAROIDS */}
           <div className="w-1/2">
             <Polaroids
-              images={["/books.jpg", "/presentation.jpg", "/library.jpg"]}
+              images={eventType.images.map((img: any) => img.uuid)}
+              fromUCare
             />
           </div>
 
@@ -87,7 +89,9 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
             <div className="flex flex-col gap-4 items-center justify-center h-1/2 font-semibold">
               <p>
                 Il n'y a pas{" "}
-                {isFirstLetterVowel(eventType.name.toLowerCase()) ? "d'" : "de"}
+                {isFirstLetterVowel(eventType.name.toLowerCase())
+                  ? "d'"
+                  : "de "}
                 {eventType.name.toLowerCase()} prévu pour le moment…
               </p>
               <p>Mais reviens vite, de nouvelles dates arrivent bientôt !</p>

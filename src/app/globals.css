@@ -33,7 +33,8 @@ body {
   width: 100%;
 }
 
-.navlink::before {
+.navlink::before,
+.sublink::before {
   content: "";
   position: absolute;
   top: 40%;
@@ -48,12 +49,25 @@ body {
 }
 
 .navlink-container:hover .navlink::before,
-.navlink.active::before {
+.navlink.active::before,
+.sublink-container:hover .sublink::before,
+.sublink.active::before {
   transform: translate(-0.5em) skew(-12deg) scaleX(1); /* Highlighter becomes visible */
 }
 
-.navlink.active::before {
+.navlink.active::before,
+.sublink.active::before {
   background: var(--OMBpink);
+}
+
+/* Fix for canceling the cascading trigger of the transition (not trigger highlighter effect in submenu when opening the submenu by hovering the parent) */
+.sublink::before {
+  visibility: hidden;
+}
+
+.sublink-container:hover .sublink::before,
+.sublink.active::before {
+  visibility: visible;
 }
 
 .footer-link::before {
@@ -119,7 +133,7 @@ body {
   z-index: -2;
 }
 
-.header-mobile ul {
+.header-mobile > ul {
   transition: transform 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99),
     opacity 0.2s cubic-bezier(0.4, 0.01, 0.165, 0.99);
   position: absolute;
@@ -134,7 +148,7 @@ body {
   visibility: visible;
 }
 
-.header-mobile.show ul {
+.header-mobile.show > ul {
   opacity: 1;
   transform: translate(-50%, 10%);
 }
@@ -452,59 +466,6 @@ input[type="time"] {
 .dynamicSwiper .swiper-slide {
   height: auto;
 }
-
-/* .eventCardSwiper .swiper-button-disabled {
-  opacity: 0 !important;
-  pointer-events: none;
-}
-
-.eventCardSwiper .swiper-button-prev,
-.eventCardSwiper .swiper-button-next {
-  background-color: rgba(220, 220, 220, 0.6);
-  color: black;
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  border-radius: 50%;
-  box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.3);
-  position: absolute;
-  z-index: 9;
-  top: 45%;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-}
-
-.eventCardSwiper .swiper-button-prev {
-  transform: translateX(-50%);
-}
-
-.eventCardSwiper .swiper-button-next {
-  transform: translateX(50%);
-  right: 0;
-}
-
-.eventCardSwiper .swiper-button-prev:hover,
-.eventCardSwiper .swiper-button-next:hover {
-  background-color: rgba(220, 220, 220, 0.8);
-}
-
-.eventCardSwiper .swiper-button-prev::after,
-.eventCardSwiper .swiper-button-next::after {
-  font-size: 40px;
-  font-family: var(--font-caprasimo), serif;
-  color: gray;
-  line-height: 50px;
-}
-
-.eventCardSwiper .swiper-button-prev::after {
-  content: "<";
-  padding-right: 2px;
-}
-
-.eventCardSwiper .swiper-button-next::after {
-  content: ">";
-  padding-left: 2px;
-} */
 
 .swiper-button-disabled {
   opacity: 0 !important;
