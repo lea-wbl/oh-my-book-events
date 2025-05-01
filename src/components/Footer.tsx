@@ -7,19 +7,17 @@ import { InstagramIcon, TiktokIcon } from "hugeicons-react";
 import axios from "axios";
 
 const Footer = () => {
-    const [contactInfo, setContactInfo] = useState({
-      email: "",
-      tel: "",
-      ig: "",
-      tiktok: "",
-    });
+  const [contactInfo, setContactInfo] = useState({
+    email: "",
+    tel: "",
+    ig: "",
+    tiktok: "",
+  });
 
   useEffect(() => {
-    axios
-      .get("/api/contactInfo")
-      .then((res) => {
-        setContactInfo(res.data[0]);
-      })
+    axios.get("/api/contactInfo").then((res) => {
+      setContactInfo(res.data[0]);
+    });
   }, []);
 
   return (
@@ -147,27 +145,34 @@ const Footer = () => {
           <p>{contactInfo.email}</p>
           {contactInfo.tel && <p>06 01 02 03 04</p>}
           <div className="flex -ml-2">
-          {contactInfo.ig && (
-                    <Link
-                      href={contactInfo.ig}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
-                    >
-                      <InstagramIcon
-                        size={24}
-                        color="black"
-                        className="cursor-pointer"
-                      />
-                    </Link>
-                  )}
+            {contactInfo.ig && (
+              <Link
+                href={contactInfo.ig}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
+              >
+                <InstagramIcon
+                  size={24}
+                  color="black"
+                  className="cursor-pointer"
+                />
+              </Link>
+            )}
             {contactInfo.tiktok && (
-                    <Link
-                      href={contactInfo.tiktok}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
-                    ><TiktokIcon size={24} color="black" className="cursor-pointer" /></Link>)}
+              <Link
+                href={contactInfo.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
+              >
+                <TiktokIcon
+                  size={24}
+                  color="black"
+                  className="cursor-pointer"
+                />
+              </Link>
+            )}
           </div>
         </div>
         {/* PAGES INFOS */}
@@ -198,18 +203,27 @@ const Footer = () => {
           </h3>
           <ul className="grid place-items-center md:place-items-start gap-2">
             <li className="footer-link-container z-0">
-              <Link href="/" className="footer-link relative">
+              <Link
+                href="/legal-info#legal-notice"
+                className="footer-link relative"
+              >
                 Mentions légales
               </Link>
             </li>
             <li className="footer-link-container z-0">
-              <Link href="/" className="footer-link relative">
+              <Link
+                href="/legal-info#privacy-policy"
+                className="footer-link relative"
+              >
                 Politique de confidentialité
               </Link>
             </li>
             <li className="footer-link-container z-0">
-              <Link href="/" className="footer-link relative">
-                Conditions générales d'utilisation
+              <Link
+                href="/legal-info#terms-of-use"
+                className="footer-link relative"
+              >
+                Conditions générales d&apos;utilisation
               </Link>
             </li>
           </ul>
