@@ -52,7 +52,7 @@ const Countdown = ({ targetDate }: { targetDate: string }) => {
           <div className="perforations-mobile md:perforations">
             <div className="paper-ring"></div>
           </div>
-          <div className="countdown font-mono bg-red-200 rounded-md grid content-center px-2 pt-6 pb-3 shadow-md mb-2">
+          <div className="countdown font-mono bg-red-200 rounded-md grid content-center px-2 pt-6 pb-3 shadow-md mb-2 items-center">
             <span
               className="countdown font-mono text-5xl md:text-6xl w-full"
               style={

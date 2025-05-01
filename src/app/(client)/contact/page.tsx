@@ -107,13 +107,13 @@ const Contact = () => {
                     {contactInfo.tel.replace(/(.{2})/g, "$1 ")}
                   </p>
                 )}
-                <div className="flex gap-4 ml-[-2px]">
+                <div className="flex -ml-2">
                   {contactInfo.ig && (
                     <Link
                       href={contactInfo.ig}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="footer-link relative"
+                      className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
                     >
                       <InstagramIcon
                         size={32}
@@ -128,7 +128,7 @@ const Contact = () => {
                       href={contactInfo.tiktok}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="footer-link relative"
+                      className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
                     >
                       <TiktokIcon
                         size={32}

@@ -64,7 +64,7 @@ const Events = () => {
               </div>
               <button
                 onClick={() => discover(type._id)}
-                className="rounded-full bg-[#F7A976] text-white px-4 py-1 self-end"
+                className="rounded-full bg-[#F7A976] border-2 border-[#F7A976] text-white px-4 py-1 self-end hover:bg-white hover:text-[#f7a976]"
               >
                 Découvrir
               </button>

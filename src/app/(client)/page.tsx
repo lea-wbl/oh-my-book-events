@@ -11,6 +11,7 @@ import { randomRotation } from "../utils/tools";
 import EventCard from "@/components/EventCard";
 import LandingSwiper from "@/components/LandingSwiper";
 import Polaroids from "@/components/Polaroids";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 
 const objectifs = [
   {
@@ -81,6 +82,7 @@ const quotes = [
 ];
 
 export default function Home() {
+  const width = useWindowWidth();
   const [sliderImages, setSliderImages] = useState([]);
   const [reviews, setReviews] = useState<
     { _id: string; name: string; content: string }[]
@@ -99,7 +101,6 @@ export default function Home() {
     partners: [],
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -124,13 +125,6 @@ export default function Home() {
   }, [isLoading]);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize(); // Run on first mount
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
     axios.get("/api/gallery").then((res) => {
       setSliderImages(res.data);
     });
@@ -152,18 +146,18 @@ export default function Home() {
   }, []);
 
   const mixUpArray = (arr: any[]) => {
-    let middle = Math.floor(arr.length / 2);
+    const middle = Math.floor(arr.length / 2);
     return arr.slice(middle).concat(arr.slice(0, middle));
   };
 
   if (isLoading) return <Loader admin={false} />;
 
   return (
-    <div>
+    <div className="snap-y snap-mandatory md:h-screen-minus-header overflow-scroll">
       <Toaster />
       {/* LANDING */}
-      <section className="h-screen-minus-header-mobile md:h-screen-minus-header bg-OMBpink py-0 gap-4 relative grid">
-        <div className="flex flex-col h-screen-minus-header pt-6">
+      <section className="h-screen-minus-header-mobile md:h-screen-minus-header bg-OMBpink py-0 gap-4 relative grid snap-start">
+        {/* <div className="flex flex-col h-screen-minus-header pt-6">
           <div className="flex gap-6 h-1/2 px-6 pb-6">
             {sliderImages
               .slice(0, 5)
@@ -178,6 +172,7 @@ export default function Home() {
                     fill
                     className="object-cover h-full !static"
                   />
+                  {image.name}
                 </div>
               ))}
           </div>
@@ -198,14 +193,61 @@ export default function Home() {
                 </div>
               ))}
           </div>
-        </div>
+          {width < 768 &&
+          <>
+                 <div className="flex gap-6 h-1/2 px-6 pb-6">
+            {sliderImages
+              .slice(0, 5).reverse()
+              .map((image: { _id: string; uuid: string; name: string }, i) => (
+                <div
+                  key={image._id}
+                  className="relative w-fit h-full max-w-[25%] overflow-hidden bg-red-200"
+                >
+                  <Image
+                    src={`https://ucarecdn.com/${image.uuid}/`}
+                    alt={`Gallery image ${i}`}
+                    fill
+                    className="object-cover h-full !static"
+                  />
+                  {image.name}
+                </div>
+              ))}
+          </div>
+          <div className="flex gap-6 h-1/2 px-6 pb-6">
+            {sliderImages
+              .slice(5, 10).reverse()
+              .map((image: { _id: string; uuid: string; name: string }, i) => (
+                <div
+                  key={image._id}
+                  className="relative w-fit h-full max-w-[25%] overflow-hidden bg-red-200"
+                >
+                  <Image
+                    src={`https://ucarecdn.com/${image.uuid}/`}
+                    alt={`Gallery image ${i}`}
+                    fill
+                    className="object-cover h-full !static"
+                  />
+                </div>
+              ))}
+          </div>
+          </>}
+        </div> */}
 
-        {/* <LandingSwiper images={sliderImages} dir="ltr" mobileOnly={false} />
+        <LandingSwiper images={sliderImages} dir="ltr" mobileOnly={false} />
         <LandingSwiper
           images={mixUpArray(sliderImages)}
           dir="rtl"
           mobileOnly={false}
-        /> */}
+        />
+        {width < 768 &&
+        <>
+         <LandingSwiper images={mixUpArray(sliderImages).toReversed()} dir="ltr" mobileOnly={false} />
+        <LandingSwiper
+          images={sliderImages.toReversed()}
+          dir="rtl"
+          mobileOnly={false}
+        />
+        </>}
 
         <div className="absolute top-0 left-0 z-10 flex flex-col justify-center items-center w-full h-full">
           <div className="flex flex-col justify-center items-center h-1/2 md:h-3/4 relative -mt-16 md:-mt-0">
@@ -232,7 +274,7 @@ export default function Home() {
       </section>
 
       {/* GOALS */}
-      <section className="h-fit md:h-screen-minus-header bg-amber-200 custom-bg1 md:p-12 px-6 py-8 relative overflow-hidden">
+      <section className="h-fit md:h-screen-minus-header bg-amber-200 custom-bg1 md:p-12 px-6 py-8 relative overflow-hidden snap-start">
         <div className="flex flex-col justify-center h-full gap-8 md:gap-12 max-w-screen-2xl mx-auto">
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit">
             <span className="realistic-marker-highlight2">
@@ -283,8 +325,8 @@ export default function Home() {
       </section>
 
       {/* UPCOMING EVENT */}
-      {nextEvent.name.length > 0 && (
-        <section className="h-fit md:h-screen-minus-header bg-pastelPink custom-bg2 px-6 py-8 md:p-12">
+      {nextEvent?.name.length > 0 && (
+        <section className="h-fit md:h-screen-minus-header bg-pastelPink custom-bg2 px-6 py-8 md:p-12 snap-start">
           <div className="flex flex-col items-center md:flex-row gap-8 md:gap-12 max-w-screen-2xl mx-auto h-full">
             <div className="flex-1 flex flex-col justify-center gap-2 w-full md:w-1/2 self-start 2xl:my-auto 2xl:-translate-y-4">
               <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl md:mt-8 text-white w-fit">
@@ -303,7 +345,7 @@ export default function Home() {
             <div className="w-full md:w-2/5">
               <EventCard
                 event={nextEvent}
-                isMobile={isMobile}
+                isMobile={width < 768}
                 hasCountdown={true}
               />
             </div>
@@ -313,7 +355,7 @@ export default function Home() {
 
       {/* CUSTOMERS REVIEWS */}
       {reviews.length > 0 && (
-        <section className="bg-OMBpink custom-bg3 h-fit md:h-screen-minus-header pt-10 pb-16 md:py-12 gap-4 overflow-x-hidden relative">
+        <section className="bg-OMBpink custom-bg3 h-fit md:h-screen-minus-header pt-10 pb-16 md:py-12 gap-4 overflow-x-hidden relative snap-start">
           {/* <Image
           aria-hidden
           src="/3hearts-doodle.png"
@@ -328,13 +370,14 @@ export default function Home() {
             </h1>
             <CustomSwiper
               classes={
-                isMobile ? "cardsEffectSwiper" : "fullWidthSwiper !h-[350px]"
+                width < 768 ? "cardsEffectSwiper" : "fullWidthSwiper !h-[350px]"
               }
-              navigation={isMobile ? false : true}
-              effect={isMobile ? "cards" : undefined}
-              slidesPerView={isMobile ? 1 : 4}
+              grabCursor={true}
+              navigation={width < 768 ? false : true}
+              effect={width < 768 ? "cards" : undefined}
+              slidesPerView={width < 768 ? 1 : width > 1440 ? 5 :4}
               centeredSlides={true}
-              spaceBetween={isMobile ? 0 : 30}
+              spaceBetween={width < 768 ? 0 : 30}
               loop={true}
               pagination={{
                 clickable: true,
@@ -345,7 +388,7 @@ export default function Home() {
                 <div
                   className="grid items-center sticky-note p-8 aspect-square relative shadow-lg overflow-y-scroll"
                   style={{
-                    ...(!isMobile && {
+                    ...(width > 768 && {
                       transform: `rotate(${randomRotation(index)})`,
                     }),
                   }}

@@ -1,11 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { InstagramIcon, TiktokIcon } from "hugeicons-react";
+import axios from "axios";
 
 const Footer = () => {
+    const [contactInfo, setContactInfo] = useState({
+      email: "",
+      tel: "",
+      ig: "",
+      tiktok: "",
+    });
+
+  useEffect(() => {
+    axios
+      .get("/api/contactInfo")
+      .then((res) => {
+        setContactInfo(res.data[0]);
+      })
+  }, []);
+
   return (
     <footer className="bg-[#fff] shadow-sm">
       {/* NEWSLETTER SUBSCRIPTION */}
@@ -68,7 +84,7 @@ const Footer = () => {
                     name="firstname"
                     id="firstname"
                     placeholder="Prénom"
-                    className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded flex-1 md:max-w-48"
+                    className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-OMBpink focus:ring-1 focus:ring-OMBpink rounded flex-1 md:max-w-48"
                     // onChange={handleChange}
                     // value={contactInfo.name}
                     required
@@ -81,7 +97,7 @@ const Footer = () => {
                     name="lastname"
                     id="lastname"
                     placeholder="Nom"
-                    className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded flex-1 md:max-w-48"
+                    className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-OMBpink focus:ring-1 focus:ring-OMBpink rounded flex-1 md:max-w-48"
                     // onChange={handleChange}
                     // value={contactInfo.name}
                     required
@@ -95,14 +111,14 @@ const Footer = () => {
                   name="email"
                   id="email"
                   placeholder="Email"
-                  className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-red-200 focus:ring-1 focus:ring-red-200 rounded flex-1 md:max-w-[25rem]"
+                  className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-OMBpink focus:ring-1 focus:ring-OMBpink rounded flex-1 md:max-w-[25rem]"
                   // onChange={handleChange}
                   // value={contactInfo.email}
                   required
                 />
                 <button
                   type="submit"
-                  className="rounded-full bg-[#f7a976] text-white px-2 py-1 mt-2"
+                  className="shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-[#f6838d]/50 hover:text-whit hover:border-white"
                 >
                   S'inscrire
                 </button>
@@ -128,11 +144,30 @@ const Footer = () => {
           <h3 className="text-lg md:mb-2 font-headline text-[#232323]">
             Contact
           </h3>
-          <p>contact@ohmybook.com</p>
-          <p>06 01 02 03 04</p>
-          <div className="flex gap-4 ml-[-2px]">
-            <InstagramIcon size={24} color="black" className="cursor-pointer" />
-            <TiktokIcon size={24} color="black" className="cursor-pointer" />
+          <p>{contactInfo.email}</p>
+          {contactInfo.tel && <p>06 01 02 03 04</p>}
+          <div className="flex -ml-2">
+          {contactInfo.ig && (
+                    <Link
+                      href={contactInfo.ig}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
+                    >
+                      <InstagramIcon
+                        size={24}
+                        color="black"
+                        className="cursor-pointer"
+                      />
+                    </Link>
+                  )}
+            {contactInfo.tiktok && (
+                    <Link
+                      href={contactInfo.tiktok}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
+                    ><TiktokIcon size={24} color="black" className="cursor-pointer" /></Link>)}
           </div>
         </div>
         {/* PAGES INFOS */}

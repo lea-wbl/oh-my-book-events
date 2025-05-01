@@ -48,9 +48,9 @@ const About = () => {
   }, []);
 
   return (
-    <div>
+    <div className="snap-y snap-mandatory md:h-screen-minus-header overflow-scroll">
       {/* OUR STORY */}
-      <section className="px-6 py-8 md:px-16 md:py-16 h-fit md:h-screen-minus-header w-full bg-OMBpink custom-bg3 text-white grid">
+      <section className="px-6 py-8 md:px-16 md:py-16 h-fit md:h-screen-minus-header w-full bg-OMBpink custom-bg3 text-white grid snap-start">
         <div className="max-w-screen-2xl mx-auto flex items-center relative gap-8">
           <div className="grid flex-1 h-fit gap-10">
             <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit">
@@ -83,7 +83,7 @@ const About = () => {
         </div>
       </section>
       {/* OUR STORY PART 2 */}
-      <section className="px-6 py-8 md:px-16 md:py-6 h-fit md:h-screen-minus-header w-full custom-bg1 bg-amber-200">
+      <section className="px-6 py-8 md:px-16 md:py-6 h-fit md:h-screen-minus-header w-full custom-bg1 bg-amber-200 snap-start">
         <div className="flex flex-col gap-8 max-w-screen-2xl mx-auto h-full justify-center">
           <div className="text-xl font-bold tracking-wide flex flex-col gap-4 text-center">
             <p>
@@ -146,7 +146,7 @@ const About = () => {
         </div>
       </section>
       {/* US */}
-      <section className="px-6 py-8 md:px-16 md:py-6 h-fit md:h-screen-minus-header w-full bg-pastelPink custom-bg2 overflow-hidden grid">
+      <section className="px-6 py-8 md:px-16 md:py-6 h-fit md:h-screen-minus-header w-full bg-pastelPink custom-bg2 overflow-hidden grid snap-start">
         <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row-reverse gap-8">
           <div className="flex-1 flex flex-col justify-center">
             <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit mb-8">

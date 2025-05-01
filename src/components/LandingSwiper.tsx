@@ -33,7 +33,13 @@ const LandingSwiper: FC<LandingSwiperProps> = ({
         //   delay: 3000,
         //   disableOnInteraction: false,
         // }}
-        loop={false}
+        autoplay={{
+          delay: 0,
+          disableOnInteraction: false,
+        }}
+        speed={50000}
+        freeMode={true}
+        loop={true}
         className={`${mobileOnly && "md:hidden"}`}
       >
         {images.map((image, index) => (

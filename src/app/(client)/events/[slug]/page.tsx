@@ -46,9 +46,9 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
   if (isLoading) return <Loader admin={false} />;
 
   return (
-    <div>
+    <div className="snap-y snap-mandatory md:h-screen-minus-header overflow-scroll">
       <Toaster />
-      <section className="grid px-6 py-8 md:p-12 h-fit md:h-screen-minus-header w-full bg-OMBpink custom-bg3 text-white ">
+      <section className="grid px-6 py-8 md:p-12 h-fit md:h-screen-minus-header w-full bg-OMBpink custom-bg3 text-white snap-start">
         <div className="flex gap-12 items-center max-w-screen-2xl mx-auto relative">
           {/* POLAROIDS */}
           <div className="w-1/2">
@@ -73,7 +73,7 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
         </div>
       </section>
 
-      <section className="bg-amber-200 custom-bg1 h-fit md:h-screen-minus-header pt-10 px-6 py-8 md:p-12 gap-4 overflow-x-hidden relative">
+      <section className="bg-amber-200 custom-bg1 h-fit md:h-screen-minus-header pt-10 px-6 py-8 md:p-12 gap-4 overflow-x-hidden relative snap-start">
         <div className="flex flex-col justify-center h-full gap-12 md:-mt-6 max-w-screen-2xl mx-auto">
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white relative z-0 w-fit">
             <span className="realistic-marker-highlight2">

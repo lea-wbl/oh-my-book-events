@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { mongooseConnect } from "@/lib/mongooseConnect";
 import GalleryImg from "@/models/GalleryImg";
 
 export async function GET() {
   try {
     await mongooseConnect();
-    const galleryImages = await GalleryImg.find();
+    console.log('COUCOU');
+    
+    const galleryImages = await GalleryImg.find().sort({ createdAt: 1 });
     return NextResponse.json(galleryImages);
   } catch (error) {
     return NextResponse.json(
