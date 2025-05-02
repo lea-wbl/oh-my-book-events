@@ -13,6 +13,9 @@ const Header = () => {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState(false);
   const [eventTypes, setEventTypes] = useState([]);
+  const [openEventsSubmenu, setOpenEventsSubmenu] = useState(false);
+
+  const toggleSubmenu = () => setOpenEventsSubmenu((prev) => !prev);
 
   useEffect(() => {
     axios.get("/api/eventTypes?field=name").then((res) => {
@@ -20,6 +23,12 @@ const Header = () => {
       setEventTypes(res.data);
     });
   }, []);
+
+  useEffect(() => {
+    if (pathname.startsWith("/events")) setOpenEventsSubmenu(true);
+    else if (openEventsSubmenu && !pathname.startsWith("/events"))
+      setOpenEventsSubmenu(false);
+  }, [pathname]);
 
   return (
     <header className="bg-white shadow-md sticky top-0 h-14 md:h-20 w-full z-50 flex">
@@ -108,7 +117,7 @@ const Header = () => {
         </nav>
 
         {/* Mobile Navigation */}
-        <nav
+        {/* <nav
           className={`header-mobile bg-white fixed top-14 right-0 w-full h-screen-minus-header-mobile md:hidden ${
             openMenu && "show"
           }`}
@@ -133,7 +142,20 @@ const Header = () => {
                   aria-current={pathname === link.href ? "page" : undefined}
                   onClick={() => setOpenMenu(false)}
                 >
-                  {link.label}
+                  <span
+                    className={`${
+                      link.href === "/events" && "flex justify-center"
+                    }`}
+                  >
+                    {link.label}
+                    {link.href === "/events" && (
+                      <ArrowDown01Icon
+                        className="ml-1 mt-[2px] -mr-[5px]"
+                        size={20}
+                        color="black"
+                      />
+                    )}
+                  </span>
                 </Link>
                 {link.href === "/events" && (
                   <ul className="grid gap-4 text-[0.75em] text-center mt-2">
@@ -166,6 +188,94 @@ const Header = () => {
                 )}
               </li>
             ))}
+          </ul>
+        </nav> */}
+
+        <nav
+          className={`header-mobile bg-white fixed top-14 right-0 w-full h-screen-minus-header-mobile md:hidden ${
+            openMenu && "show"
+          }`}
+        >
+          <ul className="flex flex-col min-h-full gap-8 place-items-center p-12 text-3xl w-full">
+            <li className="navlink-container text-center">
+              <Link
+                href="/"
+                className={`navlink relative ${pathname === "/" && "active"}`}
+                onClick={() => setOpenMenu(false)}
+              >
+                Accueil
+              </Link>
+            </li>
+            <li className="navlink-container text-center">
+              <Link
+                href="/about"
+                className={`navlink relative ${
+                  pathname === "/about" && "active"
+                }`}
+                onClick={() => setOpenMenu(false)}
+              >
+                À propos
+              </Link>
+            </li>
+
+            <li className="navlink-container text-center grid ml-4 gap-2">
+              <button
+                onClick={toggleSubmenu}
+                className="flex justify-center items-center gap-1"
+              >
+                <span>Événements</span>
+                <span>
+                  <ArrowDown01Icon
+                    className="ml-1 mt-[2px] -mr-[5px]"
+                    size={20}
+                    color="black"
+                  />
+                </span>
+              </button>
+              <ul
+                className={`grid gap-4 text-[0.75em] text-center mt-2 overflow-hidden transition-all duration-300 ${
+                  openEventsSubmenu
+                    ? "max-h-96 opacity-100"
+                    : "max-h-0 opacity-0"
+                }`}
+              >
+                <li className="sublink-container">
+                  <Link
+                    href="/events"
+                    className={`sublink relative z-0 ${
+                      pathname === "/events" ? "active" : ""
+                    }`}
+                  >
+                    Tous nos événements
+                  </Link>
+                </li>
+                {eventTypes.map((eventType: EventType) => (
+                  <li key={eventType._id} className="sublink-container">
+                    <Link
+                      href={`/events/${eventType._id}`}
+                      className={`sublink relative z-0 ${
+                        pathname === `/events/${eventType._id}` ? "active" : ""
+                      }`}
+                      onClick={() => setOpenMenu(false)}
+                    >
+                      {eventType.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+
+            <li className="navlink-container text-center">
+              <Link
+                href="/contact"
+                className={`navlink relative ${
+                  pathname === "/contact" && "active"
+                }`}
+                onClick={() => setOpenMenu(false)}
+              >
+                Contact
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

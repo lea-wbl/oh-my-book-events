@@ -19,7 +19,10 @@ export async function GET(req: Request) {
         date: 1,
       });
     } else if (typeId) {
-      events = await Event.find({ typeId });
+      events = await Event.find({
+        typeId,
+        date: { $gte: today },
+      });
     } else {
       events = await Event.find({ date: { $gte: today } }).sort({
         date: "ascending",

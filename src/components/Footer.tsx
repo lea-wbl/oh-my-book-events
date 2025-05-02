@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { InstagramIcon, TiktokIcon } from "hugeicons-react";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 const Footer = () => {
   const [contactInfo, setContactInfo] = useState({
@@ -13,6 +14,12 @@ const Footer = () => {
     ig: "",
     tiktok: "",
   });
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     axios.get("/api/contactInfo").then((res) => {
@@ -20,8 +27,37 @@ const Footer = () => {
     });
   }, []);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await axios.post("/api/newsletter", formData);
+      toast.success("Inscription réussie !", {
+        duration: 5000,
+      });
+      setFormData({ firstname: "", lastname: "", email: "" });
+    } catch (err: unknown) {
+      toast.error("Erreur lors de l'inscription à la newsletter");
+      if (axios.isAxiosError(err)) {
+        console.log(
+          err.response?.data?.error || "Erreur lors de l’inscription"
+        );
+      } else {
+        console.log("Une erreur inconnue est survenue");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <footer className="bg-[#fff] shadow-sm">
+      <Toaster position="top-right" />
+
       {/* NEWSLETTER SUBSCRIPTION */}
       <div className="bg-[#FCC0C5] shadow-md relative">
         <div
@@ -71,7 +107,7 @@ const Footer = () => {
             <div className="flex gap-8">
               <form
                 className="flex flex-col gap-4 flex-1 md:max-w-[25rem] h-fit"
-                //onSubmit={handleSubmit}
+                onSubmit={handleSubmit}
               >
                 <div className="flex flex-col md:flex-row gap-4">
                   <label htmlFor="firstname" className="sr-only">
@@ -83,8 +119,8 @@ const Footer = () => {
                     id="firstname"
                     placeholder="Prénom"
                     className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-OMBpink focus:ring-1 focus:ring-OMBpink rounded flex-1 md:max-w-48"
-                    // onChange={handleChange}
-                    // value={contactInfo.name}
+                    onChange={handleChange}
+                    value={formData.firstname}
                     required
                   />
                   <label htmlFor="lastname" className="sr-only">
@@ -96,8 +132,8 @@ const Footer = () => {
                     id="lastname"
                     placeholder="Nom"
                     className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-OMBpink focus:ring-1 focus:ring-OMBpink rounded flex-1 md:max-w-48"
-                    // onChange={handleChange}
-                    // value={contactInfo.name}
+                    onChange={handleChange}
+                    value={formData.lastname}
                     required
                   />
                 </div>
@@ -110,15 +146,19 @@ const Footer = () => {
                   id="email"
                   placeholder="Email"
                   className="border border-stone-200 px-2 py-1 focus:outline-none focus:border-OMBpink focus:ring-1 focus:ring-OMBpink rounded flex-1 md:max-w-[25rem]"
-                  // onChange={handleChange}
-                  // value={contactInfo.email}
+                  onChange={handleChange}
+                  value={formData.email}
                   required
                 />
                 <button
                   type="submit"
-                  className="shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-[#f6838d]/50 hover:text-whit hover:border-white"
+                  disabled={loading}
+                  className={`shadow-sm rounded-full bg-[#f7a976] text-white px-4 py-1 border-[#f7a976] border-2 hover:bg-[#f6838d]/50 hover:border-white ${
+                    loading &&
+                    "bg-gray-300 text-gray-600 border-gray-300 cursor-not-allowed hover:bg-gray-300 hover:border-gray-300"
+                  }`}
                 >
-                  S'inscrire
+                  {loading ? "Inscription en cours..." : "S’inscrire"}
                 </button>
               </form>
               <Image

@@ -60,9 +60,14 @@ const About = () => {
               On va pas se mentir : on aurait pu juste être deux lectrices qui
               se croisent, parlent livres et s’arrêtent là. Mais non.
             </p>
-            <span className="font-handwritten text-4xl leading-[0]">
-              Lire, c’est bien. Mais partager, c’est mieux.
-            </span>
+            <div className="flex flex-col md:flex-row md:gap-2">
+              <span className="font-handwritten text-4xl md:leading-[0]">
+                Lire, c’est bien.
+              </span>
+              <span className="font-handwritten text-4xl md:leading-[0]">
+                Mais partager, c’est mieux.
+              </span>
+            </div>
             <p className="leading-7">
               Combien de fois on a refermé un livre en se disant "Il faut
               absolument que j’en parle à quelqu’un !" sans jamais trouver LA
@@ -75,7 +80,7 @@ const About = () => {
               Alors on a décidé de créer Oh My Book.
             </span>
           </div>
-          <div className="w-1/2">
+          <div className="w-1/2 hidden md:block">
             <Polaroids
               images={["/books.jpg", "/presentation.jpg", "/library.jpg"]}
             />

@@ -230,11 +230,42 @@ const Contact = () => {
         </div>
 
         <div className="flex flex-col gap-2 text-white text-center md:hidden">
-          <p>contact@ohmybook.com</p>
-          <p>06 01 02 03 04</p>
+          <p>{contactInfo.email}</p>
+          {contactInfo.tel && (
+            <p className="font-semibold">
+              {contactInfo.tel.replace(/(.{2})/g, "$1 ")}
+              {/* formatting phone number from 0601020304 to 06 01 02 03 04 */}
+            </p>
+          )}
           <div className="flex gap-4 ml-[-2px] justify-center">
-            <InstagramIcon size={32} color="white" className="cursor-pointer" />
-            <TiktokIcon size={32} color="white" className="cursor-pointer" />
+            {contactInfo.ig && (
+              <Link
+                href={contactInfo.ig}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
+              >
+                <InstagramIcon
+                  size={32}
+                  color="white"
+                  className="cursor-pointer"
+                />
+              </Link>
+            )}
+            {contactInfo.tiktok && (
+              <Link
+                href={contactInfo.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-link relative hover:bg-[#fcc0c5]/75 rounded-full p-2 transition-colors duration-300"
+              >
+                <TiktokIcon
+                  size={32}
+                  color="white"
+                  className="cursor-pointer"
+                />
+              </Link>
+            )}
           </div>
         </div>
       </div>

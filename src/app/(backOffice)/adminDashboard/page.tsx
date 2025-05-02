@@ -131,8 +131,8 @@ const AdminDashboard = () => {
 
       <div className="flex flex-col gap-4">
         <span className="text-sm text-gray-500">
-          TIPS: Alterner les formats d'images (portrait, paysage, carré) pour un
-          meilleur rendu.
+          TIPS: Alterner les formats d&apos;images (portrait, paysage, carré)
+          pour un meilleur rendu.
         </span>
         {remainingImages === 0 ? (
           <p className="text-lg font-bold mb-4">

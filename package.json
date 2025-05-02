@@ -12,6 +12,7 @@
     "@uploadcare/react-uploader": "^1.5.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
+    "googleapis": "^148.0.0",
     "hugeicons-react": "^0.3.0",
     "mongoose": "^8.10.0",
     "next": "15.1.4",

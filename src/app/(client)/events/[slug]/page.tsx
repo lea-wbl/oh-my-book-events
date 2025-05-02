@@ -51,7 +51,7 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
       <section className="grid px-6 py-8 md:p-12 h-fit md:h-screen-minus-header w-full bg-OMBpink custom-bg3 text-white snap-start">
         <div className="flex gap-12 items-center max-w-screen-2xl mx-auto relative">
           {/* POLAROIDS */}
-          <div className="w-1/2">
+          <div className="w-1/2 hidden md:block">
             <Polaroids
               images={eventType.images.map((img: any) => img.uuid)}
               fromUCare
@@ -87,14 +87,16 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
             </div>
           ) : (
             <div className="flex flex-col gap-4 items-center justify-center h-1/2 font-semibold">
-              <p>
-                Il n'y a pas{" "}
+              <p className="text-center">
+                Il n&apos;y a pas{" "}
                 {isFirstLetterVowel(eventType.name.toLowerCase())
                   ? "d'"
                   : "de "}
                 {eventType.name.toLowerCase()} prévu pour le moment…
               </p>
-              <p>Mais reviens vite, de nouvelles dates arrivent bientôt !</p>
+              <p className="text-center">
+                Mais reviens vite, de nouvelles dates arrivent bientôt !
+              </p>
             </div>
           )}
         </div>
