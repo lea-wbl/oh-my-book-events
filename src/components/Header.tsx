@@ -218,7 +218,7 @@ const Header = () => {
               </Link>
             </li>
 
-            <li className="navlink-container text-center grid ml-4 gap-2">
+            <li className="navlink-container text-center grid ml-4">
               <button
                 onClick={toggleSubmenu}
                 className="flex justify-center items-center gap-1"
@@ -233,9 +233,9 @@ const Header = () => {
                 </span>
               </button>
               <ul
-                className={`grid gap-4 text-[0.75em] text-center mt-2 overflow-hidden transition-all duration-300 ${
+                className={`grid gap-4 text-[0.75em] text-center overflow-hidden transition-all duration-500 ${
                   openEventsSubmenu
-                    ? "max-h-96 opacity-100"
+                    ? "max-h-96 opacity-100 pt-4"
                     : "max-h-0 opacity-0"
                 }`}
               >

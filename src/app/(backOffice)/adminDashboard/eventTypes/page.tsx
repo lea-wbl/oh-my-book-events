@@ -170,7 +170,7 @@ const EventTypes = () => {
 
   return (
     <div>
-      <Toaster position="top-right" />
+      <Toaster />
 
       <h1 className="text-2xl font-bold mb-8">Types d'événements proposés</h1>
 

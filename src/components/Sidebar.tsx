@@ -5,10 +5,12 @@ import Link from "next/link";
 import { CancelCircleIcon, Menu01Icon } from "hugeicons-react";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 const Sidebar = () => {
   const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   if (session)
     return (
@@ -46,7 +48,9 @@ const Sidebar = () => {
             <nav className="flex flex-col gap-2 p-4">
               <Link
                 href="/adminDashboard"
-                className="px-4 py-2 hover:bg-gray-700 rounded-md"
+                className={`px-4 py-2 hover:bg-gray-700 rounded-md sidebar-link ${
+                  pathname === "/adminDashboard" && "text-orange-500 font-bold"
+                }`}
                 onClick={() => {
                   setIsOpen(false);
                 }}
@@ -55,7 +59,10 @@ const Sidebar = () => {
               </Link>
               <Link
                 href="/adminDashboard/reviews"
-                className="px-4 py-2 hover:bg-gray-700 rounded-md"
+                className={`px-4 py-2 hover:bg-gray-700 rounded-md sidebar-link ${
+                  pathname === "/adminDashboard/reviews" &&
+                  "text-orange-500 font-bold"
+                }`}
                 onClick={() => {
                   setIsOpen(false);
                 }}
@@ -71,16 +78,22 @@ const Sidebar = () => {
             <nav className="flex flex-col gap-2 p-4">
               <Link
                 href="/adminDashboard/eventTypes"
-                className="px-4 py-2 hover:bg-gray-700 rounded-md"
+                className={`px-4 py-2 hover:bg-gray-700 rounded-md sidebar-link ${
+                  pathname === "/adminDashboard/eventTypes" &&
+                  "text-orange-500 font-bold"
+                }`}
                 onClick={() => {
                   setIsOpen(false);
                 }}
               >
-                Types d'événements
+                Types d&apos;événements
               </Link>
               <Link
                 href="/adminDashboard/upcomingEvents"
-                className="px-4 py-2 hover:bg-gray-700 rounded-md"
+                className={`px-4 py-2 hover:bg-gray-700 rounded-md sidebar-link ${
+                  pathname === "/adminDashboard/upcomingEvents" &&
+                  "text-orange-500 font-bold"
+                }`}
                 onClick={() => {
                   setIsOpen(false);
                 }}
@@ -96,7 +109,10 @@ const Sidebar = () => {
             <nav className="flex flex-col gap-2 p-4">
               <Link
                 href="/adminDashboard/contact"
-                className="px-4 py-2 hover:bg-gray-700 rounded-md"
+                className={`px-4 py-2 hover:bg-gray-700 rounded-md sidebar-link ${
+                  pathname === "/adminDashboard/contact" &&
+                  "text-orange-500 font-bold"
+                }`}
                 onClick={() => {
                   setIsOpen(false);
                 }}
@@ -105,7 +121,10 @@ const Sidebar = () => {
               </Link>
               <Link
                 href="/adminDashboard/questions"
-                className="px-4 py-2 hover:bg-gray-700 rounded-md"
+                className={`px-4 py-2 hover:bg-gray-700 rounded-md sidebar-link ${
+                  pathname === "/adminDashboard/questions" &&
+                  "text-orange-500 font-bold"
+                }`}
                 onClick={() => {
                   setIsOpen(false);
                 }}

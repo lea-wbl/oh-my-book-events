@@ -56,7 +56,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#fff] shadow-sm">
-      <Toaster position="top-right" />
+      <Toaster />
 
       {/* NEWSLETTER SUBSCRIPTION */}
       <div className="bg-[#FCC0C5] shadow-md relative">
@@ -273,7 +273,19 @@ const Footer = () => {
       {/* CREDITS */}
       <div className="grid justify-center text-center pb-2 text-sm">
         <p>© 2025 Oh My Book. Tous droits réservés.</p>
-        <p>Conception et développement Acherontia Dev.</p>
+        <p>
+          Conception et développement{" "}
+          <a
+            href="https://lea-weibel-card.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Voir la carte de visite de Léa Weibel"
+            title="Voir la carte de visite de Léa Weibel"
+          >
+            Léa Weibel
+          </a>
+          .
+        </p>
       </div>
     </footer>
   );

@@ -139,7 +139,7 @@ const Reviews = () => {
 
   return (
     <div>
-      <Toaster position="top-right" />
+      <Toaster />
 
       <h1 className="text-2xl font-bold mb-8">Avis de la communauté</h1>
 

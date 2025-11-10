@@ -92,7 +92,7 @@ const EventTypeDetail = ({ params }: { params: Promise<{ slug: string }> }) => {
                 {isFirstLetterVowel(eventType.name.toLowerCase())
                   ? "d'"
                   : "de "}
-                {eventType.name.toLowerCase()} prévu pour le moment…
+                {eventType.name.toLowerCase()} prévus pour le moment…
               </p>
               <p className="text-center">
                 Mais reviens vite, de nouvelles dates arrivent bientôt !

@@ -142,7 +142,7 @@ const Questions = () => {
 
   return (
     <div className="mx-auto max-w-screen-xl ">
-      <Toaster position="top-right" />
+      <Toaster />
 
       <h1 className="text-2xl font-bold mb-8">FAQ</h1>
 

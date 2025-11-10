@@ -39,8 +39,8 @@ const Events = () => {
         </h1>
         <p className="text-center text-white font-semibold leading-7">
           Oh My Book, ce ne sont pas juste des événements, mais des moments qui
-          rassemblent. Avec nous, chaque expériences est une histoire à vivre,
-          un moment à partager et une aventure qui laisse une empreinte. Que ce
+          rassemblent. Avec nous, chaque expérience est une histoire à vivre, un
+          moment à partager et une aventure qui laisse une empreinte. Que ce
           soit autour d’un livre, dans un décor immersif ou à travers la
           création, nos événements sont pensés pour faire vibrer, surprendre et
           créer du lien. Viens pour un instant, repars avec une émotion, une

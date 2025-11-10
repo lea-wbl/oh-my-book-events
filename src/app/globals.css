@@ -530,3 +530,12 @@ input[type="time"] {
   content: ">";
   padding-left: 2px;
 }
+
+/* 404 PAGE */
+.landscape {
+  background: bottom / cover no-repeat url("/landscape3.png");
+}
+
+.sidebar-link.active {
+  color: var;
+}

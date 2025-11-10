@@ -8,6 +8,21 @@ const LegalInfo = () => {
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit">
             <span className="realistic-marker-highlight">Mentions Légales</span>
           </h1>
+          <h2>Collecte des données personnelles</h2>
+          <p>
+            Le site ne collecte des données personnelles que dans deux cas :
+            <ul>
+              <li>
+                Lorsque l'utilisateur s'inscrit volontairement à la newsletter,
+                via un formulaire.
+              </li>
+              <li>
+                Lorsque l'utilisateur envoie un message via le formulaire de
+                contact (ou directement à l’adresse e-mail fournie).
+              </li>
+              Les données collectées sont limitées à : nom et adresse e-mail.
+            </ul>
+          </p>
         </section>
         <section id="privacy-policy" className="h-96  pt-24">
           <h1 className="font-headline text-[2.5rem] leading-none md:text-6xl text-white w-fit">
